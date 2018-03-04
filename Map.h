@@ -8,7 +8,8 @@
 #define ROOM_FIELD_MIN_RATIO 0.45
 #define MAX_MAP_GEN_DEPTH 6
 
-#define MAP_SEPARATION_SIZE 6
+#define ROOM_SEPARATION 6
+#define MAX_ROOM_SEPARATION 20
 
 struct MapDivideField {
 	int x, y, w, h;
@@ -24,12 +25,14 @@ public:
 
 	std::vector<Room*> rooms;
 	void generateNewMap();
-	void generateNewMap(int);
-	void generateMapField(int _x, int _y, int _width, int _height, bool divideWidth, int);
+	void generateSpecialRooms(int &roomNumber);
 	void createRoom(Room* room);
+	void generateHallways(int &roomsNumber);
+	void createHallwayH(SDL_Point&, SDL_Point&); // Horizontal
+	void createHallwayV(SDL_Point&, SDL_Point&); // Vertical
+	void createHallwayAngle(SDL_Point&, SDL_Point&);
+	void createRoomWalls(Room* room);
 	void createFieldWalls(Room* room);
-	void createRoomConectionsX(Room* room, int xSeparation);
-	void createRoomConectionsY(Room* room, int ySeparation);
 
 	Map(int _hCenter, int _wCenter);
 	~Map();

@@ -98,7 +98,7 @@ Game::Game(const char* title, int w, int h, bool fullscreen) {
 	map = new Map(h / 2, w / 2);
 
 	keystates = SDL_GetKeyboardState(NULL);
-	FPS = 6;
+	FPS = 60;
 	cameraMovePix = 5;
 	_running = true;
 }

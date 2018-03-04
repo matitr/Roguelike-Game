@@ -7,21 +7,33 @@
 
 
 void RenderMap::initValues() {
+	/*
+	startRenderPos.x = (cameraPos.x / fieldRect.w + floor((resolution.x / 2) / fieldRect.w)) * fieldRect.w;
+	startRenderPos.x += fieldRect.w - cameraPos.x % fieldRect.w;
+
+	startRenderPos.y = (cameraPos.y / fieldRect.h + floor((resolution.y / 2) / fieldRect.h)) * fieldRect.h;
+	startRenderPos.y += fieldRect.h - cameraPos.y % fieldRect.h;
+	*/
+
+	startRenderPos.xField = cameraPos.x / fieldRect.w - floor(fieldsToRender.x / 2);
+	startRenderPos.xAdditionalPixels = cameraPos.x % fieldRect.w;
+
+	startRenderPos.yField = cameraPos.y / fieldRect.h - floor(fieldsToRender.y / 2);
+	startRenderPos.yAdditionalPixels = cameraPos.y % fieldRect.h;
+
 }
 
 void RenderMap::render() {
 	if (!Game::renderer)
 		return;
 
-//	fieldY = startRenderPos.yField;
-	fieldY = 0;
+	fieldY = startRenderPos.yField;
 
 	for (fieldCounterY = 0; fieldCounterY <= fieldsToRender.y; fieldCounterY++, fieldY++) { // Y
-//		fieldX = startRenderPos.xField;
-		fieldX = 0;
-		fieldRect.y = fieldCounterY * fieldRect.h;
+ 		fieldX = startRenderPos.xField;
+		fieldRect.y = fieldCounterY * fieldRect.h - startRenderPos.yAdditionalPixels;
 		for (fieldCounterX = 0; fieldCounterX <= fieldsToRender.x; fieldCounterX++, fieldX++) { // X
-			fieldRect.x = fieldCounterX * fieldRect.w;
+			fieldRect.x = fieldCounterX * fieldRect.w - startRenderPos.xAdditionalPixels;
 			if (map[fieldX][fieldY])
 				SDL_RenderCopy(Game::renderer, map[fieldX][fieldY]->getBackground(), NULL, &fieldRect);
 
@@ -32,36 +44,28 @@ void RenderMap::render() {
 	SDL_RenderPresent(Game::renderer);
 }
 
+void RenderMap::setSpawn(float x, float y) {
+	if (x == int(x))
+		cameraPos.x = x * fieldRect.w + fieldRect.w / 2;
+	else
+		cameraPos.x = x * fieldRect.w;
+
+	if (y == int(y))
+		cameraPos.y = y * fieldRect.h + fieldRect.h / 2;
+	else
+		cameraPos.y = y * fieldRect.h;
+
+	initValues();
+}
+
 void RenderMap::setCamera(int x, int y) {
 	cameraPos.x = x;
 	cameraPos.y = y;
+
+	initValues();
 }
 
 void RenderMap::moveCamera(int x, int y) {
-	/*
-	cameraPos.xAdditionalPixels += x;
-
-	if (cameraPos.xAdditionalPixels < 0) {
-		cameraPos.xField += (cameraPos.xAdditionalPixels / fieldRect.w) - 1;
-		cameraPos.xAdditionalPixels = fieldRect.w + (cameraPos.xAdditionalPixels - (cameraPos.xAdditionalPixels / fieldRect.w) * fieldRect.w);
-	}
-	else if (cameraPos.xAdditionalPixels >= fieldRect.w) {
-		cameraPos.xField += cameraPos.xAdditionalPixels / fieldRect.w + 1;
-		cameraPos.xAdditionalPixels = cameraPos.xAdditionalPixels - (cameraPos.xAdditionalPixels / fieldRect.w) * fieldRect.w;
-	}
-
-	
-	cameraPos.yAdditionalPixels += y;
-
-	if (cameraPos.yAdditionalPixels < 0) {
-		cameraPos.yField += (cameraPos.yAdditionalPixels / fieldRect.h) - 1;
-		cameraPos.yAdditionalPixels = fieldRect.h + (cameraPos.yAdditionalPixels - (cameraPos.yAdditionalPixels / fieldRect.h) * fieldRect.h);
-	}
-	else if (cameraPos.yAdditionalPixels >= fieldRect.w) {
-		cameraPos.yField += cameraPos.yAdditionalPixels / fieldRect.h + 1;
-		cameraPos.yAdditionalPixels = cameraPos.yAdditionalPixels - (cameraPos.yAdditionalPixels / fieldRect.h) * fieldRect.h;
-	}
-	*/
 	cameraPos.x += x;
 	cameraPos.y += y;
 
@@ -73,20 +77,12 @@ RenderMap::RenderMap(int _hCenter, int _wCenter){
 	for (int i = 0; i < map.size(); i++)
 		map[i].resize(MAP_HEIGHT);
 
-	fieldRect.h = 80;
-	fieldRect.w = 80;
+	fieldRect.h = 30;
+	fieldRect.w = 30;
 	fieldsToRender.x = (_wCenter * 2) / fieldRect.w + 1;
 	fieldsToRender.y = (_hCenter * 2) / fieldRect.h + 1;
-/*
-	cameraPos.xField = MAP_SIZE / 2;
-	cameraPos.yField = MAP_SIZE / 2;//-1 2 3
-	cameraPos.xAdditionalPixels = 0;
-	cameraPos.yAdditionalPixels = 0;
-
-	startRenderPos.xField = cameraPos.xField - fieldsToRender.x / 2;
-	startRenderPos.yField = cameraPos.yField - fieldsToRender.y / 2;
-	*/
-
+	resolution.x = _wCenter * 2;
+	resolution.y = _hCenter * 2;
 }
 
 
