@@ -14,6 +14,8 @@
 #define WALL_TOP_B 7
 #define WALL_TOP_L 8
 
+#define PLAYER 9
+
 class SDL_Texture;
 class FIELD;
 

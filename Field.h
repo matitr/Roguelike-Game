@@ -5,18 +5,13 @@
 class Room;
 
 class Field{
-	SDL_Texture* background;
-	Item* itemOnField;
-	Room* roomParent;
+	SDL_Texture* texture;
 public:
-	SDL_Texture* getBackground() { return background; }
-
-	void addTexture(SDL_Texture* txt);
+	SDL_Texture * getTexture() { return texture; }
 
 	Field();
 	Field(SDL_Texture* txt);
-	Field(SDL_Texture* txt, Room* parent);
-	Field(SDL_Texture* txt, Item*);
+	Field(SDL_Texture* txt, SDL_Rect* rectSize, int frames, int frameTime);
 	~Field();
 
 };

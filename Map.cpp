@@ -87,7 +87,7 @@ void Map::createRoom(Room* room) {
 	int xIter, yIter;
 	for (xIter = room->x1 + 1; xIter < room->x2; xIter++)
 		for (yIter = room->y1 + 1; yIter < room->y2; yIter++) {
-			map[xIter][yIter] = new Field(textures[WOOD_FLOOR], room);
+			map[xIter][yIter] = new Field(textures[WOOD_FLOOR]);
 		}
 
 }
@@ -252,6 +252,7 @@ Map::Map(int _hCenter, int _wCenter) : RenderMap(_hCenter, _wCenter) {
 	hCenter = _hCenter;
 	wCenter = _wCenter;
 
+	textures[PLAYER] = TextureManager::LoadTexture("Textures/player.png");
 	textures[WOOD_FLOOR] = TextureManager::LoadTexture("Textures/woodFloor.png");
 	textures[WATER] = TextureManager::LoadTexture("Textures/water.png");
 	textures[STONE] = TextureManager::LoadTexture("Textures/stone.png");
@@ -261,6 +262,7 @@ Map::Map(int _hCenter, int _wCenter) : RenderMap(_hCenter, _wCenter) {
 	textures[WALL_TOP_R] = TextureManager::LoadTexture("Textures/wallTopR.png");
 	textures[WALL_TOP_B] = TextureManager::LoadTexture("Textures/wallTopB.png");
 	textures[WALL_TOP_L] = TextureManager::LoadTexture("Textures/wallTopL.png");
+
 }
 
 Map::~Map() {

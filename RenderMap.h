@@ -39,6 +39,8 @@ public:
 	void setSpawn(float fieldX, float fieldY);
 	void setCamera(int x, int y);
 	void moveCamera(int x, int y);
+	int getCameraX() { return cameraPos.x; }
+	int getCameraY() { return cameraPos.y; }
 
 	RenderMap(int _hCenter, int _wCenter);
 	~RenderMap();

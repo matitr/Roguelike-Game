@@ -17,6 +17,16 @@
     <ClCompile Include="Room.cpp">
       <Filter>Map</Filter>
     </ClCompile>
+    <ClCompile Include="Sprite.cpp">
+      <Filter>Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp" />
+    <ClCompile Include="Unit.cpp">
+      <Filter>Unit</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Unit</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
@@ -34,10 +44,28 @@
     <ClInclude Include="Room.h">
       <Filter>Map</Filter>
     </ClInclude>
+    <ClInclude Include="Sprite.h">
+      <Filter>Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="Unit.h">
+      <Filter>Unit</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Unit</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Map">
       <UniqueIdentifier>{02228ff1-c577-4a3c-b4c5-6e7e108269d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Textures">
+      <UniqueIdentifier>{410b34ce-d4cb-443b-83d1-d44225611aaf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Unit">
+      <UniqueIdentifier>{a0701841-36c5-476a-a0c2-88862fba92ed}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

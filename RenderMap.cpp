@@ -7,14 +7,6 @@
 
 
 void RenderMap::initValues() {
-	/*
-	startRenderPos.x = (cameraPos.x / fieldRect.w + floor((resolution.x / 2) / fieldRect.w)) * fieldRect.w;
-	startRenderPos.x += fieldRect.w - cameraPos.x % fieldRect.w;
-
-	startRenderPos.y = (cameraPos.y / fieldRect.h + floor((resolution.y / 2) / fieldRect.h)) * fieldRect.h;
-	startRenderPos.y += fieldRect.h - cameraPos.y % fieldRect.h;
-	*/
-
 	startRenderPos.xField = cameraPos.x / fieldRect.w - floor(fieldsToRender.x / 2);
 	startRenderPos.xAdditionalPixels = cameraPos.x % fieldRect.w;
 
@@ -35,7 +27,7 @@ void RenderMap::render() {
 		for (fieldCounterX = 0; fieldCounterX <= fieldsToRender.x; fieldCounterX++, fieldX++) { // X
 			fieldRect.x = fieldCounterX * fieldRect.w - startRenderPos.xAdditionalPixels;
 			if (map[fieldX][fieldY])
-				SDL_RenderCopy(Game::renderer, map[fieldX][fieldY]->getBackground(), NULL, &fieldRect);
+				SDL_RenderCopy(Game::renderer, map[fieldX][fieldY]->getTexture(), NULL, &fieldRect);
 
 
 		}
@@ -54,6 +46,8 @@ void RenderMap::setSpawn(float x, float y) {
 		cameraPos.y = y * fieldRect.h + fieldRect.h / 2;
 	else
 		cameraPos.y = y * fieldRect.h;
+
+
 
 	initValues();
 }
@@ -77,8 +71,8 @@ RenderMap::RenderMap(int _hCenter, int _wCenter){
 	for (int i = 0; i < map.size(); i++)
 		map[i].resize(MAP_HEIGHT);
 
-	fieldRect.h = 30;
-	fieldRect.w = 30;
+	fieldRect.h = 50;
+	fieldRect.w = 50;
 	fieldsToRender.x = (_wCenter * 2) / fieldRect.w + 1;
 	fieldsToRender.y = (_hCenter * 2) / fieldRect.h + 1;
 	resolution.x = _wCenter * 2;
