@@ -9,7 +9,6 @@
 class Game{
 
 	SDL_Window* window;
-	std::unordered_map <int, SDL_Texture*> textures;
 
 	int FPS;
 	Map* map;

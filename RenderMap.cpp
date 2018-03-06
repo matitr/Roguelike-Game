@@ -32,8 +32,6 @@ void RenderMap::render() {
 
 		}
 	}
-
-	SDL_RenderPresent(Game::renderer);
 }
 
 void RenderMap::setSpawn(float x, float y) {

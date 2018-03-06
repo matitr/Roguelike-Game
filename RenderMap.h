@@ -31,9 +31,9 @@ private:
 
 protected:
 	std::vector<std::vector<Field*>> map;
-	std::unordered_map <int, SDL_Texture*> textures;
 
 public:
+	std::unordered_map <int, SDL_Texture*> textures;
 	void initValues();
 	void render();
 	void setSpawn(float fieldX, float fieldY);

@@ -1,11 +1,10 @@
 #pragma once
 #include "Sprite.h"
 class Animation {
-protected:
+public:
 	int frames;
 	int frameTime;
 	int yPosTexture;
-	int currFrame;
 public:
 
 	Animation(int y, int f, int frameT);

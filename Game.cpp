@@ -13,9 +13,9 @@ void Game::run() {
 	int frameCounter=0;
 
 	map->generateNewMap();//temp
-	units.push_back(new Player(textures[PLAYER]));
+	units.push_back(new Player(map->textures[PLAYER]));
 	units[0]->setPosition(map->getCameraX(), map->getCameraY());
-
+	units[0]->setAnimation("Stand");
 	while (running()) {
 		if (clock() - timeCounter > CLOCKS_PER_SEC) {
 			std::cout << frameCounter << std::endl;
@@ -24,7 +24,6 @@ void Game::run() {
 		}
 
 		frameStart = SDL_GetTicks();
-		units[0]->draw();
 		handleEvents();
 		render();
 
@@ -77,16 +76,20 @@ void Game::handleEvents() {
 	if (event.type == SDL_KEYDOWN) {
 		switch (event.key.keysym.sym) {
 		case SDLK_w:
-			units[0]->movement.x = -1;
+			units[0]->velocity.y = -1;
+			units[0]->setAnimation("Walk");
 			break;
 		case SDLK_s:
-			units[0]->movement.x = 1;
+			units[0]->velocity.y = 1;
+			units[0]->setAnimation("Walk");
 			break;
 		case SDLK_a:
-			units[0]->movement.y = -1;
+			units[0]->velocity.x = -1;
+			units[0]->setAnimation("Walk");
 			break;
 		case SDLK_d:
-			units[0]->movement.y = 1;
+			units[0]->velocity.x = 1;
+			units[0]->setAnimation("Walk");
 			break;
 
 		}
@@ -94,16 +97,20 @@ void Game::handleEvents() {
 	else if (event.type == SDL_KEYUP) {
 		switch (event.key.keysym.sym) {
 		case SDLK_w:
-			units[0]->movement.x = 0;
+			units[0]->velocity.y = 0;
+			units[0]->setAnimation("Stand");
 			break;
 		case SDLK_s:
-			units[0]->movement.x = 0;
+			units[0]->velocity.y = 0;
+			units[0]->setAnimation("Stand");
 			break;
 		case SDLK_a:
-			units[0]->movement.y = 0;
+			units[0]->velocity.x = 0;
+			units[0]->setAnimation("Stand");
 			break;
 		case SDLK_d:
-			units[0]->movement.y = 0;
+			units[0]->velocity.x = 0;
+			units[0]->setAnimation("Stand");
 			break;
 
 		}
@@ -115,6 +122,9 @@ void Game::render() {
 	map->render();
 
 
+	units[0]->update();
+	map->moveCamera(units[0]->velocity.x, units[0]->velocity.y);
+	units[0]->draw();
 
 	SDL_RenderPresent(renderer);
 }
