@@ -1,24 +1,13 @@
 #include "Unit.h"
 #include "Game.h"
 
-void Unit::draw() {
+void Unit::draw(SDL_Point* startRender) {
 	srcrect.x = srcrect.w * textureFrame;
+	dstrect.x = position.x - startRender->x;
+	dstrect.y = position.y - startRender->y;
+
 	SDL_RenderCopy(Game::renderer, texture, &srcrect, &dstrect);
 
-}
-
-void Unit::update() {
-	dstrect.x += velocity.x;
-	dstrect.y += velocity.y;
-
-	if (frameCounter == textureFrameTime) {
-		frameCounter = 0;
-		if (textureFrame == textureFrames - 1)
-			textureFrame = 0;
-		else
-			textureFrame++;
-	}
-	frameCounter++;
 }
 
 void Unit::addAnimation(const char* actionName, int _yPosTexture, int _frames, int _frameTime) {
@@ -47,6 +36,8 @@ void Unit::setPosition(int x, int y) {
 }
 
 Unit::Unit(SDL_Texture *txt, int width, int height) {
+	speed = 5;
+
 	texture = txt;
 
 	dstrect.x = 100;

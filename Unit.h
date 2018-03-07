@@ -1,6 +1,7 @@
 #pragma once
 #include "Animation.h"
 #include <unordered_map>
+#include "Map.h"
 
 class Unit {
 protected:
@@ -11,14 +12,14 @@ protected:
 	SDL_Rect srcrect, dstrect;
 	SDL_Point position;
 	SDL_Texture *texture;
-	int speed = 3;
+	int speed;
 
 	const char* unitActionName;
 public:
 	SDL_Point velocity;
 	SDL_Point movement;
-	void draw();
-	void update();
+	void draw(SDL_Point* startRender);
+	virtual void update(Map* map, SDL_Rect& fieldRect) = 0;
 
 	void addAnimation(const char* actionName, int _yPosTexture, int _frames, int _frameTime);
 	void setAnimation(const char* actionName);

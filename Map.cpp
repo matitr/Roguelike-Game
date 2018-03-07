@@ -87,7 +87,7 @@ void Map::createRoom(Room* room) {
 	int xIter, yIter;
 	for (xIter = room->x1 + 1; xIter < room->x2; xIter++)
 		for (yIter = room->y1 + 1; yIter < room->y2; yIter++) {
-			map[xIter][yIter] = new Field(textures[WOOD_FLOOR]);
+			map[xIter][yIter] = new Field(textures[WOOD_FLOOR], true);
 		}
 
 }
@@ -169,8 +169,8 @@ void Map::createHallwayH(SDL_Point& p1, SDL_Point& p2) {
 	Field *field;
 
 	for (x = p1.x; x <= p2.x; x++) {
-		map[x][p1.y] = new Field(textures[WOOD_FLOOR]);
-		map[x][p2.y] = new Field(textures[WOOD_FLOOR]);
+		map[x][p1.y] = new Field(textures[WOOD_FLOOR], true);
+		map[x][p2.y] = new Field(textures[WOOD_FLOOR], true);
 		if (p1.y < p2.y) {
 			map[x][p1.y - 3] = new Field(textures[WALL_TOP_T]);
 			map[x][p1.y - 2] = new Field(textures[WALL_SIDE]);
@@ -190,8 +190,8 @@ void Map::createHallwayV(SDL_Point& p1, SDL_Point& p2) {
 	Field *field;
 
 	for (y = p1.y; y <= p2.y; y++) {
-		map[p1.x][y] = new Field(textures[WOOD_FLOOR]);
-		map[p2.x][y] = new Field(textures[WOOD_FLOOR]);
+		map[p1.x][y] = new Field(textures[WOOD_FLOOR], true);
+		map[p2.x][y] = new Field(textures[WOOD_FLOOR], true);
 		if (p1.x < p2.x) {
 			map[p1.x - 1][y] = new Field(textures[WALL_TOP_L]);
 			map[p2.x + 1][y] = new Field(textures[WALL_TOP_R]);

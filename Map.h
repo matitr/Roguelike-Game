@@ -4,7 +4,6 @@
 #include "RenderMap.h"
 #include <vector>
 #include <unordered_map>
-#include "Player.h"
 
 #define ROOM_FIELD_MIN_RATIO 0.45
 #define MAX_MAP_GEN_DEPTH 6

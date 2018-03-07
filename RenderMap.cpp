@@ -13,6 +13,8 @@ void RenderMap::initValues() {
 	startRenderPos.yField = cameraPos.y / fieldRect.h - floor(fieldsToRender.y / 2);
 	startRenderPos.yAdditionalPixels = cameraPos.y % fieldRect.h;
 
+	startRender.x = startRenderPos.xField * fieldRect.w + startRenderPos.xAdditionalPixels;
+	startRender.y = startRenderPos.yField * fieldRect.h + startRenderPos.yAdditionalPixels;
 }
 
 void RenderMap::render() {
@@ -69,8 +71,8 @@ RenderMap::RenderMap(int _hCenter, int _wCenter){
 	for (int i = 0; i < map.size(); i++)
 		map[i].resize(MAP_HEIGHT);
 
-	fieldRect.h = 50;
-	fieldRect.w = 50;
+	fieldRect.h = 60;
+	fieldRect.w = 60;
 	fieldsToRender.x = (_wCenter * 2) / fieldRect.w + 1;
 	fieldsToRender.y = (_hCenter * 2) / fieldRect.h + 1;
 	resolution.x = _wCenter * 2;

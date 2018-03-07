@@ -17,7 +17,6 @@ struct CameraPosition {
 class RenderMap{
 
 private:
-	SDL_Rect fieldRect;
 	SDL_Point cameraPos;
 	CameraPosition startRenderPos;
 	SDL_Point firstSpawnChunk; //cords
@@ -29,10 +28,11 @@ private:
 	int fieldCounterX, fieldCounterY;
 	int i, j;
 
-protected:
-	std::vector<std::vector<Field*>> map;
 
 public:
+	SDL_Rect fieldRect;
+	std::vector<std::vector<Field*>> map;
+	SDL_Point startRender;
 	std::unordered_map <int, SDL_Texture*> textures;
 	void initValues();
 	void render();

@@ -122,9 +122,8 @@ void Game::render() {
 	map->render();
 
 
-	units[0]->update();
-	map->moveCamera(units[0]->velocity.x, units[0]->velocity.y);
-	units[0]->draw();
+	units[0]->update(map, map->fieldRect);
+	units[0]->draw(&map->startRender);
 
 	SDL_RenderPresent(renderer);
 }
