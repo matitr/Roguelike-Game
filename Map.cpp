@@ -54,8 +54,7 @@ void Map::generateNewMap() {
 	for (i = 0; i < roomsNumber; i++)
 		createRoomWalls(rooms[i]);
 //	render();
-	setSpawn((rooms[0]->x2 - rooms[0]->x1) / 2 + rooms[0]->x1, (rooms[0]->y2 - rooms[0]->y1) / 2 + rooms[0]->y1);
-	moveCamera(0, 0);
+	setSpawn(rooms[0], (rooms[0]->x2 - rooms[0]->x1) / 2 + rooms[0]->x1, (rooms[0]->y2 - rooms[0]->y1) / 2 + rooms[0]->y1);
 }
 
 void Map::generateSpecialRooms(int &roomsNumber) {

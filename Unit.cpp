@@ -7,7 +7,6 @@ void Unit::draw(SDL_Point* startRender) {
 	dstrect.y = position.y - startRender->y;
 
 	SDL_RenderCopy(Game::renderer, texture, &srcrect, &dstrect);
-
 }
 
 void Unit::addAnimation(const char* actionName, int _yPosTexture, int _frames, int _frameTime) {
@@ -29,16 +28,17 @@ void Unit::setAnimation(const char* actionName) {
 }
 
 void Unit::setPosition(int x, int y) {
-	position.x = x;
-	position.y = y;
-
-
+	position.x = x - srcrect.w * 3 / 4;
+	position.y = y - srcrect.w * 1;
 }
 
 Unit::Unit(SDL_Texture *txt, int width, int height) {
 	speed = 5;
 
 	texture = txt;
+
+	velocity.x = 0;
+	velocity.y = 0;
 
 	dstrect.x = 100;
 	dstrect.y = 100;

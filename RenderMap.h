@@ -22,7 +22,7 @@ private:
 	SDL_Point firstSpawnChunk; //cords
 	SDL_Point fieldsToRender;
 	SDL_Texture * texture;
-
+	Room* currRoom;
 	SDL_Point resolution;
 	int fieldX, fieldY;
 	int fieldCounterX, fieldCounterY;
@@ -36,7 +36,7 @@ public:
 	std::unordered_map <int, SDL_Texture*> textures;
 	void initValues();
 	void render();
-	void setSpawn(float fieldX, float fieldY);
+	void setSpawn(Room* room, float fieldX, float fieldY);
 	void setCamera(int x, int y);
 	void moveCamera(int x, int y);
 	int getCameraX() { return cameraPos.x; }
