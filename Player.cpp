@@ -33,6 +33,17 @@ void Player::movement(int x, int y) {
 	velocity.y = y;
 }
 
+Projectile* Player::attack(SDL_Texture* txt, int x, int y) {
+	Projectile* p = new Projectile(txt, 25, 25, 0, 3, 10);
+	if (x - position.x > 0)
+		p->setVelocity(1,0);
+	else
+		p->setVelocity(-1, 0);
+
+	p->setPosition(position.x, position.y);
+	return p;
+}
+
 Player::Player(SDL_Texture* txt) : Unit(txt, 60, 60){
 	addAnimation("Stand", 0, 2, 15);
 	addAnimation("Walk", 1, 2, 15);

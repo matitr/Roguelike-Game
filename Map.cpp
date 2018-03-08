@@ -262,6 +262,7 @@ Map::Map(int _hCenter, int _wCenter) : RenderMap(_hCenter, _wCenter) {
 	textures[WALL_TOP_B] = TextureManager::LoadTexture("Textures/wallTopB.png");
 	textures[WALL_TOP_L] = TextureManager::LoadTexture("Textures/wallTopL.png");
 
+	textures[PROJECTILES] = TextureManager::LoadTexture("Textures/projectiles.png");
 }
 
 Map::~Map() {

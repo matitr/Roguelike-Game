@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <vector>
 #include "Player.h"
+#include "Projectile.h"
 
 
 
@@ -18,6 +19,7 @@ class Game{
 	int cameraMovePix;
 	SDL_Rect srcRectUnit, dstRectUnit;
 	std::vector <Unit*> units;
+	std::vector <Projectile*> projectiles;
 public:
 	static SDL_Renderer* renderer;
 

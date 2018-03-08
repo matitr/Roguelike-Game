@@ -13,6 +13,7 @@ void Game::run() {
 	int frameCounter=0;
 
 	map->generateNewMap();//temp
+	projectiles.resize(10);
 	units.push_back(new Player(map->textures[PLAYER]));
 	units[0]->setPosition(map->getCameraX(), map->getCameraY());
 	units[0]->setAnimation("Stand");
@@ -115,6 +116,10 @@ void Game::handleEvents() {
 
 		}
 	}
+	else if (event.type == SDL_MOUSEBUTTONDOWN) {
+		//todo
+		projectiles[0] = units[0]->attack(map->textures[PROJECTILES], event.button.x + map->startRender.x, event.button.y + map->startRender.y);
+	}
 }
 
 void Game::render() {
@@ -124,6 +129,16 @@ void Game::render() {
 
 	units[0]->update(map, map->fieldRect);
 	units[0]->draw(&map->startRender);
+
+	for (int i = 0; i < projectiles.size(); i++)
+		if (projectiles[i]) {
+			if (!projectiles[i]->update(map, map->fieldRect)) {
+				delete projectiles[0];
+				projectiles[0] = nullptr;
+			}
+			else
+				projectiles[i]->draw(&map->startRender);
+		}
 
 	SDL_RenderPresent(renderer);
 }

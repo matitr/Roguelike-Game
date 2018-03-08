@@ -13,6 +13,7 @@
 #define WALL_TOP_R 6
 #define WALL_TOP_B 7
 #define WALL_TOP_L 8
+#define PROJECTILES 9
 
 
 class SDL_Texture;

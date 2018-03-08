@@ -27,6 +27,10 @@
     <ClCompile Include="Player.cpp">
       <Filter>Unit</Filter>
     </ClCompile>
+    <ClCompile Include="SpriteAnimation.cpp">
+      <Filter>Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="Projectile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
@@ -56,6 +60,10 @@
     <ClInclude Include="Player.h">
       <Filter>Unit</Filter>
     </ClInclude>
+    <ClInclude Include="SpriteAnimation.h">
+      <Filter>Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="Projectile.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Map">

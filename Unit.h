@@ -3,6 +3,8 @@
 #include <unordered_map>
 #include "Map.h"
 
+class Projectile;
+
 class Unit {
 protected:
 	std::unordered_map <const char*, Animation*> animations;
@@ -20,6 +22,7 @@ public:
 	SDL_Point movement;
 	void draw(SDL_Point* startRender);
 	virtual void update(Map* map, SDL_Rect& fieldRect) = 0;
+	virtual Projectile* attack(SDL_Texture*txt, int x, int y) = 0;
 
 	void addAnimation(const char* actionName, int _yPosTexture, int _frames, int _frameTime);
 	void setAnimation(const char* actionName);
