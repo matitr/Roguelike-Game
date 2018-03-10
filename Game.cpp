@@ -12,11 +12,13 @@ void Game::run() {
 	time_t timeCounter = clock();
 	int frameCounter=0;
 
-	map->generateNewMap();//temp
+	map->generateNewMap();
+	map->setFieldsPositions();
 	projectiles.resize(10);
-	units.push_back(new Player(map->textures[PLAYER]));
-	units[0]->setPosition(map->getCameraX(), map->getCameraY());
-	units[0]->setAnimation("Stand");
+	player = new Player(map->textures[PLAYER]);
+	player->setPosition(map->getCameraX(), map->getCameraY());
+	player->setAnimation(Walk);
+	player->setAnimation(Stand);
 	while (running()) {
 		if (clock() - timeCounter > CLOCKS_PER_SEC) {
 			std::cout << frameCounter << std::endl;
@@ -77,20 +79,20 @@ void Game::handleEvents() {
 	if (event.type == SDL_KEYDOWN) {
 		switch (event.key.keysym.sym) {
 		case SDLK_w:
-			units[0]->velocity.y = -1;
-			units[0]->setAnimation("Walk");
+			player->velocity.y = -1;
+			player->setAnimation(Walk);
 			break;
 		case SDLK_s:
-			units[0]->velocity.y = 1;
-			units[0]->setAnimation("Walk");
+			player->velocity.y = 1;
+			player->setAnimation(Walk);
 			break;
 		case SDLK_a:
-			units[0]->velocity.x = -1;
-			units[0]->setAnimation("Walk");
+			player->velocity.x = -1;
+			player->setAnimation(Walk);
 			break;
 		case SDLK_d:
-			units[0]->velocity.x = 1;
-			units[0]->setAnimation("Walk");
+			player->velocity.x = 1;
+			player->setAnimation(Walk);
 			break;
 
 		}
@@ -98,27 +100,27 @@ void Game::handleEvents() {
 	else if (event.type == SDL_KEYUP) {
 		switch (event.key.keysym.sym) {
 		case SDLK_w:
-			units[0]->velocity.y = 0;
-			units[0]->setAnimation("Stand");
+			player->velocity.y = 0;
+			player->setAnimation(Stand);
 			break;
 		case SDLK_s:
-			units[0]->velocity.y = 0;
-			units[0]->setAnimation("Stand");
+			player->velocity.y = 0;
+			player->setAnimation(Stand);
 			break;
 		case SDLK_a:
-			units[0]->velocity.x = 0;
-			units[0]->setAnimation("Stand");
+			player->velocity.x = 0;
+			player->setAnimation(Stand);
 			break;
 		case SDLK_d:
-			units[0]->velocity.x = 0;
-			units[0]->setAnimation("Stand");
+			player->velocity.x = 0;
+			player->setAnimation(Stand);
 			break;
 
 		}
 	}
 	else if (event.type == SDL_MOUSEBUTTONDOWN) {
 		//todo
-		projectiles[0] = units[0]->attack(map->textures[PROJECTILES], event.button.x + map->startRender.x, event.button.y + map->startRender.y);
+		projectiles[0] = player->attack(map->textures[PROJECTILES], event.button.x + map->startRender.x, event.button.y + map->startRender.y);
 	}
 }
 
@@ -127,8 +129,8 @@ void Game::render() {
 	map->render();
 
 
-	units[0]->update(map, map->fieldRect);
-	units[0]->draw(&map->startRender);
+	player->update(map, map->fieldRect);
+	player->draw(&map->startRender);
 
 	for (int i = 0; i < projectiles.size(); i++)
 		if (projectiles[i]) {

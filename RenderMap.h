@@ -15,6 +15,8 @@ struct CameraPosition {
 };
 
 class RenderMap{
+protected:
+	Room * currRoom;
 
 private:
 	SDL_Point cameraPos;
@@ -22,7 +24,6 @@ private:
 	SDL_Point firstSpawnChunk; //cords
 	SDL_Point fieldsToRender;
 	SDL_Texture * texture;
-	Room* currRoom;
 	SDL_Point resolution;
 	int fieldX, fieldY;
 	int fieldCounterX, fieldCounterY;

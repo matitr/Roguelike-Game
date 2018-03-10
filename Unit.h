@@ -5,9 +5,11 @@
 
 class Projectile;
 
+enum ActionType {Stand, Walk};
+
 class Unit {
 protected:
-	std::unordered_map <const char*, Animation*> animations;
+	std::unordered_map <ActionType, Animation*> animations;
 
 	int textureY = 0, textureFrame = 0, textureFrameTime = 100, textureFrames = 2, frameCounter = 0;
 
@@ -16,7 +18,7 @@ protected:
 	SDL_Texture *texture;
 	int speed;
 
-	const char* unitActionName;
+	ActionType unitActionName;
 public:
 	SDL_Point velocity;
 	SDL_Point movement;
@@ -24,8 +26,8 @@ public:
 	virtual void update(Map* map, SDL_Rect& fieldRect) = 0;
 	virtual Projectile* attack(SDL_Texture*txt, int x, int y) = 0;
 
-	void addAnimation(const char* actionName, int _yPosTexture, int _frames, int _frameTime);
-	void setAnimation(const char* actionName);
+	void addAnimation(ActionType actionName, int _yPosTexture, int _frames, int _frameTime);
+	void setAnimation(ActionType actionName);
 	void setPosition(int x, int y);
 
 	Unit(SDL_Texture *txt, int width,int height);

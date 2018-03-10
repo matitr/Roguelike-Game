@@ -9,11 +9,11 @@ void Unit::draw(SDL_Point* startRender) {
 	SDL_RenderCopy(Game::renderer, texture, &srcrect, &dstrect);
 }
 
-void Unit::addAnimation(const char* actionName, int _yPosTexture, int _frames, int _frameTime) {
+void Unit::addAnimation(ActionType actionName, int _yPosTexture, int _frames, int _frameTime) {
 	animations[actionName] = new Animation(_yPosTexture, _frames, _frameTime);
 }
 
-void Unit::setAnimation(const char* actionName) {
+void Unit::setAnimation(ActionType actionName) {
 	if (unitActionName == actionName)
 		return;
 

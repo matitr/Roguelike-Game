@@ -18,21 +18,29 @@ struct MapDivideField {
 class Map: public RenderMap {
 	int hCenter, wCenter;
 	int min, max;
+	bool battle = false;
 public:
 
 	bool openMap(); // todo
 	bool saveMap(); // todo
 
+	void setBattle(bool b) { battle = b; }
+	Room* currentRoom() { return currRoom; }
+
 	std::vector<Room*> rooms;
+
 	void generateNewMap();
 	void generateSpecialRooms(int &roomNumber);
 	void createRoom(Room* room);
 	void generateHallways(int &roomsNumber);
-	void createHallwayH(SDL_Point&, SDL_Point&); // Horizontal
-	void createHallwayV(SDL_Point&, SDL_Point&); // Vertical
+	void createHallwayH(SDL_Point&, SDL_Point&); // Horizontal, (p1.y >= p2.y)
+	void createHallwayV(SDL_Point&, SDL_Point&); // Vertical, (p1.y >= p2.y)
 	void createHallwayAngle(SDL_Point&, SDL_Point&);
 	void createRoomWalls(Room* room);
 	void createFieldWalls(Room* room);
+
+	void setFieldsPositions();
+	void changeRoom(Room* room, Field* fieldToMove);
 
 	Map(int _hCenter, int _wCenter);
 	~Map();

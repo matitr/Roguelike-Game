@@ -18,6 +18,7 @@ class Game{
 	const Uint8* keystates;
 	int cameraMovePix;
 	SDL_Rect srcRectUnit, dstRectUnit;
+	Unit* player;
 	std::vector <Unit*> units;
 	std::vector <Projectile*> projectiles;
 public:

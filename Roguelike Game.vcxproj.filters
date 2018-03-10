@@ -4,7 +4,6 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="Field.cpp">
       <Filter>Map</Filter>
     </ClCompile>
@@ -20,7 +19,6 @@
     <ClCompile Include="Sprite.cpp">
       <Filter>Textures</Filter>
     </ClCompile>
-    <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Unit.cpp">
       <Filter>Unit</Filter>
     </ClCompile>
@@ -31,11 +29,16 @@
       <Filter>Textures</Filter>
     </ClCompile>
     <ClCompile Include="Projectile.cpp" />
+    <ClCompile Include="Animation.cpp">
+      <Filter>Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureManager.cpp">
+      <Filter>Textures</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
     <ClInclude Include="Item.h" />
-    <ClInclude Include="TextureManager.h" />
     <ClInclude Include="Field.h">
       <Filter>Map</Filter>
     </ClInclude>
@@ -64,6 +67,9 @@
       <Filter>Textures</Filter>
     </ClInclude>
     <ClInclude Include="Projectile.h" />
+    <ClInclude Include="TextureManager.h">
+      <Filter>Textures</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Map">

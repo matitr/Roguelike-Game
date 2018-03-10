@@ -3,11 +3,24 @@
 
 class Map;
 
+class PointFloat {
+public:
+	float x, y;
+
+	PointFloat() {
+		x = 0;
+		y = 0;
+	}
+};
+
 class Projectile : public SpriteAnimation {
 	int projectileSpeed;
 	SDL_Point velocity;
-	SDL_Point position;
+	PointFloat position;
+	float direction;
+	float angle; // starting in bottom right
 public:
+	void setDirection(float dir);
 	void setVelocity(int x, int y);
 	void setPosition(int x, int y);
 
