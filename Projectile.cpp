@@ -4,13 +4,11 @@
 #include <math.h>
 
 void Projectile::setDirection(float dir) {
-	direction = dir * 3.14 / 180.0;
-	angle = dir;
-}
+	direction = dir;
+	angle = dir * 3.14 / 180.0;
 
-void Projectile::setVelocity(int x, int y) {
-	velocity.x = x;
-	velocity.y = y;
+	velocity.x = cos(direction);
+	velocity.y = sin(direction);
 }
 
 void Projectile::setPosition(int x, int y) {
@@ -19,19 +17,18 @@ void Projectile::setPosition(int x, int y) {
 }
 
 bool Projectile::update(Map* map, SDL_Rect& fieldRect) {
-	if (!map->map[(position.x + velocity.x * projectileSpeed) / fieldRect.w][(position.y + velocity.y * projectileSpeed + srcRect.h / 2) / fieldRect.h]->ground())
-		return false;
-	else if (!map->map[(position.x + velocity.x * projectileSpeed + srcRect.w) / fieldRect.w][(position.y + velocity.y * projectileSpeed + srcRect.h / 2) / fieldRect.h]->ground())
-		return false;
-	else if (!map->map[(position.x + velocity.x * projectileSpeed) / fieldRect.w][(position.y + velocity.y * projectileSpeed + srcRect.h / 2) / fieldRect.h]->ground())
-		return false;
-	else if (!map->map[(position.x + velocity.x * projectileSpeed) / fieldRect.w][(position.y + velocity.y * projectileSpeed + srcRect.h) / fieldRect.h]->ground())
-		return false;
+	position.x += projectileSpeed * velocity.x;
+	position.y += projectileSpeed * velocity.y;
 
-//	direction = -90.0;
-	position.x += projectileSpeed * cos(direction);
-	position.y += projectileSpeed * sin(direction);
-
+	if (!map->map[(position.x) / fieldRect.w][(position.y + srcRect.h / 2) / fieldRect.h]->ground())
+		return false;
+	else if (!map->map[(position.x + srcRect.w) / fieldRect.w][(position.y + srcRect.h / 2) / fieldRect.h]->ground())
+		return false;
+	else if (!map->map[(position.x) / fieldRect.w][(position.y + srcRect.h / 2) / fieldRect.h]->ground())
+		return false;
+	else if (!map->map[(position.x) / fieldRect.w][(position.y + srcRect.h) / fieldRect.h]->ground())
+		return false;
+	
 	if (frameCounter == frameTime) {
 		frameCounter = 0;
 		if (currFrame == frames - 1)

@@ -3,6 +3,7 @@
 #include "Map.h"
 #include <unordered_map>
 #include <vector>
+#include <list>
 #include "Player.h"
 #include "Projectile.h"
 
@@ -18,9 +19,13 @@ class Game{
 	const Uint8* keystates;
 	int cameraMovePix;
 	SDL_Rect srcRectUnit, dstRectUnit;
-	Unit* player;
-	std::vector <Unit*> units;
-	std::vector <Projectile*> projectiles;
+	Player* player;
+	std::list <Unit*> units;
+	std::list <Projectile*> playerProjectiles;
+	std::list <Projectile*> mobsProjectiles;
+
+	std::list<Projectile*>::iterator it = playerProjectiles.begin();
+	std::list<Projectile*>::iterator tempItProjectile;
 public:
 	static SDL_Renderer* renderer;
 

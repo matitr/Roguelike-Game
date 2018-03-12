@@ -53,6 +53,10 @@ void RenderMap::render() {
 
 		}
 	}
+	minimapSrcRect.x = cameraPos.x / fieldRect.w - MINIMAP_WIDTH / 2;
+	minimapSrcRect.y = cameraPos.y / fieldRect.h - MINIMAP_HEIGHT / 2;
+	SDL_RenderCopy(Game::renderer, minimap, &minimapSrcRect, &minimapDstRect);
+	SDL_RenderDrawRect(Game::renderer, &minimapDstRect);
 }
 
 void RenderMap::setSpawn(Room* room, float x, float y) {
@@ -93,12 +97,23 @@ RenderMap::RenderMap(int _hCenter, int _wCenter){
 	for (int i = 0; i < map.size(); i++)
 		map[i].resize(MAP_HEIGHT);
 
+	minimap = SDL_CreateTexture(Game::renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, MAP_WIDTH, MAP_HEIGHT);
+	SDL_SetTextureBlendMode(minimap, SDL_BLENDMODE_BLEND);
+
 	fieldRect.h = 60;
 	fieldRect.w = 60;
 	fieldsToRender.x = (_wCenter * 2) / fieldRect.w + 1;
 	fieldsToRender.y = (_hCenter * 2) / fieldRect.h + 1;
 	resolution.x = _wCenter * 2;
 	resolution.y = _hCenter * 2;
+
+	minimapDstRect.x = resolution.x - MINIMAP_WIDTH - 20;
+	minimapDstRect.y = 20;
+	minimapDstRect.w = MINIMAP_WIDTH;
+	minimapDstRect.h = MINIMAP_HEIGHT;
+
+	minimapSrcRect.w = MINIMAP_WIDTH;
+	minimapSrcRect.h = MINIMAP_HEIGHT;
 }
 
 

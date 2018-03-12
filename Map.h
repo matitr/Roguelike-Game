@@ -27,7 +27,7 @@ public:
 	void setBattle(bool b) { battle = b; }
 	Room* currentRoom() { return currRoom; }
 
-	std::vector<Room*> rooms;
+	std::vector<Room*> rooms; // rooms[0] is spawn
 
 	void generateNewMap();
 	void generateSpecialRooms(int &roomNumber);
@@ -38,6 +38,9 @@ public:
 	void createHallwayAngle(SDL_Point&, SDL_Point&);
 	void createRoomWalls(Room* room);
 	void createFieldWalls(Room* room);
+
+	void createMinimap();
+	void addToMinimap(Room* room);
 
 	void setFieldsPositions();
 	void changeRoom(Room* room, Field* fieldToMove);

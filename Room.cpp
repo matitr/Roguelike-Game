@@ -41,6 +41,16 @@ bool Room::connectedRoom(Room* r) {
 	return false;
 }
 
+void Room::addHallway(Room* otherRoom, SDL_Point& p1, SDL_Point& p2) {
+	Room* hallway = new Room(p1.x, p1.y, p2.x, p2.y, 1);
+
+	hallways.push_back(hallway);
+	otherRoom->hallways.push_back(hallway);
+
+	hallway->connectedRooms.push_back(this);
+	hallway->connectedRooms.push_back(otherRoom);
+}
+
 Room::Room(int _x1, int _y1, int _x2, int _y2, bool specialR) {
 	x1 = _x1;
 	y1 = _y1;
@@ -49,6 +59,7 @@ Room::Room(int _x1, int _y1, int _x2, int _y2, bool specialR) {
 
 	specialRoom = specialR;
 	battle = false;
+	visited = false;
 }
 
 Room::Room(int _x1, int _y1, int _x2, int _y2, bool specialR, bool _battle){
@@ -59,6 +70,7 @@ Room::Room(int _x1, int _y1, int _x2, int _y2, bool specialR, bool _battle){
 
 	specialRoom = specialR;
 	battle = _battle;
+	visited = false;
 }
 
 

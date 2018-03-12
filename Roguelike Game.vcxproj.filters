@@ -2,7 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="Item.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Field.cpp">
       <Filter>Map</Filter>
@@ -38,7 +37,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
-    <ClInclude Include="Item.h" />
     <ClInclude Include="Field.h">
       <Filter>Map</Filter>
     </ClInclude>

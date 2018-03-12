@@ -1,6 +1,7 @@
 #include "Map.h"
 #include "TextureManager.h"
 #include <time.h>
+#include "Game.h"
 
 
 void Map::generateNewMap() {
@@ -53,8 +54,10 @@ void Map::generateNewMap() {
 
 	for (i = 0; i < roomsNumber; i++)
 		createRoomWalls(rooms[i]);
-//	render();
+
 	setSpawn(rooms[0], (rooms[0]->x2 - rooms[0]->x1) / 2 + rooms[0]->x1, (rooms[0]->y2 - rooms[0]->y1) / 2 + rooms[0]->y1);
+	rooms[0]->setVisited(true);
+	createMinimap();
 }
 
 void Map::generateSpecialRooms(int &roomsNumber) {
@@ -130,6 +133,7 @@ void Map::generateHallways(int &roomsNumber) {
 
 							p2.y = p1.y + 1;
 							createHallwayH(p1, p2);	
+							rooms[i]->addHallway(rooms[j], p1, p2);
 							rooms[i]->addConnection(map[p1.x][p1.y], map[p2.x][p1.y], rooms[j]);
 							rooms[i]->addConnection(map[p1.x][p1.y + 1], map[p2.x][p1.y + 1], rooms[j]);
 						}
@@ -155,7 +159,8 @@ void Map::generateHallways(int &roomsNumber) {
 								p1.x = rooms[j]->x2 - (rooms[j]->x2 - p1.x) / 2;
 							
 							p2.x = p1.x + 1;
-							createHallwayV(p1, p2);	
+							createHallwayV(p1, p2);
+							rooms[i]->addHallway(rooms[j], p1, p2);
 							rooms[i]->addConnection(map[p1.x][p1.y], map[p1.x][p2.y], rooms[j]);
 							rooms[i]->addConnection(map[p1.x + 1][p1.y], map[p1.x + 1][p2.y], rooms[j]);
 						}
@@ -263,6 +268,73 @@ void Map::createFieldWalls(Room* room) {
 	}
 }
 
+void Map::createMinimap() {
+	SDL_SetRenderDrawColor(Game::renderer, 255, 184, 77, 200);
+	SDL_SetRenderTarget(Game::renderer, minimap);
+	SDL_Rect r;
+	r.w = 1;
+	r.h = 1;
+	int x, y;
+	for (int i = 0; i < rooms.size(); i++) { // for every room
+		if (rooms[i]->visited && std::find(roomsOnMiniman.begin(), roomsOnMiniman.end(), rooms[i]) == roomsOnMiniman.end()) {
+			for (x = rooms[i]->x1; x < rooms[i]->x2; x++) {
+				for (y = rooms[i]->y1; y < rooms[i]->y2; y++) {
+					if (map[x][y] && (map[x][y]->type() == Floor)) {
+						r.x = x;
+						r.y = y;
+						SDL_RenderFillRect(Game::renderer, &r);
+					}
+				}
+			}
+			addToMinimap(rooms[i]);
+		}
+	}
+
+	SDL_SetRenderTarget(Game::renderer, NULL);
+	SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 255);
+}
+
+void Map::addToMinimap(Room* room) {
+	SDL_SetRenderDrawColor(Game::renderer, 255, 184, 77, 200);
+	SDL_SetRenderTarget(Game::renderer, minimap);
+	SDL_Rect r;
+	r.w = 1;
+	r.h = 1;
+	int x, y;
+
+	for (std::list<Room*>::iterator it = room->hallways.begin(); it != room->hallways.end(); it++) { // for every hallway in room
+		if (std::find(roomsOnMiniman.begin(), roomsOnMiniman.end(), (*it)) == roomsOnMiniman.end()) {
+			for (x = (*it)->x1; x <= (*it)->x2; x++) {
+				for (y = (*it)->y1; y <= (*it)->y2; y++) {
+					if (map[x][y] && (map[x][y]->type() == Floor || map[x][y]->type() == Door)) {
+						r.x = x;
+						r.y = y;
+						SDL_RenderFillRect(Game::renderer, &r);
+					}
+				}
+			}
+			for (std::list<Room*>::iterator it_room = (*it)->connectedRooms.begin(); it_room != (*it)->connectedRooms.end(); it_room++) { // for other room in hallway
+				if ((*it_room) != room) {
+					for (x = (*it_room)->x1; x < (*it_room)->x2; x++) {
+						for (y = (*it_room)->y1; y < (*it_room)->y2; y++) {
+							if (map[x][y] && (map[x][y]->type() == Floor)) {
+								r.x = x;
+								r.y = y;
+								SDL_RenderFillRect(Game::renderer, &r);
+							}
+						}
+					}
+					roomsOnMiniman.push_back(*it_room);
+				}
+			}
+			roomsOnMiniman.push_back(*it);
+		}
+	}
+
+	SDL_SetRenderTarget(Game::renderer, NULL);
+	SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 255);
+}
+
 void Map::setFieldsPositions() {
 	int x, y;
 	for (x = 0; x < map.size(); x++)
@@ -278,35 +350,36 @@ void Map::changeRoom(Room* room, Field* fieldToMove) {
 	if (map[x + 1][y]->type() == Door) { // Doors are horizontally
 		newX = x * fieldRect.w + fieldRect.w / 2;
 		if (y + 1 <= room->y2) // Top
-			newY = (y + 1) * fieldRect.h;
+			newY = (y + 2) * fieldRect.h;
 		else
-			newY = (y - 1) * fieldRect.h;
+			newY = (y - 2) * fieldRect.h;
 	}
 	else if (map[x - 1][y]->type() == Door) { // Doors are horizontally
 		newX = x * fieldRect.w - fieldRect.w / 2;
 		if (y + 1 <= room->y2) // Top
-			newY = (y + 1) * fieldRect.h;
+			newY = (y + 2) * fieldRect.h;
 		else
-			newY = (y - 1) * fieldRect.h;
+			newY = (y - 2) * fieldRect.h;
 	}
 	else if (map[x][y + 1]->type() == Door) { // Doors are vertically
 		newY = y * fieldRect.w + fieldRect.w / 2;
 		if (x + 1 <= room->x2) // Left
-			newX = (x + 1) * fieldRect.w;
+			newX = (x + 2) * fieldRect.w;
 		else
-			newX = (x - 1) * fieldRect.w;
+			newX = (x - 2) * fieldRect.w;
 
 	}
 	else if (map[x][y - 1]->type() == Door) { // Doors are vertically
 		newY = y * fieldRect.w - fieldRect.w / 2;
 		if (x + 1 <= room->x2)
-			newX = (x + 1) * fieldRect.w;
+			newX = (x + 2) * fieldRect.w;
 		else
-			newX = (x - 1) * fieldRect.w;
+			newX = (x - 2) * fieldRect.w;
 	}
 
 	currRoom = room;
 	setCamera(newX, newY);
+	addToMinimap(room);
 }
 
 Map::Map(int _hCenter, int _wCenter) : RenderMap(_hCenter, _wCenter) {
@@ -326,6 +399,7 @@ Map::Map(int _hCenter, int _wCenter) : RenderMap(_hCenter, _wCenter) {
 
 	textures[PROJECTILES] = TextureManager::LoadTexture("Textures/projectiles.png");
 	textures[DOORS] = TextureManager::LoadTexture("Textures/doors.png");
+	textures[PLAYER_STATS] = TextureManager::LoadTexture("Textures/playerStats.png");
 }
 
 Map::~Map() {

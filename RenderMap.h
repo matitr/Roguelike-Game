@@ -8,6 +8,10 @@
 #define MAP_HEIGHT (600 + BORDER_SIZE + BORDER_SIZE)
 
 
+#define MINIMAP_HEIGHT 140
+#define MINIMAP_WIDTH 180
+
+
 class SDL_Texture;
 
 struct CameraPosition {
@@ -29,8 +33,12 @@ private:
 	int fieldCounterX, fieldCounterY;
 	int i, j;
 
-
+	SDL_Rect minimapSrcRect, minimapDstRect;
 public:
+	SDL_Texture* minimap;
+	std::list<Room*> roomsOnMiniman;
+//	Uint32 * minimapPixels;
+
 	SDL_Rect fieldRect;
 	std::vector<std::vector<Field*>> map;
 	SDL_Point startRender;

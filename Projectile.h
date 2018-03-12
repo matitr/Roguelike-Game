@@ -15,13 +15,12 @@ public:
 
 class Projectile : public SpriteAnimation {
 	int projectileSpeed;
-	SDL_Point velocity;
+	PointFloat velocity;
 	PointFloat position;
 	float direction;
 	float angle; // starting in bottom right
 public:
 	void setDirection(float dir);
-	void setVelocity(int x, int y);
 	void setPosition(int x, int y);
 
 	bool update(Map* map, SDL_Rect& fieldRect);
