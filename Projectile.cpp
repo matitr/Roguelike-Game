@@ -5,7 +5,15 @@
 
 void Projectile::setDirection(float dir) {
 	direction = dir;
-	angle = dir * 3.14 / 180.0;
+	angle = dir * 180.0 / 3.14;
+
+	velocity.x = cos(direction);
+	velocity.y = sin(direction);
+}
+
+void Projectile::setAngle(float ang) {
+	direction = ang * 3.14 / 180.0;
+	angle = ang;
 
 	velocity.x = cos(direction);
 	velocity.y = sin(direction);

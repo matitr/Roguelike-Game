@@ -27,12 +27,20 @@
     <ClCompile Include="SpriteAnimation.cpp">
       <Filter>Textures</Filter>
     </ClCompile>
-    <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="Animation.cpp">
       <Filter>Textures</Filter>
     </ClCompile>
     <ClCompile Include="TextureManager.cpp">
       <Filter>Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="UnitAction.cpp">
+      <Filter>Combat</Filter>
+    </ClCompile>
+    <ClCompile Include="Projectile.cpp">
+      <Filter>Combat</Filter>
+    </ClCompile>
+    <ClCompile Include="Attacks.cpp">
+      <Filter>Combat</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -64,9 +72,20 @@
     <ClInclude Include="SpriteAnimation.h">
       <Filter>Textures</Filter>
     </ClInclude>
-    <ClInclude Include="Projectile.h" />
     <ClInclude Include="TextureManager.h">
       <Filter>Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="UnitAction.h">
+      <Filter>Combat</Filter>
+    </ClInclude>
+    <ClInclude Include="Projectile.h">
+      <Filter>Combat</Filter>
+    </ClInclude>
+    <ClInclude Include="Attacks.h">
+      <Filter>Combat</Filter>
+    </ClInclude>
+    <ClInclude Include="Monsters.h">
+      <Filter>Unit</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -78,6 +97,9 @@
     </Filter>
     <Filter Include="Unit">
       <UniqueIdentifier>{a0701841-36c5-476a-a0c2-88862fba92ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Combat">
+      <UniqueIdentifier>{47714e46-156d-47b7-84a4-9fea32020901}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

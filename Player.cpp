@@ -25,7 +25,7 @@ void Player::update(Map* map, SDL_Rect& fieldRect) {
 	if (velocity.x < 0)
 		field = map->map[(position.x + velocity.x * speed) / fieldRect.w][(position.y + srcrect.h / 4 * 3) / fieldRect.h];
 	else if (velocity.x > 0)
-		field = map->map[(position.x + velocity.x * speed + srcrect.w) / fieldRect.w][(position.y + srcrect.h / 2) / fieldRect.h];
+		field = map->map[(position.x + velocity.x * speed + srcrect.w) / fieldRect.w][(position.y + srcrect.h / 4 * 3) / fieldRect.h];
 
 	if (velocity.x != 0 && field->type() == Door && !map->currentRoom()->battle) {
 		Field * f = map->currentRoom()->doorsConnection[field];
@@ -74,32 +74,15 @@ void Player::update(Map* map, SDL_Rect& fieldRect) {
 		}
 	}
 
-	if (frameCounter == textureFrameTime) {
-		frameCounter = 0;
-		if (textureFrame == textureFrames - 1)
-			textureFrame = 0;
-		else
-			textureFrame++;
-	}
-	frameCounter++;
+	updateFrame();
 }
 
-void Player::draw(SDL_Point* startRender) {
-	srcrect.x = srcrect.w * textureFrame;
-	dstrect.x = position.x - startRender->x;
-	dstrect.y = position.y - startRender->y;
-	if (velocity.x < 0)
-		flip = SDL_FLIP_HORIZONTAL;
-	else
-		flip = SDL_FLIP_NONE;
-
-	SDL_RenderCopyEx(Game::renderer, texture, &srcrect, &dstrect, NULL, NULL, flip);
-
+void Player::drawStatus() {
 	statusDstRest.y = 5;
 	statusSrcRect.y = 0;
 	statusSrcRect.x = 0;
 	int i;
-	for (i = 1; i < hp; i+=2) {
+	for (i = 1; i < hp; i += 2) {
 		statusDstRest.x = (i / 2) * statusDstRest.w + 40;
 		SDL_RenderCopy(Game::renderer, playerStatsTxt, &statusSrcRect, &statusDstRest);
 	}
@@ -109,11 +92,10 @@ void Player::draw(SDL_Point* startRender) {
 		SDL_RenderCopy(Game::renderer, playerStatsTxt, &statusSrcRect, &statusDstRest);
 	}
 	statusSrcRect.x = statusSrcRect.w * 2;
-	for (i = hp + 1; i < maxHp; i+=2) {
+	for (i = hp + 1; i < maxHp; i += 2) {
 		statusDstRest.x = i / 2 * statusDstRest.w + 40;
 		SDL_RenderCopy(Game::renderer, playerStatsTxt, &statusSrcRect, &statusDstRest);
 	}
-
 }
 
 void Player::movement(int x, int y) {
@@ -143,11 +125,15 @@ void Player::attack(std::list <Projectile*>& playerProjectiles, SDL_Texture* txt
 	playerProjectiles.push_back(p);
 }
 
+void Player::addAnimation(ActionType actionName, int _yPosTexture, int _frames, int _frameTime) {
+	animations[actionName] = new Animation(_yPosTexture, _frames, _frameTime);
+}
+
 void Player::setAnimation(ActionType actionName) {
 	if (unitActionName == actionName)
 		return;
 
-	if (actionName == Roll && lastRollFramesAgo < rollCooldown)
+	if (actionName == Roll && (lastRollFramesAgo < rollCooldown || (velocity.x == 0 && velocity.y == 0)))
 		return;
 
 	if (unitActionName == Roll && lastRollFramesAgo < animations[Roll]->frames * animations[Roll]->frameTime)
@@ -186,7 +172,7 @@ void Player::resetAnimation() {
 Player::Player(SDL_Texture* txt, SDL_Texture* _playerStatsTxt) : Unit(txt, 60, 60){
 	addAnimation(Stand, 0, 2, 15);
 	addAnimation(Walk, 1, 2, 15);
-	addAnimation(Roll, 2, 4, 15);
+	addAnimation(Roll, 2, 4, 10);
 	rollCooldown = 2 * 60;
 	lastRollFramesAgo = rollCooldown;
 	hp = 8;

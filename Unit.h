@@ -2,35 +2,48 @@
 #include "Animation.h"
 #include <unordered_map>
 #include "Map.h"
-#include "Projectile.h"
-class Projectile;
+#include "Attacks.h"
 
-enum ActionType {Stand, Walk, Roll};
+class Projectile;
+class UnitAction;
+class Attack;
+class Movement;
+
+enum ActionType {Stand, Walk, Roll, AttackProj};
 
 class Unit {
 protected:
-	std::unordered_map <ActionType, Animation*> animations;
+	std::unordered_map <ActionType, UnitAction*> actions;
+	std::list<ActionType> pattern;
+	std::list<ActionType>::iterator currAction;
 
 	int textureY = 0, textureFrame = 0, textureFrameTime = 100, textureFrames = 2, frameCounter = 0;
 
 	SDL_Rect srcrect, dstrect;
 	PointFloat position; // sdlpoint
 	SDL_Texture *texture;
+	SDL_RendererFlip flip;
 
 	int speed;
 	float hp;
 	float maxHp;
 
-	ActionType unitActionName;
 public:
 	SDL_Point velocity;
 	SDL_Point movement;
+	virtual void update(std::list <Projectile*>& monsterAttacks, Map* map, SDL_Rect& fieldRect);
 	virtual void draw(SDL_Point* startRender);
-	virtual void update(Map* map, SDL_Rect& fieldRect) = 0;
+	void updateFrame();
 
-	void addAnimation(ActionType actionName, int _yPosTexture, int _frames, int _frameTime);
-	void setAnimation(ActionType actionName);
+	void addAction(ActionType action, Movement* move, Attack* attack, int yPosTexture, int frames, int frameTime, int attackFrame = -1, int loops = 1);
+	void setAction(ActionType actionType);
+	void nextAction();
+	void addPattern(ActionType actionType);
+
 	void setPosition(int x, int y);
+
+	inline int getPositionX() { return position.x; }
+	inline int getPositionY() { return position.y; }
 
 	Unit(SDL_Texture *txt, int width,int height);
 	~Unit();

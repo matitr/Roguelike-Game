@@ -4,22 +4,11 @@
 #include <list>
 
 
-#define WOOD_FLOOR 0
-#define WATER 1
-#define STONE 2
-#define PLAYER 3
-#define WALL_SIDE 4
-#define WALL_TOP_T 5
-#define WALL_TOP_R 6
-#define WALL_TOP_B 7
-#define WALL_TOP_L 8
-#define PROJECTILES 9
-#define DOORS 10
-#define PLAYER_STATS 11
-
-
 class SDL_Texture;
-class FIELD;
+class Field;
+class Unit;
+
+enum RoomType {Monsters, Boss, Treasure, Secret, Hallway, Spawn};
 
 class Room {
 private:
@@ -32,6 +21,7 @@ public:
 	std::unordered_map<Field*, Field*> doorsConnection;
 	std::unordered_map<Field*, Room*> roomConnection;
 
+	RoomType type;
 	bool battle;
 	bool visited;
 	bool specialRoom;
@@ -46,8 +36,9 @@ public:
 
 	void addHallway(Room* otherRoom, SDL_Point&, SDL_Point&);
 
-	Room(int _x1, int _y1, int _x2, int _y2, bool sp);
-	Room(int _x1, int _y1, int _x2, int _y2, bool sp, bool battle);
+	void spawnMonsters(std::list <Unit*>& monsters);
+
+	Room(int _x1, int _y1, int _x2, int _y2, RoomType);
 	~Room();
 };
 

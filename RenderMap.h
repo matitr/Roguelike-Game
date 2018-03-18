@@ -42,7 +42,6 @@ public:
 	SDL_Rect fieldRect;
 	std::vector<std::vector<Field*>> map;
 	SDL_Point startRender;
-	std::unordered_map <int, SDL_Texture*> textures;
 	void initValues();
 	void render();
 	void setSpawn(Room* room, float fieldX, float fieldY);

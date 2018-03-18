@@ -5,7 +5,6 @@
 #include <vector>
 #include <list>
 #include "Player.h"
-#include "Projectile.h"
 
 
 
@@ -20,9 +19,9 @@ class Game{
 	int cameraMovePix;
 	SDL_Rect srcRectUnit, dstRectUnit;
 	Player* player;
-	std::list <Unit*> units;
+	std::list <Unit*> monsters;
 	std::list <Projectile*> playerProjectiles;
-	std::list <Projectile*> mobsProjectiles;
+	std::list <Projectile*> monsterAttacks;
 
 	std::list<Projectile*>::iterator it = playerProjectiles.begin();
 	std::list<Projectile*>::iterator tempItProjectile;

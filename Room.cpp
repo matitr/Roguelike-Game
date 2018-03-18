@@ -1,5 +1,6 @@
 #include "Room.h"
 #include "SDL.h"
+#include "Monsters.h"
 
 
 void Room::changeValues(int _x1, int _y1, int _x2, int _y2) {
@@ -42,7 +43,7 @@ bool Room::connectedRoom(Room* r) {
 }
 
 void Room::addHallway(Room* otherRoom, SDL_Point& p1, SDL_Point& p2) {
-	Room* hallway = new Room(p1.x, p1.y, p2.x, p2.y, 1);
+	Room* hallway = new Room(p1.x, p1.y, p2.x, p2.y, Hallway);
 
 	hallways.push_back(hallway);
 	otherRoom->hallways.push_back(hallway);
@@ -51,26 +52,41 @@ void Room::addHallway(Room* otherRoom, SDL_Point& p1, SDL_Point& p2) {
 	hallway->connectedRooms.push_back(otherRoom);
 }
 
-Room::Room(int _x1, int _y1, int _x2, int _y2, bool specialR) {
-	x1 = _x1;
-	y1 = _y1;
-	x2 = _x2;
-	y2 = _y2;
-
-	specialRoom = specialR;
-	battle = false;
-	visited = false;
+void Room::spawnMonsters(std::list <Unit*>& monsters) {
+	Unit *m = new MonRandMoveProjAround();
+	monsters.push_back(m);
+	m->setPosition((x1 + (x2 - x1) / 2) * 60, (y1 + (y2 - y1) / 2) * 60);
 }
 
-Room::Room(int _x1, int _y1, int _x2, int _y2, bool specialR, bool _battle){
+Room::Room(int _x1, int _y1, int _x2, int _y2, RoomType _type) {
 	x1 = _x1;
 	y1 = _y1;
 	x2 = _x2;
 	y2 = _y2;
 
-	specialRoom = specialR;
-	battle = _battle;
 	visited = false;
+	type = _type;
+
+	if (type == Monsters) {
+		specialRoom = false;
+		battle = true;
+	}
+	else if (type == Boss) {
+		specialRoom = true;
+		battle = true;
+	}
+	else if (type == Treasure) {
+		specialRoom = false;
+		battle = false;
+	}
+	else if (type == Spawn) {
+		specialRoom = false;
+		battle = false;
+	}
+	else {
+		specialRoom = true;
+		battle = false;
+	}
 }
 
 

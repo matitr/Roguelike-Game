@@ -11,10 +11,11 @@ void Game::run() {
 	int frameDelay = 1000 / FPS;
 	time_t timeCounter = clock();
 	int frameCounter=0;
+	TextureManager::loadAllTextures();
 
 	map->generateNewMap();
 	map->setFieldsPositions();
-	player = new Player(map->textures[PLAYER], map->textures[PLAYER_STATS]);
+	player = new Player(TextureManager::textures[PLAYER], TextureManager::textures[PLAYER_STATS]);
 	player->setPosition(map->getCameraX(), map->getCameraY());
 	player->setAnimation(Walk);
 	player->setAnimation(Stand);
@@ -71,16 +72,46 @@ void Game::handleEvents() {
 
 	if (SDL_GetMouseState(&x, &y) & SDL_BUTTON(SDL_BUTTON_LEFT)) {
 		if (player->attackPossible())
-			player->attack(playerProjectiles, map->textures[PROJECTILES], x + map->startRender.x, y + map->startRender.y);
+			player->attack(playerProjectiles, TextureManager::textures[PROJECTILES], x + map->startRender.x, y + map->startRender.y);
 	}
 }
 
 void Game::render() {
 	SDL_RenderClear(renderer);
-	map->render();
-
 
 	player->update(map, map->fieldRect);
+	player->drawStatus();
+
+	if (!map->currentRoom()->visited && map->currentRoom()->battle) {
+		map->currentRoom()->setVisited(true);
+		map->currentRoom()->spawnMonsters(monsters);
+	}
+
+	map->render();
+	std::list <Unit*>::iterator it_monsters = monsters.begin();
+
+	while (it_monsters != monsters.end()) {
+		(*it_monsters)->update(monsterAttacks, map, map->fieldRect);
+		(*it_monsters)->draw(&map->startRender);
+		it_monsters++;
+	}
+
+	it = monsterAttacks.begin();
+	while (it != monsterAttacks.end()) {
+		if (*it) {
+			if (!(*it)->update(map, map->fieldRect)) {
+				delete (*it);
+				tempItProjectile = it;
+				it++;
+				monsterAttacks.erase(tempItProjectile);
+			}
+			else {
+				(*it)->draw(&map->startRender);
+				it++;
+			}
+		}
+	}
+
 	player->draw(&map->startRender);
 
 	it = playerProjectiles.begin();

@@ -21,6 +21,7 @@ class Projectile : public SpriteAnimation {
 	float angle; // starting in bottom right
 public:
 	void setDirection(float dir);
+	void setAngle(float ang);
 	void setPosition(int x, int y);
 
 	bool update(Map* map, SDL_Rect& fieldRect);
