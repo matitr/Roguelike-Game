@@ -20,6 +20,8 @@ class Map: public RenderMap {
 	int min, max;
 	bool battle = false;
 public:
+	inline int fieldHeight() { return fieldRect.h; }
+	inline int fieldWidth() { return fieldRect.w; }
 
 	bool openMap(); // todo
 	bool saveMap(); // todo

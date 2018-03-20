@@ -13,6 +13,9 @@ class Field{
 	FieldType fieldType;
 	int xPos, yPos;
 public:
+	double f, g, h; // A* search algorithm
+	Field* prevField; // A* search algorithm
+
 	void setPosition(int _x, int _y);
 
 	SDL_Texture * getTexture() { return texture; }

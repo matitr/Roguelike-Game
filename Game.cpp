@@ -2,6 +2,7 @@
 #include "TextureManager.h"
 #include <iostream>
 #include <time.h>
+#include "Monsters.h"
 
 SDL_Renderer *Game::renderer = nullptr;;
 
@@ -15,10 +16,13 @@ void Game::run() {
 
 	map->generateNewMap();
 	map->setFieldsPositions();
-	player = new Player(TextureManager::textures[PLAYER], TextureManager::textures[PLAYER_STATS]);
+	player = new Player(TextureManager::textures[PLAYER], TextureManager::textures[PLAYER_STATS]);	
 	player->setPosition(map->getCameraX(), map->getCameraY());
 	player->setAnimation(Walk);
 	player->setAnimation(Stand);
+	Unit *m = new MonRandMoveProjAround(map, player);
+	monsters.push_back(m);
+	m->setPosition(player->getPositionX(), player->getPositionY());
 	while (running()) {
 		if (clock() - timeCounter > CLOCKS_PER_SEC) {
 			std::cout << frameCounter << std::endl;
@@ -84,7 +88,7 @@ void Game::render() {
 
 	if (!map->currentRoom()->visited && map->currentRoom()->battle) {
 		map->currentRoom()->setVisited(true);
-		map->currentRoom()->spawnMonsters(monsters);
+		map->currentRoom()->spawnMonsters(monsters, map, player);
 	}
 
 	map->render();

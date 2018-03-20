@@ -4,8 +4,7 @@
 #include "Attacks.h"
 
 void Unit::update(std::list <Projectile*>& monsterAttacks, Map* map, SDL_Rect& fieldRect) {
-	if (frameCounter == textureFrameTime) { // Next texture frame
-		frameCounter = 0;
+	if (!(frameCounter % textureFrameTime)) { // Next texture frame
 		if (textureFrame == textureFrames - 1) { // The last texture frame has ended
 			if (++currAction == pattern.end()) // Last action
 				currAction = pattern.begin();
@@ -25,6 +24,13 @@ void Unit::update(std::list <Projectile*>& monsterAttacks, Map* map, SDL_Rect& f
 
 	if (frameCounter == actions[*currAction]->makeAttackFrame())
 		actions[*currAction]->makeAttack(this, monsterAttacks);
+
+	actions[*currAction]->makeMove(this);
+	if (!(!velocity.y && !velocity.x)) {
+		float dir = atan2(velocity.y, velocity.x);
+		position.x += cos(dir) * speed;
+		position.y += sin(dir) * speed;
+	}
 }
 
 void Unit::draw(SDL_Point* startRender) {

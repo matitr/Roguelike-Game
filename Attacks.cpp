@@ -16,16 +16,18 @@ void ProjectileDirection::makeAttack(Unit* unit, std::list <Projectile*>& monste
 	angle = startAngle;
 	for (int i = 0; i < numbOfProj; i++) {
 		Projectile* p = new Projectile(TextureManager::textures[PROJECTILES], 25, 25, 0, 3, 10);
-		angle = startAngle + (360 / numbOfProj) * i;
+		angle = startAngle + (360.0 / (numbOfProj )) * i;
 		if (angle >= 360)
 			angle -= 360;
 
 		if (angle > 180)
-			p->setAngle(angle - 180);
+			p->setAngle(180 - (angle - 180));
 		else
 			p->setAngle(-1 * angle);
 
 		p->setPosition(unit->getPositionX(), unit->getPositionY());
 		monsterAttacks.push_back(p);
+		if (i > 25)
+			i = i;
 	}
 }

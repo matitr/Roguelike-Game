@@ -7,6 +7,7 @@
 class SDL_Texture;
 class Field;
 class Unit;
+class Map;
 
 enum RoomType {Monsters, Boss, Treasure, Secret, Hallway, Spawn};
 
@@ -36,7 +37,7 @@ public:
 
 	void addHallway(Room* otherRoom, SDL_Point&, SDL_Point&);
 
-	void spawnMonsters(std::list <Unit*>& monsters);
+	void spawnMonsters(std::list <Unit*>& monsters, Map* _map, Unit* _player);
 
 	Room(int _x1, int _y1, int _x2, int _y2, RoomType);
 	~Room();

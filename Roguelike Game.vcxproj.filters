@@ -42,6 +42,9 @@
     <ClCompile Include="Attacks.cpp">
       <Filter>Combat</Filter>
     </ClCompile>
+    <ClCompile Include="Movements.cpp">
+      <Filter>Combat</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
@@ -86,6 +89,9 @@
     </ClInclude>
     <ClInclude Include="Monsters.h">
       <Filter>Unit</Filter>
+    </ClInclude>
+    <ClInclude Include="Movements.h">
+      <Filter>Combat</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

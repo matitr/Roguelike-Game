@@ -36,14 +36,14 @@ public:
 	void updateFrame();
 
 	void addAction(ActionType action, Movement* move, Attack* attack, int yPosTexture, int frames, int frameTime, int attackFrame = -1, int loops = 1);
-	void setAction(ActionType actionType);
-	void nextAction();
 	void addPattern(ActionType actionType);
 
 	void setPosition(int x, int y);
 
 	inline int getPositionX() { return position.x; }
 	inline int getPositionY() { return position.y; }
+	inline int getPosMiddleX() { return position.x + dstrect.w / 2; }
+	inline int getPosMiddleY() { return position.y + dstrect.h / 4 * 3.3; }
 
 	Unit(SDL_Texture *txt, int width,int height);
 	~Unit();

@@ -25,6 +25,7 @@ public:
 	inline int textureFrameTime() { return frameTime; }
 	inline int makeAttackFrame() { return attackFrame; }
 	void makeAttack(Unit* unit, std::list <Projectile*>& monsterAttacks);
+	void makeMove(Unit* unitToMove);
 
 	UnitAction(ActionType action, Movement* move, Attack* attack, int yPosTexture, int frames, int frameTime, int attackFrame, int loops);
 	~UnitAction();

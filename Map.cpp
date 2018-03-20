@@ -227,7 +227,7 @@ void Map::createHallwayAngle(SDL_Point& p1, SDL_Point& p2) { // todo
 }
 
 void Map::createRoomWalls(Room* room) {
-	for (int i = room->x1 + 1; i <= room->x2 - 1; i++) { // x walls
+	for (int i = room->x1; i <= room->x2; i++) { // x walls
 		if (!map[i][room->y1]) { // TOP
 			map[i][room->y1] = new Field(TextureManager::textures[WALL_SIDE], Wall);
 			map[i][room->y1 - 1] = new Field(TextureManager::textures[WALL_SIDE], Wall);
