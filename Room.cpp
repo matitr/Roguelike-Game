@@ -54,19 +54,26 @@ void Room::addHallway(Room* otherRoom, SDL_Point& p1, SDL_Point& p2) {
 }
 
 void Room::spawnMonsters(std::list <Unit*>& monsters, Map* _map, Unit* _player) {
-	Unit *m = new MonRandMoveProjAround(_map, _player);
-	monsters.push_back(m);
-	m->setPosition((x1 + (x2 - x1) / 2) * 60, (y1 + (y2 - y1) / 2) * 60);
+	if (type == Monsters) {
+		Unit *m = new MonRandMoveProjAround(_map, _player);
+		monsters.push_back(m);
+		m->setPosition((x1 + (x2 - x1) / 2) * 60, (y1 + (y2 - y1) / 2) * 60);
+	}
+	else if (type == Boss) {
+		Unit *m = new Boss1(_map, _player);
+		monsters.push_back(m);
+		m->setPosition((x1 + (x2 - x1) / 2) * 60, (y1 + (y2 - y1) / 2) * 60);
+
+	}
 }
 
-Room::Room(int _x1, int _y1, int _x2, int _y2, RoomType _type) {
+Room::Room(int _x1, int _y1, int _x2, int _y2, RoomType _type) : type(_type) {
 	x1 = _x1;
 	y1 = _y1;
 	x2 = _x2;
 	y2 = _y2;
 
 	visited = false;
-	type = _type;
 
 	if (type == Monsters) {
 		specialRoom = false;

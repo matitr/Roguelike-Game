@@ -139,6 +139,7 @@
     <ClCompile Include="Attacks.cpp" />
     <ClCompile Include="Field.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Movements.cpp" />
@@ -146,17 +147,18 @@
     <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="RenderMap.cpp" />
     <ClCompile Include="Room.cpp" />
-    <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="SpriteAnimation.cpp" />
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="Unit.cpp" />
     <ClCompile Include="UnitAction.cpp" />
+    <ClCompile Include="UpdateCollision.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animation.h" />
     <ClInclude Include="Attacks.h" />
     <ClInclude Include="Field.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="GameObject.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Monsters.h" />
     <ClInclude Include="Movements.h" />
@@ -164,11 +166,11 @@
     <ClInclude Include="Projectile.h" />
     <ClInclude Include="RenderMap.h" />
     <ClInclude Include="Room.h" />
-    <ClInclude Include="Sprite.h" />
     <ClInclude Include="SpriteAnimation.h" />
     <ClInclude Include="TextureManager.h" />
     <ClInclude Include="Unit.h" />
     <ClInclude Include="UnitAction.h" />
+    <ClInclude Include="UpdateCollision.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include "Map.h"
 #include "Attacks.h"
+#include "GameObject.h"
 
 class Projectile;
 class UnitAction;
@@ -11,7 +12,7 @@ class Movement;
 
 enum ActionType {Stand, Walk, Roll, AttackProj};
 
-class Unit {
+class Unit : public GameObject {
 protected:
 	std::unordered_map <ActionType, UnitAction*> actions;
 	std::list<ActionType> pattern;
@@ -20,18 +21,18 @@ protected:
 	int textureY = 0, textureFrame = 0, textureFrameTime = 100, textureFrames = 2, frameCounter = 0;
 
 	SDL_Rect srcrect, dstrect;
-	PointFloat position; // sdlpoint
-	SDL_Texture *texture;
 	SDL_RendererFlip flip;
 
 	int speed;
 	float hp;
 	float maxHp;
 
+	// Hitbox
+	int positionShiftX, positionShiftY;
+
 public:
 	SDL_Point velocity;
-	SDL_Point movement;
-	virtual void update(std::list <Projectile*>& monsterAttacks, Map* map, SDL_Rect& fieldRect);
+	virtual bool update(std::list <Projectile*>& monsterAttacks, Map* map, SDL_Rect& fieldRect);
 	virtual void draw(SDL_Point* startRender);
 	void updateFrame();
 
@@ -39,13 +40,18 @@ public:
 	void addPattern(ActionType actionType);
 
 	void setPosition(int x, int y);
+	void setPositionShift(float positionShiftX, float positionShiftY, float hitboxRange);
 
 	inline int getPositionX() { return position.x; }
 	inline int getPositionY() { return position.y; }
 	inline int getPosMiddleX() { return position.x + dstrect.w / 2; }
 	inline int getPosMiddleY() { return position.y + dstrect.h / 4 * 3.3; }
 
+	void setHp(int _hp) { hp = float(hp); }
+	void takeDamage(float damage) { hp -= damage; }
+
 	Unit(SDL_Texture *txt, int width,int height);
 	~Unit();
+	void renderCircle(int _x, int _y, int radius);
 };
 

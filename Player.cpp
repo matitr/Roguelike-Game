@@ -4,7 +4,7 @@
 #include <math.h>
 
 
-void Player::update(Map* map, SDL_Rect& fieldRect) {
+bool Player::update(Map* map, SDL_Rect& fieldRect) {
 	if (attackFrame > -1) {
 		if (attackFrame + 1 == attackFrames)
 			attackFrame = -1;
@@ -35,7 +35,7 @@ void Player::update(Map* map, SDL_Rect& fieldRect) {
 		velocity.x = 0;
 		velocity.y = 0;
 		setAnimation(Stand);
-		return;
+		return true;
 	}
 	else if (!field->ground())
 		velocity.x = 0;
@@ -52,7 +52,7 @@ void Player::update(Map* map, SDL_Rect& fieldRect) {
 		velocity.x = 0;
 		velocity.y = 0;
 		setAnimation(Stand);
-		return;
+		return true;
 	}
 	else if (!field->ground())
 		velocity.y = 0;
@@ -64,17 +64,18 @@ void Player::update(Map* map, SDL_Rect& fieldRect) {
 			float dir = atan2(velocity.y, velocity.x);
 			position.x += cos(dir) * rollSpeed;
 			position.y += sin(dir) * rollSpeed;
-			map->setCamera(int(position.x + srcrect.w * 3 / 4), int(position.y + srcrect.w * 1));
+			map->setCamera(int(position.x), int(position.y));
 		}
 		else {
 			float dir = atan2(velocity.y, velocity.x);
 			position.x += cos(dir) * speed;
 			position.y += sin(dir) * speed;
-			map->setCamera(int(position.x + srcrect.w * 3 / 4), int(position.y + srcrect.w * 1));
+			map->setCamera(int(position.x), int(position.y));
 		}
 	}
 
 	updateFrame();
+	return true;
 }
 
 void Player::drawStatus() {
@@ -117,7 +118,7 @@ void Player::attack(std::list <Projectile*>& playerProjectiles, SDL_Texture* txt
 
 	Projectile* p = new Projectile(txt, 25, 25, 0, 3, 10);
 
-	float dir = atan2(y - 17 - position.y, x - 17 - position.x);
+	float dir = atan2(y - position.y, x - position.x);
 
 	p->setDirection(dir);
 
@@ -186,6 +187,8 @@ Player::Player(SDL_Texture* txt, SDL_Texture* _playerStatsTxt) : Unit(txt, 60, 6
 	statusSrcRect.h = 20;
 	statusDstRest.w = 40;
 	statusDstRest.h = 40;
+	speed = 6;
+	rollSpeed = 10;
 };
 
 

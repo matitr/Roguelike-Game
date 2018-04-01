@@ -2,14 +2,11 @@
 #include <list>
 #include "Projectile.h"
 
-enum ActionType;
 class Movement;
 class Attack;
 class Unit;
 
 class UnitAction {
-
-	ActionType action;
 	Movement *movement;
 	Attack *attack;
 	int yPosTexture;
@@ -24,10 +21,13 @@ public:
 	inline int textureFrames() { return frames; }
 	inline int textureFrameTime() { return frameTime; }
 	inline int makeAttackFrame() { return attackFrame; }
+	inline bool movementExists() { return movement ? true : false; }
+	inline bool attackExists() { return movement ? true : false; }
+
 	void makeAttack(Unit* unit, std::list <Projectile*>& monsterAttacks);
 	void makeMove(Unit* unitToMove);
 
-	UnitAction(ActionType action, Movement* move, Attack* attack, int yPosTexture, int frames, int frameTime, int attackFrame, int loops);
+	UnitAction(Movement* move, Attack* attack, int yPosTexture, int frames, int frameTime, int attackFrame, int loops);
 	~UnitAction();
 };
 

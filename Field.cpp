@@ -7,22 +7,22 @@ void Field::setPosition(int _x, int _y) {
 	yPos = _y;
 }
 
-Field::Field() {
+Field::Field() : GameObject(Static, Square) {
 	texture = nullptr;
 }
 
-Field::Field(SDL_Texture* txt) {
+Field::Field(SDL_Texture* txt) : GameObject(Static, Square) {
 	texture = txt;
 }
 
-Field::Field(SDL_Texture* txt, FieldType _type) {
+Field::Field(SDL_Texture* txt, FieldType _type) : GameObject(Static, Square) {
 	texture = txt;
 	fieldType = _type;
 	if (_type == Floor)
 		isGround = true;
 }
 
-Field::Field(SDL_Texture* txt, SDL_Rect* rectSize, int frames, int frameTime) {
+Field::Field(SDL_Texture* txt, SDL_Rect* rectSize, int frames, int frameTime) : GameObject(Static, Square) {
 
 }
 

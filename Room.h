@@ -28,6 +28,7 @@ public:
 	bool specialRoom;
 
 	void setVisited(bool x) { visited = x; }
+	void setBattle(bool x) { battle = x; }
 	void changeValues(int _x1, int _y1, int _x2, int _y2);
 	void changePosition(int _x1, int _y1);
 

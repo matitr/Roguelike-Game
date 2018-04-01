@@ -42,7 +42,6 @@ class A_Star {
 //	int roomW;
 //	std::vector<FieldA*> room;
 
-	void crearData();
 	void createNeighbors(Field*, std::stack<Field*>&);
 	double distance(int x1, int y1, int x2, int y2);
 	SDL_Point* getVelocityOfPath(Field*, Field* start);

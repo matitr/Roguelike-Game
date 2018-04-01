@@ -13,13 +13,14 @@ void RenderMap::initValues() {
 	startRenderPos.yField = cameraPos.y / fieldRect.h - floor(fieldsToRender.y / 2);
 	startRenderPos.yAdditionalPixels = cameraPos.y % fieldRect.h;
 
+	// Render only room, not empty fields after room
 	if (startRenderPos.xField < currRoom->x1) {
 		startRenderPos.xField = currRoom->x1;
 		startRenderPos.xAdditionalPixels = 0;
 	}
 	else if (startRenderPos.xField * fieldRect.w + startRenderPos.xAdditionalPixels > (currRoom->x2 + 1) * fieldRect.w - resolution.x) {
 		startRenderPos.xField = ((currRoom->x2 * fieldRect.w) - resolution.x) / fieldRect.w + 1;
-		startRenderPos.xAdditionalPixels = fieldRect.w - (currRoom->x2 * fieldRect.w - resolution.x) % fieldRect.w;
+		startRenderPos.xAdditionalPixels = (currRoom->x2 * fieldRect.w - resolution.x) % fieldRect.w;
 	}
 
 	if (startRenderPos.yField + 1 < currRoom->y1) {
@@ -28,12 +29,16 @@ void RenderMap::initValues() {
 	}
 	else if (startRenderPos.yField * fieldRect.h + startRenderPos.yAdditionalPixels > (currRoom->y2 + 1) * fieldRect.h - resolution.y) {
 		startRenderPos.yField = ((currRoom->y2 * fieldRect.h) - resolution.y) / fieldRect.h + 1;
-		startRenderPos.yAdditionalPixels = fieldRect.h - (currRoom->y2 * fieldRect.h - resolution.y) % fieldRect.h;
+		startRenderPos.yAdditionalPixels = (currRoom->y2 * fieldRect.h - resolution.y) % fieldRect.h;
 	}
 
 
 	startRender.x = startRenderPos.xField * fieldRect.w + startRenderPos.xAdditionalPixels;
 	startRender.y = startRenderPos.yField * fieldRect.h + startRenderPos.yAdditionalPixels;
+//	startRenderPos.xField = 0;
+//	startRenderPos.yField = 0;
+//	startRenderPos.xAdditionalPixels = 0;
+//	startRenderPos.yAdditionalPixels = 0;
 }
 
 void RenderMap::render() {

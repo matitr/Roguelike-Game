@@ -33,22 +33,30 @@ void Map::generateNewMap() {
 			x = rand() % (MAP_WIDTH - BORDER_SIZE - BORDER_SIZE - 70) + BORDER_SIZE;
 			y = rand() % (MAP_HEIGHT - BORDER_SIZE - BORDER_SIZE - 70) + BORDER_SIZE;
 			rooms[i]->changePosition(x, y);
+
 			for (j = 0; j < i; j++) {
-				if (rooms[i]->x2 + ROOM_SEPARATION >= rooms[j]->x1 && rooms[j]->x2 + ROOM_SEPARATION >= rooms[i]->x1 &&
-					rooms[i]->y2 + ROOM_SEPARATION >= rooms[j]->y1 && rooms[j]->y2 + ROOM_SEPARATION >= rooms[i]->y1)
+				if (MIN_ROOM_SEPARATION >= rooms[j]->x1 - rooms[i]->x2 && MIN_ROOM_SEPARATION >= rooms[i]->x1 - rooms[j]->x2 && 
+					MIN_ROOM_SEPARATION >= rooms[j]->y1 - rooms[i]->y2 && MIN_ROOM_SEPARATION >= rooms[i]->y1 - rooms[j]->y2)
 					goodPosition = false;
-				if (rooms[i]->x2 + MAX_ROOM_SEPARATION >= rooms[j]->x1 && rooms[j]->x2 + MAX_ROOM_SEPARATION >= rooms[i]->x1 
-					&& rooms[i]->y2 + MAX_ROOM_SEPARATION >= rooms[j]->y1 && rooms[j]->y2 + MAX_ROOM_SEPARATION >= rooms[i]->y1)
-					closeRooms++;
+
+				if (MAX_ROOM_SEPARATION >= rooms[j]->x1 - rooms[i]->x2 && MAX_ROOM_SEPARATION >= rooms[i]->x1 - rooms[j]->x2 && 
+					MAX_ROOM_SEPARATION >= rooms[j]->y1 - rooms[i]->y2 && MAX_ROOM_SEPARATION >= rooms[i]->y1 - rooms[j]->y2) {
+					if ((rooms[i]->x1 - rooms[j]->x2 >= MIN_ROOM_SEPARATION || rooms[j]->x1 - rooms[i]->x2 >= MIN_ROOM_SEPARATION) && 
+						(!(rooms[i]->y1 - rooms[j]->y2 > -6 || rooms[j]->y1 - rooms[i]->y2 > -6))) // do not allow diagonal rooms
+						closeRooms++;
+					else if ((rooms[i]->y1 - rooms[j]->y2 >= MIN_ROOM_SEPARATION || rooms[j]->y1 - rooms[i]->y2 >= MIN_ROOM_SEPARATION) && 
+						(!(rooms[i]->x1 - rooms[j]->x2 > -6 || rooms[j]->x1 - rooms[i]->x2 > -6))) // do not allow diagonal rooms
+						closeRooms++;
+				}
 				if (rooms[j]->specialRoom)
 					specialRooms++;
 			}
+
 		}
 	}
 
 	for (i = 0; i < roomsNumber; i++)
 		createRoom(rooms[i]);
-	//		createFieldWalls(rooms[i]);
 
 	generateHallways(roomsNumber);
 
@@ -97,6 +105,7 @@ void Map::createRoom(Room* room) {
 void Map::generateHallways(int &roomsNumber) {
 	int i, j, xji, xij, yji, yij;
 	SDL_Point p1, p2;
+	SDL_Point pointBetween;
 
 	for (i = 0; i < roomsNumber; i++) {
 		for (j = 0; j < roomsNumber; j++) { // 
@@ -113,9 +122,8 @@ void Map::generateHallways(int &roomsNumber) {
 
 					int ko = 0;
 					if (xij > 0) {
-						if (yji > 0 || yij > 0 || xij < 5) { // Hallway with angle  _|
+						if (yij > -6) { // Hallway with angle  -|
 
-						// todo
 						}
 						else { // Hallway is straight line
 							p1.x = rooms[i]->x2;
@@ -140,8 +148,7 @@ void Map::generateHallways(int &roomsNumber) {
 						rooms[i]->addConnectedRoom(rooms[j]);
 					}
 					else if (yij > 0) {
-						if (xij > 0 || xji > 0 || yij < 5) { // Hallway with angle  _|
-
+						if (xij > -6 || xji > -6) { // Hallway with angle  _|
 							// todo
 						}
 						else { // Hallway is straight line
@@ -170,6 +177,11 @@ void Map::generateHallways(int &roomsNumber) {
 			}
 		}
 	}
+	generateHallwaysAngle(roomsNumber);
+}
+
+void Map::generateHallwaysAngle(int &roomsNumber) {
+
 }
 
 void Map::createHallwayH(SDL_Point& p1, SDL_Point& p2) { // Horizontal
@@ -178,23 +190,13 @@ void Map::createHallwayH(SDL_Point& p1, SDL_Point& p2) { // Horizontal
 
 	for (x = p1.x + 1; x < p2.x; x++) {
 		map[x][p1.y] = new Field(TextureManager::textures[WOOD_FLOOR], Floor);
-		map[x][p2.y] = new Field(TextureManager::textures[WOOD_FLOOR], Floor);
-
-		map[x][p1.y - 3] = new Field(TextureManager::textures[WALL_TOP_T], Wall);
-		map[x][p1.y - 2] = new Field(TextureManager::textures[WALL_SIDE], Wall);
-		map[x][p1.y - 1] = new Field(TextureManager::textures[WALL_SIDE], Wall);
-		map[x][p2.y + 1] = new Field(TextureManager::textures[WALL_TOP_B], Wall);
+		map[x][p1.y + 1] = new Field(TextureManager::textures[WOOD_FLOOR], Floor);
 	}
 
 	x = p1.x;
 	for (int i = 0; i < 2; i++) {
 		map[x][p1.y] = new Field(TextureManager::textures[DOORS], Door);
-		map[x][p2.y] = new Field(TextureManager::textures[DOORS], Door);
-
-		map[x][p1.y - 3] = new Field(TextureManager::textures[WALL_TOP_T], Wall);
-		map[x][p1.y - 2] = new Field(TextureManager::textures[WALL_SIDE], Wall);
-		map[x][p1.y - 1] = new Field(TextureManager::textures[WALL_SIDE], Wall);
-		map[x][p2.y + 1] = new Field(TextureManager::textures[WALL_TOP_B], Wall);
+		map[x][p1.y + 1] = new Field(TextureManager::textures[DOORS], Door);
 		x = p2.x;
 	}
 }
@@ -206,24 +208,56 @@ void Map::createHallwayV(SDL_Point& p1, SDL_Point& p2) { // Vertical
 	for (y = p1.y + 1; y <= p2.y; y++) {
 		map[p1.x][y] = new Field(TextureManager::textures[WOOD_FLOOR], Floor);
 		map[p2.x][y] = new Field(TextureManager::textures[WOOD_FLOOR], Floor);
-
-		map[p1.x - 1][y] = new Field(TextureManager::textures[WALL_TOP_L], Wall);
-		map[p2.x + 1][y] = new Field(TextureManager::textures[WALL_TOP_R], Wall);
 	}
 
 	y = p1.y;
 	for (int i = 0; i < 2; i++) {
 		map[p1.x][y] = new Field(TextureManager::textures[DOORS], Door);
 		map[p2.x][y] = new Field(TextureManager::textures[DOORS], Door);
-
-		map[p1.x - 1][y] = new Field(TextureManager::textures[WALL_TOP_L], Wall);
-		map[p2.x + 1][y] = new Field(TextureManager::textures[WALL_TOP_R], Wall);
 		y = p2.y;
 	}
 }
 
-void Map::createHallwayAngle(SDL_Point& p1, SDL_Point& p2) { // todo
-	
+// p1 is closer to the main room
+void Map::createHallwayAngleH(SDL_Point& p1, SDL_Point& p2) { // First line is Horizontal
+	int x, y;
+	Field *field;
+
+	if (p1.x < p2.x) {
+		for (x = p1.x + 1; x <= p2.x + 1; x++) {
+			map[x][p1.y] = new Field(TextureManager::textures[WOOD_FLOOR], Floor);
+			map[x][p1.y + 1] = new Field(TextureManager::textures[WOOD_FLOOR], Floor);
+		}
+	}
+	else {
+		for (x = p2.x; x < p1.x; x++) {
+			map[x][p1.y] = new Field(TextureManager::textures[WOOD_FLOOR], Floor);
+			map[x][p1.y + 1] = new Field(TextureManager::textures[WOOD_FLOOR], Floor);
+		}
+	}
+
+	if (p1.y < p2.y) {
+		for (y = p1.y + 2; y < p2.y; y++) {
+			map[p2.x][y] = new Field(TextureManager::textures[WOOD_FLOOR], Floor);
+			map[p2.x + 1][y] = new Field(TextureManager::textures[WOOD_FLOOR], Floor);
+		}
+	}
+	else {
+		for (y = p2.y + 1; y < p1.y; y++) {
+			map[p2.x][y] = new Field(TextureManager::textures[WOOD_FLOOR], Floor);
+			map[p2.x + 1][y] = new Field(TextureManager::textures[WOOD_FLOOR], Floor);
+		}
+	}
+
+	map[p1.x][p1.y] = new Field(TextureManager::textures[DOORS], Door);
+	map[p1.x][p1.y + 1] = new Field(TextureManager::textures[DOORS], Door);
+	map[p2.x][p2.y] = new Field(TextureManager::textures[DOORS], Door);
+	map[p2.x + 1][p2.y] = new Field(TextureManager::textures[DOORS], Door);
+
+}
+
+void Map::createHallwayAngleV(SDL_Point& p1, SDL_Point& p2) { // First line is Vertical
+
 }
 
 void Map::createRoomWalls(Room* room) {
@@ -272,6 +306,16 @@ void Map::createMinimap() {
 	SDL_SetRenderDrawColor(Game::renderer, 255, 184, 77, 200);
 	SDL_SetRenderTarget(Game::renderer, minimap);
 	SDL_Rect r;
+
+	r.h = MAP_HEIGHT;
+	r.w = MAP_WIDTH;
+	r.x = 0;
+	r.y = 0;
+	SDL_SetRenderDrawColor(Game::renderer, 0, 51, 51, 100);
+	SDL_RenderFillRect(Game::renderer, &r);
+
+	SDL_SetRenderDrawColor(Game::renderer, 255, 184, 77, 200);
+
 	r.w = 1;
 	r.h = 1;
 	int x, y;
@@ -369,7 +413,7 @@ void Map::changeRoom(Room* room, Field* fieldToMove) {
 			newX = (x - 2) * fieldRect.w;
 
 	}
-	else if (map[x][y - 1]->type() == Door) { // Doors are vertically
+	else { // Doors are vertically
 		newY = y * fieldRect.w - fieldRect.w / 2;
 		if (x + 1 <= room->x2)
 			newX = (x + 2) * fieldRect.w;

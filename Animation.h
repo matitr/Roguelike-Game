@@ -1,5 +1,5 @@
 #pragma once
-#include "Sprite.h"
+
 class Animation {
 public:
 	int frames;

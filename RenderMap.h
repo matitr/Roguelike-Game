@@ -25,13 +25,10 @@ protected:
 private:
 	SDL_Point cameraPos;
 	CameraPosition startRenderPos;
-	SDL_Point firstSpawnChunk; //cords
 	SDL_Point fieldsToRender;
-	SDL_Texture * texture;
 	SDL_Point resolution;
 	int fieldX, fieldY;
 	int fieldCounterX, fieldCounterY;
-	int i, j;
 
 	SDL_Rect minimapSrcRect, minimapDstRect;
 public:

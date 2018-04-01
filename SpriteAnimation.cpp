@@ -3,7 +3,6 @@
 
 
 SpriteAnimation::SpriteAnimation(SDL_Texture*txt, int width, int height, int _yIter, int _frames, int _frameTime) {
-	texture = txt;
 //	yIter = _yIter;
 	frames = _frames;
 	frameTime = _frameTime;

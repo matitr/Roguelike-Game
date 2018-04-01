@@ -25,19 +25,6 @@ A_Star::~A_Star() {
 
 }
 
-void A_Star::crearData() {
-//	std::list<FieldA*>::iterator it = openSet.begin();
-//
-//	for (it; it != openSet.end(); it++)
-//		delete (*it);
-//
-//	for (it = closedSet.begin(); it != closedSet.end(); it++)
-//		delete (*it);
-//
-	openSet.clear();
-	closedSet.clear();
-}
-
 void A_Star::createNeighbors(Field* field, std::stack<Field*>& neighbors) {
 
 	Field* toAdd = map->map[field->x() + 1][field->y()];
@@ -153,11 +140,7 @@ SDL_Point A_Star::findPath(Unit* unitToMove) {
 			neighbor->f = neighbor->g + neighbor->h;
 			neighbor->prevField = lowestF;
 		}
-
-
-
 	}
-
 
 	return SDL_Point();
 }

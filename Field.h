@@ -1,5 +1,6 @@
 #pragma once
 #include "SDL.h"
+#include "GameObject.h"
 #include <typeinfo>
 #include <iostream>
 
@@ -7,11 +8,11 @@ class Room;
 
 enum FieldType {Floor, Door, Wall};
 
-class Field{
-	SDL_Texture* texture;
+class Field : public GameObject {
 	bool isGround = false;
 	FieldType fieldType;
 	int xPos, yPos;
+
 public:
 	double f, g, h; // A* search algorithm
 	Field* prevField; // A* search algorithm

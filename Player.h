@@ -14,13 +14,13 @@ class Player : public Unit {
 	int rollCooldown;
 	int lastRollFramesAgo;
 
-	int rollSpeed = 10;
+	int rollSpeed;
 	SDL_Point rollVelocity;
 
 	SDL_Texture* playerStatsTxt;
 	SDL_Rect statusSrcRect, statusDstRest;
 public:
-	void update(Map* map, SDL_Rect& fieldRect);
+	bool update(Map* map, SDL_Rect& fieldRect);
 	void drawStatus();
 	void movement(int x, int y);
 	bool attackPossible();

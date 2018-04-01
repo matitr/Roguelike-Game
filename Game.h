@@ -17,7 +17,6 @@ class Game{
 	bool _running;
 	const Uint8* keystates;
 	int cameraMovePix;
-	SDL_Rect srcRectUnit, dstRectUnit;
 	Player* player;
 	std::list <Unit*> monsters;
 	std::list <Projectile*> playerProjectiles;
@@ -25,12 +24,14 @@ class Game{
 
 	std::list<Projectile*>::iterator it = playerProjectiles.begin();
 	std::list<Projectile*>::iterator tempItProjectile;
+	std::list<Unit*>::iterator tempItMonster;
 public:
 	static SDL_Renderer* renderer;
 
 	void run();
 	void handleEvents();
-	void render();
+	void updateGame();
+	void updateGameProjectiles();
 
 	inline bool running() { return _running; }
 
