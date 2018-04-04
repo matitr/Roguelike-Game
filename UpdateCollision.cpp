@@ -5,15 +5,18 @@
 #include "Player.h"
 #include "Field.h"
 #include "GameObject.h"
+#include "SDL.h"
 
 
-void UpdateCollision::updateAllUnits(Player* player, std::list <Unit*> monsters, std::vector<std::vector<Field*>> map) {
+void UpdateCollision::updateAllUnits(Player* player, std::list <Unit*>& monsters, std::vector<std::vector<Field*>>& map, SDL_Rect& fieldRect) {
 	std::list <Unit*>::iterator it_mon;
 	std::list <Unit*>::iterator it_mon_second;
 
+	player->collisionUnitFields(map, fieldRect);
 	for (it_mon = monsters.begin(); it_mon != monsters.end(); it_mon++) {
 		player->collisionUnit(*it_mon);
-		// update wall collision //todo
+
+		(*it_mon)->collisionUnitFields(map, fieldRect);
 
 		for (it_mon_second = monsters.begin(); it_mon_second != monsters.end(); it_mon_second++) {
 			if (it_mon != it_mon_second)

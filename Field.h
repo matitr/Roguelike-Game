@@ -25,9 +25,11 @@ public:
 	int x() { return xPos; }
 	int y() { return yPos; }
 
+	void draw(int x, int y);
+
 	Field();
 	Field(SDL_Texture* txt);
-	Field(SDL_Texture* txt, FieldType);
+	Field(SDL_Texture* txt, SDL_Rect& _srcRect, FieldType);
 	Field(SDL_Texture* txt, SDL_Rect* rectSize, int frames, int frameTime);
 	~Field();
 

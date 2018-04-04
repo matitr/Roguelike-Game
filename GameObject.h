@@ -1,7 +1,9 @@
 #pragma once
 #include "SDL.h"
+#include <vector>
 
 class Unit;
+class Field;
 
 class PointFloat {
 public:
@@ -26,6 +28,7 @@ protected:
 	ObjectHitboxType hitboxType;
 	int radius;
 
+	SDL_Rect srcRect, dstRect;
 public:
 	template <class T>
 	void collisionUnit(T *gameObj);
@@ -33,8 +36,10 @@ public:
 	template <class T>
 	bool detectCollision(T *gameObj);
 
+	inline int getPositionX() { return position.x; }
+	inline int getPositionY() { return position.y; }
+	int getRadius() { return radius; }
 
-	void test(Unit * u);
 	GameObject(GameObjectType objType, ObjectHitboxType hitbType);
 	~GameObject();
 };

@@ -8,12 +8,9 @@ void Map::generateNewMap() {
 	int roomsNumber = 1 + 1 + 2 + 2 + rand() % 5 + 10;
 	rooms.resize(roomsNumber);
 	generateSpecialRooms(roomsNumber);
-
+	levelTexture = TextureManager::textures[LEVEL_1];
 	int x, y;
 	int i, j;
-	bool goodPosition = false;
-	int closeRooms = 0;
-	int specialRooms;
 
 	for (i = 1; i < roomsNumber; i++) {
 		if (!rooms[i]) {
@@ -23,37 +20,7 @@ void Map::generateNewMap() {
 		}
 	}
 
-	for (i = 1; i < roomsNumber; i++) {
-		goodPosition = false;
-
-		while ((!goodPosition || (closeRooms - specialRooms) <= 0)) {
-			specialRooms = 0;
-			goodPosition = true;
-			closeRooms = 0;
-			x = rand() % (MAP_WIDTH - BORDER_SIZE - BORDER_SIZE - 70) + BORDER_SIZE;
-			y = rand() % (MAP_HEIGHT - BORDER_SIZE - BORDER_SIZE - 70) + BORDER_SIZE;
-			rooms[i]->changePosition(x, y);
-
-			for (j = 0; j < i; j++) {
-				if (MIN_ROOM_SEPARATION >= rooms[j]->x1 - rooms[i]->x2 && MIN_ROOM_SEPARATION >= rooms[i]->x1 - rooms[j]->x2 && 
-					MIN_ROOM_SEPARATION >= rooms[j]->y1 - rooms[i]->y2 && MIN_ROOM_SEPARATION >= rooms[i]->y1 - rooms[j]->y2)
-					goodPosition = false;
-
-				if (MAX_ROOM_SEPARATION >= rooms[j]->x1 - rooms[i]->x2 && MAX_ROOM_SEPARATION >= rooms[i]->x1 - rooms[j]->x2 && 
-					MAX_ROOM_SEPARATION >= rooms[j]->y1 - rooms[i]->y2 && MAX_ROOM_SEPARATION >= rooms[i]->y1 - rooms[j]->y2) {
-					if ((rooms[i]->x1 - rooms[j]->x2 >= MIN_ROOM_SEPARATION || rooms[j]->x1 - rooms[i]->x2 >= MIN_ROOM_SEPARATION) && 
-						(!(rooms[i]->y1 - rooms[j]->y2 > -6 || rooms[j]->y1 - rooms[i]->y2 > -6))) // do not allow diagonal rooms
-						closeRooms++;
-					else if ((rooms[i]->y1 - rooms[j]->y2 >= MIN_ROOM_SEPARATION || rooms[j]->y1 - rooms[i]->y2 >= MIN_ROOM_SEPARATION) && 
-						(!(rooms[i]->x1 - rooms[j]->x2 > -6 || rooms[j]->x1 - rooms[i]->x2 > -6))) // do not allow diagonal rooms
-						closeRooms++;
-				}
-				if (rooms[j]->specialRoom)
-					specialRooms++;
-			}
-
-		}
-	}
+	findPositionForRooms(roomsNumber);
 
 	for (i = 0; i < roomsNumber; i++)
 		createRoom(rooms[i]);
@@ -93,19 +60,55 @@ void Map::generateSpecialRooms(int &roomsNumber) {
 	rooms[roomsNumber - 4] = new Room(x, y, x + 7, y + 7, Treasure); // treasure room
 }
 
+void Map::findPositionForRooms(int roomsNumber) {
+	bool goodPosition = false;
+	int closeRooms = 0, specialRooms, x, y, j;
+
+	for (int i = 1; i < roomsNumber; i++) {
+		goodPosition = false;
+
+		while ((!goodPosition || (closeRooms - specialRooms) <= 0)) {
+			specialRooms = 0;
+			goodPosition = true;
+			closeRooms = 0;
+			x = rand() % (MAP_WIDTH - BORDER_SIZE - BORDER_SIZE - 70) + BORDER_SIZE;
+			y = rand() % (MAP_HEIGHT - BORDER_SIZE - BORDER_SIZE - 70) + BORDER_SIZE;
+			rooms[i]->changePosition(x, y);
+
+			for (j = 0; j < i; j++) {
+				if (MIN_ROOM_SEPARATION >= rooms[j]->x1 - rooms[i]->x2 && MIN_ROOM_SEPARATION >= rooms[i]->x1 - rooms[j]->x2 &&
+					MIN_ROOM_SEPARATION >= rooms[j]->y1 - rooms[i]->y2 && MIN_ROOM_SEPARATION >= rooms[i]->y1 - rooms[j]->y2)
+					goodPosition = false;
+
+				if (MAX_ROOM_SEPARATION >= rooms[j]->x1 - rooms[i]->x2 && MAX_ROOM_SEPARATION >= rooms[i]->x1 - rooms[j]->x2 &&
+					MAX_ROOM_SEPARATION >= rooms[j]->y1 - rooms[i]->y2 && MAX_ROOM_SEPARATION >= rooms[i]->y1 - rooms[j]->y2) {
+					if ((rooms[i]->x1 - rooms[j]->x2 >= MIN_ROOM_SEPARATION || rooms[j]->x1 - rooms[i]->x2 >= MIN_ROOM_SEPARATION) &&
+						(!(rooms[i]->y1 - rooms[j]->y2 > -6 || rooms[j]->y1 - rooms[i]->y2 > -6))) // do not allow diagonal rooms
+						closeRooms++;
+					else if ((rooms[i]->y1 - rooms[j]->y2 >= MIN_ROOM_SEPARATION || rooms[j]->y1 - rooms[i]->y2 >= MIN_ROOM_SEPARATION) &&
+						(!(rooms[i]->x1 - rooms[j]->x2 > -6 || rooms[j]->x1 - rooms[i]->x2 > -6))) // do not allow diagonal rooms
+						closeRooms++;
+				}
+				if (rooms[j]->specialRoom)
+					specialRooms++;
+			}
+
+		}
+	}
+}
+
 void Map::createRoom(Room* room) {
 	int xIter, yIter;
 	for (xIter = room->x1 + 1; xIter < room->x2; xIter++)
 		for (yIter = room->y1 + 1; yIter < room->y2; yIter++) {
-			map[xIter][yIter] = new Field(TextureManager::textures[WOOD_FLOOR], Floor);
+			map[xIter][yIter] = new Field(levelTexture, TextureManager::textureSrcRect[WOOD_FLOOR], Floor);
 		}
 
 }
 
 void Map::generateHallways(int &roomsNumber) {
 	int i, j, xji, xij, yji, yij;
-	SDL_Point p1, p2;
-	SDL_Point pointBetween;
+	SDL_Point p1, p2, pointBetween;
 
 	for (i = 0; i < roomsNumber; i++) {
 		for (j = 0; j < roomsNumber; j++) { // 
@@ -177,11 +180,6 @@ void Map::generateHallways(int &roomsNumber) {
 			}
 		}
 	}
-	generateHallwaysAngle(roomsNumber);
-}
-
-void Map::generateHallwaysAngle(int &roomsNumber) {
-
 }
 
 void Map::createHallwayH(SDL_Point& p1, SDL_Point& p2) { // Horizontal
@@ -189,14 +187,14 @@ void Map::createHallwayH(SDL_Point& p1, SDL_Point& p2) { // Horizontal
 	Field *field;
 
 	for (x = p1.x + 1; x < p2.x; x++) {
-		map[x][p1.y] = new Field(TextureManager::textures[WOOD_FLOOR], Floor);
-		map[x][p1.y + 1] = new Field(TextureManager::textures[WOOD_FLOOR], Floor);
+		map[x][p1.y] = new Field(levelTexture, TextureManager::textureSrcRect[WOOD_FLOOR], Floor);
+		map[x][p1.y + 1] = new Field(levelTexture, TextureManager::textureSrcRect[WOOD_FLOOR], Floor);
 	}
 
 	x = p1.x;
 	for (int i = 0; i < 2; i++) {
-		map[x][p1.y] = new Field(TextureManager::textures[DOORS], Door);
-		map[x][p1.y + 1] = new Field(TextureManager::textures[DOORS], Door);
+		map[x][p1.y] = new Field(levelTexture, TextureManager::textureSrcRect[DOORS], Door);
+		map[x][p1.y + 1] = new Field(levelTexture, TextureManager::textureSrcRect[DOORS], Door);
 		x = p2.x;
 	}
 }
@@ -206,99 +204,39 @@ void Map::createHallwayV(SDL_Point& p1, SDL_Point& p2) { // Vertical
 	Field *field;
 
 	for (y = p1.y + 1; y <= p2.y; y++) {
-		map[p1.x][y] = new Field(TextureManager::textures[WOOD_FLOOR], Floor);
-		map[p2.x][y] = new Field(TextureManager::textures[WOOD_FLOOR], Floor);
+		map[p1.x][y] = new Field(levelTexture, TextureManager::textureSrcRect[WOOD_FLOOR], Floor);
+		map[p2.x][y] = new Field(levelTexture, TextureManager::textureSrcRect[WOOD_FLOOR], Floor);
 	}
 
 	y = p1.y;
 	for (int i = 0; i < 2; i++) {
-		map[p1.x][y] = new Field(TextureManager::textures[DOORS], Door);
-		map[p2.x][y] = new Field(TextureManager::textures[DOORS], Door);
+		map[p1.x][y] = new Field(levelTexture, TextureManager::textureSrcRect[DOORS], Door);
+		map[p2.x][y] = new Field(levelTexture, TextureManager::textureSrcRect[DOORS], Door);
 		y = p2.y;
 	}
-}
-
-// p1 is closer to the main room
-void Map::createHallwayAngleH(SDL_Point& p1, SDL_Point& p2) { // First line is Horizontal
-	int x, y;
-	Field *field;
-
-	if (p1.x < p2.x) {
-		for (x = p1.x + 1; x <= p2.x + 1; x++) {
-			map[x][p1.y] = new Field(TextureManager::textures[WOOD_FLOOR], Floor);
-			map[x][p1.y + 1] = new Field(TextureManager::textures[WOOD_FLOOR], Floor);
-		}
-	}
-	else {
-		for (x = p2.x; x < p1.x; x++) {
-			map[x][p1.y] = new Field(TextureManager::textures[WOOD_FLOOR], Floor);
-			map[x][p1.y + 1] = new Field(TextureManager::textures[WOOD_FLOOR], Floor);
-		}
-	}
-
-	if (p1.y < p2.y) {
-		for (y = p1.y + 2; y < p2.y; y++) {
-			map[p2.x][y] = new Field(TextureManager::textures[WOOD_FLOOR], Floor);
-			map[p2.x + 1][y] = new Field(TextureManager::textures[WOOD_FLOOR], Floor);
-		}
-	}
-	else {
-		for (y = p2.y + 1; y < p1.y; y++) {
-			map[p2.x][y] = new Field(TextureManager::textures[WOOD_FLOOR], Floor);
-			map[p2.x + 1][y] = new Field(TextureManager::textures[WOOD_FLOOR], Floor);
-		}
-	}
-
-	map[p1.x][p1.y] = new Field(TextureManager::textures[DOORS], Door);
-	map[p1.x][p1.y + 1] = new Field(TextureManager::textures[DOORS], Door);
-	map[p2.x][p2.y] = new Field(TextureManager::textures[DOORS], Door);
-	map[p2.x + 1][p2.y] = new Field(TextureManager::textures[DOORS], Door);
-
-}
-
-void Map::createHallwayAngleV(SDL_Point& p1, SDL_Point& p2) { // First line is Vertical
-
 }
 
 void Map::createRoomWalls(Room* room) {
 	for (int i = room->x1; i <= room->x2; i++) { // x walls
 		if (!map[i][room->y1]) { // TOP
-			map[i][room->y1] = new Field(TextureManager::textures[WALL_SIDE], Wall);
-			map[i][room->y1 - 1] = new Field(TextureManager::textures[WALL_SIDE], Wall);
-			map[i][room->y1 - 2] = new Field(TextureManager::textures[WALL_TOP_T], Wall);
+			map[i][room->y1] = new Field(levelTexture, TextureManager::textureSrcRect[WALL_SIDE], Wall);
+			map[i][room->y1 - 1] = new Field(levelTexture, TextureManager::textureSrcRect[WALL_SIDE], Wall);
+			map[i][room->y1 - 2] = new Field(levelTexture, TextureManager::textureSrcRect[WALL_TOP_T], Wall);
 		}
 
 		if (!map[i][room->y2]) { // BOTTOM
-			map[i][room->y2] = new Field(TextureManager::textures[WALL_TOP_B], Wall);
+			map[i][room->y2] = new Field(levelTexture, TextureManager::textureSrcRect[WALL_TOP_B], Wall);
 		}
 	}
 
 	for (int i = room->y1 - 1; i <= room->y2 - 1; i++) { // y walls
 		if (!map[room->x1][i]) { // LEFT
-			map[room->x1][i] = new Field(TextureManager::textures[WALL_TOP_L], Wall);
+			map[room->x1][i] = new Field(levelTexture, TextureManager::textureSrcRect[WALL_TOP_L], Wall);
 		}
 
 		if (!map[room->x2][i]) { // RIGHT
-			map[room->x2][i] = new Field(TextureManager::textures[WALL_TOP_R], Wall);
+			map[room->x2][i] = new Field(levelTexture, TextureManager::textureSrcRect[WALL_TOP_R], Wall);
 		}
-	}
-}
-
-void Map::createFieldWalls(Room* room) {
-	for (int i = room->x1; i <= room->x2; i++) { // x walls
-		if (!map[i][room->y1])
-			map[i][room->y1] = new Field(TextureManager::textures[STONE]);
-
-		if (!map[i][room->y2])
-			map[i][room->y2] = new Field(TextureManager::textures[STONE]);
-	}
-
-	for (int i = room->y1; i <= room->y2; i++) { // y walls
-		if (!map[room->x1][i])
-			map[room->x1][i] = new Field(TextureManager::textures[STONE]);
-
-		if (!map[room->x2][i])
-			map[room->x2][i] = new Field(TextureManager::textures[STONE]);
 	}
 }
 

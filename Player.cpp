@@ -20,42 +20,40 @@ bool Player::update(Map* map, SDL_Rect& fieldRect) {
 		velocity.y = rollVelocity.y;
 	}
 
-	Field *field = map->map[(position.x + velocity.x * speed + srcrect.w) / fieldRect.w][(position.y + velocity.y * speed + srcrect.h / 2) / fieldRect.h];
+	Field *field = nullptr;
 
 	if (velocity.x < 0)
-		field = map->map[(position.x + velocity.x * speed) / fieldRect.w][(position.y + srcrect.h / 4 * 3) / fieldRect.h];
+		field = map->map[(position.x - radius - speed) / fieldRect.w][(position.y) / fieldRect.h];
 	else if (velocity.x > 0)
-		field = map->map[(position.x + velocity.x * speed + srcrect.w) / fieldRect.w][(position.y + srcrect.h / 4 * 3) / fieldRect.h];
+		field = map->map[(position.x + radius + speed) / fieldRect.w][(position.y) / fieldRect.h];
 
-	if (velocity.x != 0 && field->type() == Door && !map->currentRoom()->battle) {
-		Field * f = map->currentRoom()->doorsConnection[field];
-		map->changeRoom(map->currentRoom()->roomConnection[field], map->currentRoom()->doorsConnection[field]);
-		resetAnimation();
-		setPosition(map->getCameraX(), map->getCameraY());
-		velocity.x = 0;
-		velocity.y = 0;
-		setAnimation(Stand);
-		return true;
-	}
-	else if (!field->ground())
-		velocity.x = 0;
+	if (velocity.x != 0)
+		if (field->type() == Door && !map->currentRoom()->battle) {
+			Field * f = map->currentRoom()->doorsConnection[field];
+			map->changeRoom(map->currentRoom()->roomConnection[field], map->currentRoom()->doorsConnection[field]);
+			resetAnimation();
+			setPosition(map->getCameraX(), map->getCameraY());
+			velocity.x = 0;
+			velocity.y = 0;
+			setAnimation(Stand);
+			return true;
+		}
 
 	if (velocity.y < 0)
-		field = map->map[(position.x) / fieldRect.w][(position.y + velocity.y * speed + srcrect.h / 4 * 3) / fieldRect.h];
+		field = map->map[(position.x) / fieldRect.w][(position.y - radius - speed) / fieldRect.h];
 	else if (velocity.y > 0)
-		field = map->map[(position.x) / fieldRect.w][(position.y + velocity.y * speed + srcrect.h) / fieldRect.h];
+		field = map->map[(position.x) / fieldRect.w][(position.y + radius + speed) / fieldRect.h];
 
-	if (velocity.y != 0 && field->type() == Door && !map->currentRoom()->battle) {
-		map->changeRoom(map->currentRoom()->roomConnection[field], map->currentRoom()->doorsConnection[field]);
-		resetAnimation();
-		setPosition(map->getCameraX(), map->getCameraY());
-		velocity.x = 0;
-		velocity.y = 0;
-		setAnimation(Stand);
-		return true;
-	}
-	else if (!field->ground())
-		velocity.y = 0;
+	if (velocity.y != 0)
+		if (field->type() == Door && !map->currentRoom()->battle) {
+			map->changeRoom(map->currentRoom()->roomConnection[field], map->currentRoom()->doorsConnection[field]);
+			resetAnimation();
+			setPosition(map->getCameraX(), map->getCameraY());
+			velocity.x = 0;
+			velocity.y = 0;
+			setAnimation(Stand);
+			return true;
+		}
 
 	if (!velocity.y && !velocity.x)
 		setAnimation(Stand);
@@ -153,7 +151,7 @@ void Player::setAnimation(ActionType actionName) {
 	textureFrameTime = animations[actionName]->frameTime;
 	textureFrames = animations[actionName]->frames;
 
-	srcrect.y = dstrect.h * textureY;
+	srcRect.y = dstRect.h * textureY;
 }
 
 void Player::resetAnimation() {
@@ -167,7 +165,7 @@ void Player::resetAnimation() {
 	textureFrameTime = animations[Stand]->frameTime;
 	textureFrames = animations[Stand]->frames;
 
-	srcrect.y = dstrect.h * textureY;
+	srcRect.y = dstRect.h * textureY;
 }
 
 Player::Player(SDL_Texture* txt, SDL_Texture* _playerStatsTxt) : Unit(txt, 60, 60){

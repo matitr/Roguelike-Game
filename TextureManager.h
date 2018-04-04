@@ -3,29 +3,26 @@
 #include <unordered_map>
 
 
-#define WOOD_FLOOR 0
-#define WATER 1
-#define STONE 2
-#define PLAYER 3
-#define WALL_SIDE 4
-#define WALL_TOP_T 5
-#define WALL_TOP_R 6
-#define WALL_TOP_B 7
-#define WALL_TOP_L 8
-#define PROJECTILES 9
-#define DOORS 10
-#define PLAYER_STATS 11
+#define PLAYER 0
+#define PROJECTILES 1
+#define PLAYER_STATS 2
+#define LEVEL_1 3
 
+
+
+enum SingleTexture { WOOD_FLOOR , WALL_SIDE, WALL_TOP_T, WALL_TOP_R, WALL_TOP_B, WALL_TOP_L, DOORS};
 
 class TextureManager{
 
 public:
 	static std::unordered_map <int, SDL_Texture*> textures;
+	static std::unordered_map <SingleTexture, SDL_Rect> textureSrcRect;
+
 	static void loadAllTextures();
+	static void loadAllTextureSrcRect();
 	static SDL_Texture* LoadTexture(const char*);
 
 	TextureManager();
 	~TextureManager();
-
 };
 

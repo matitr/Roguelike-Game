@@ -63,10 +63,6 @@ template bool GameObject::detectCollision<Player>(Player *gameObj);
 template bool GameObject::detectCollision<Field>(Field *gameObj);
 template bool GameObject::detectCollision<Projectile>(Projectile *gameObj);
 
-void GameObject::test(Unit * u) {
-
-}
-
 GameObject::GameObject(GameObjectType objType, ObjectHitboxType hitbType)
 	: objectType(objType), hitboxType(hitbType) {
 

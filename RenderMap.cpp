@@ -53,7 +53,8 @@ void RenderMap::render() {
 		for (fieldCounterX = 0; fieldCounterX <= fieldsToRender.x; fieldCounterX++, fieldX++) { // X
 			fieldRect.x = fieldCounterX * fieldRect.w - startRenderPos.xAdditionalPixels;
 			if (map[fieldX][fieldY])
-				SDL_RenderCopy(Game::renderer, map[fieldX][fieldY]->getTexture(), NULL, &fieldRect);
+				map[fieldX][fieldY]->draw(fieldRect.x, fieldRect.y);
+				//SDL_RenderCopy(Game::renderer, map[fieldX][fieldY]->getTexture(), NULL, &fieldRect);
 
 
 		}

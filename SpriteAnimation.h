@@ -4,7 +4,6 @@
 class SpriteAnimation {
 protected:
 
-	SDL_Rect srcRect, dstRect;
 	int frames, frameTime, currFrame, frameCounter;
 //	int yIter;
 public:

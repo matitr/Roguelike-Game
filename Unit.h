@@ -20,7 +20,6 @@ protected:
 
 	int textureY = 0, textureFrame = 0, textureFrameTime = 100, textureFrames = 2, frameCounter = 0;
 
-	SDL_Rect srcrect, dstrect;
 	SDL_RendererFlip flip;
 
 	int speed;
@@ -31,21 +30,18 @@ protected:
 	int positionShiftX, positionShiftY;
 
 public:
-	SDL_Point velocity;
+	PointFloat velocity;
 	virtual bool update(std::list <Projectile*>& monsterAttacks, Map* map, SDL_Rect& fieldRect);
 	virtual void draw(SDL_Point* startRender);
 	void updateFrame();
 
-	void addAction(ActionType action, Movement* move, Attack* attack, int yPosTexture, int frames, int frameTime, int attackFrame = -1, int loops = 1);
+	void addAction(ActionType action, Movement* move, Attack* attack, int yPosTexture, int frames, int frameTime, int attackFrame = -1);
 	void addPattern(ActionType actionType);
 
 	void setPosition(int x, int y);
 	void setPositionShift(float positionShiftX, float positionShiftY, float hitboxRange);
 
-	inline int getPositionX() { return position.x; }
-	inline int getPositionY() { return position.y; }
-	inline int getPosMiddleX() { return position.x + dstrect.w / 2; }
-	inline int getPosMiddleY() { return position.y + dstrect.h / 4 * 3.3; }
+	void collisionUnitFields(std::vector<std::vector<Field*>>& map, SDL_Rect& fieldRect);
 
 	void setHp(int _hp) { hp = float(hp); }
 	void takeDamage(float damage) { hp -= damage; }

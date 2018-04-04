@@ -95,11 +95,9 @@ SDL_Point A_Star::findPath(Unit* unitToMove) {
 	closedSet.clear();
 
 	std::list<Field*>::iterator it = openSet.begin();
-	Field* start = map->map[unitToMove->getPosMiddleX() / map->fieldWidth()][unitToMove->getPosMiddleY() / map->fieldHeight()];
+	Field* start = map->map[unitToMove->getPositionX() / map->fieldWidth()][unitToMove->getPositionY() / map->fieldHeight()];
 	openSet.push_back(start);
-	Field* lowestF;
-	Field* neighbor;
-	Field* end = map->map[player->getPosMiddleX() / map->fieldWidth()][player->getPosMiddleY() / map->fieldHeight()];
+	Field *lowestF, *neighbor, *end = map->map[player->getPositionX() / map->fieldWidth()][player->getPositionY() / map->fieldHeight()];
 
 	while (!openSet.empty()) {
 		lowestF = (*openSet.begin());

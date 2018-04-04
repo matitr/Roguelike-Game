@@ -31,13 +31,13 @@ bool Projectile::update(Map* map, SDL_Rect& fieldRect) {
 	position.x += velocity.x;
 	position.y += velocity.y;
 
-	if (!map->map[(position.x) / fieldRect.w][(position.y + srcRect.h / 2) / fieldRect.h]->ground())
+	if (!map->map[(position.x) / fieldRect.w][(position.y + radius) / fieldRect.h]->ground())
 		return false;
-	else if (!map->map[(position.x + srcRect.w) / fieldRect.w][(position.y + srcRect.h / 2) / fieldRect.h]->ground())
+	else if (!map->map[(position.x + radius) / fieldRect.w][(position.y) / fieldRect.h]->ground())
 		return false;
-	else if (!map->map[(position.x) / fieldRect.w][(position.y + srcRect.h / 2) / fieldRect.h]->ground())
+	else if (!map->map[(position.x) / fieldRect.w][(position.y - radius) / fieldRect.h]->ground())
 		return false;
-	else if (!map->map[(position.x) / fieldRect.w][(position.y + srcRect.h) / fieldRect.h]->ground())
+	else if (!map->map[(position.x - radius) / fieldRect.w][(position.y) / fieldRect.h]->ground())
 		return false;
 	
 	if (frameCounter == frameTime) {
@@ -67,6 +67,16 @@ Projectile::Projectile(SDL_Texture*txt, int width, int height, int _yIter, int _
 	damage = 1;
 	enemyHitted = false;
 	radius = width / 2;
+
+	srcRect.w = width;
+	srcRect.h = height;
+	srcRect.x = 0;
+	srcRect.y = _yIter;
+
+	dstRect.x = 0;
+	dstRect.y = 0;
+	dstRect.w = width;
+	dstRect.h = height;
 }
 
 

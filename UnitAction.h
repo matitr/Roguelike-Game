@@ -14,7 +14,6 @@ class UnitAction {
 	int frameTime;
 
 	int attackFrame = 0;
-	int currLoop = 0, loops;
 
 public:
 	inline int texturePosY() { return yPosTexture; }
@@ -27,7 +26,7 @@ public:
 	void makeAttack(Unit* unit, std::list <Projectile*>& monsterAttacks);
 	void makeMove(Unit* unitToMove);
 
-	UnitAction(Movement* move, Attack* attack, int yPosTexture, int frames, int frameTime, int attackFrame, int loops);
+	UnitAction(Movement* move, Attack* attack, int yPosTexture, int frames, int frameTime, int attackFrame);
 	~UnitAction();
 };
 

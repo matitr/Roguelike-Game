@@ -2,22 +2,29 @@
 #include "Game.h"
 
 std::unordered_map <int, SDL_Texture*> TextureManager::textures;
+std::unordered_map <SingleTexture, SDL_Rect> TextureManager::textureSrcRect;
 
 void TextureManager::loadAllTextures() {
 	textures[PLAYER] = TextureManager::LoadTexture("Textures/player.png");
-	textures[WOOD_FLOOR] = TextureManager::LoadTexture("Textures/woodFloor.png");
-	textures[WATER] = TextureManager::LoadTexture("Textures/water.png");
-	textures[STONE] = TextureManager::LoadTexture("Textures/stone.png");
-	textures[PLAYER] = TextureManager::LoadTexture("Textures/player.png");
-	textures[WALL_SIDE] = TextureManager::LoadTexture("Textures/wallSide.png");
-	textures[WALL_TOP_T] = TextureManager::LoadTexture("Textures/wallTopT.png");
-	textures[WALL_TOP_R] = TextureManager::LoadTexture("Textures/wallTopR.png");
-	textures[WALL_TOP_B] = TextureManager::LoadTexture("Textures/wallTopB.png");
-	textures[WALL_TOP_L] = TextureManager::LoadTexture("Textures/wallTopL.png");
 	
 	textures[PROJECTILES] = TextureManager::LoadTexture("Textures/projectiles.png");
-	textures[DOORS] = TextureManager::LoadTexture("Textures/doors.png");
-	textures[PLAYER_STATS] = TextureManager::LoadTexture("Textures/playerStats.png");
+	textures[PLAYER_STATS] = TextureManager::LoadTexture("Textures/playerStats.png"); 
+
+	textures[LEVEL_1] = TextureManager::LoadTexture("Textures/level_1.png");
+
+	TextureManager::loadAllTextureSrcRect();
+}
+
+void TextureManager::loadAllTextureSrcRect() { // srcRect = { x, y, w, h }
+	int fieldSize = 60;
+
+	textureSrcRect[WOOD_FLOOR] = { fieldSize * 0,fieldSize * 0,fieldSize,fieldSize };
+	textureSrcRect[DOORS] = { fieldSize * 1,fieldSize * 0,fieldSize,fieldSize };
+	textureSrcRect[WALL_SIDE] = { fieldSize * 2,fieldSize * 0,fieldSize,fieldSize };
+	textureSrcRect[WALL_TOP_T] = { fieldSize * 0,fieldSize * 1,fieldSize,fieldSize };
+	textureSrcRect[WALL_TOP_R] = { fieldSize * 1,fieldSize * 1,fieldSize,fieldSize };
+	textureSrcRect[WALL_TOP_B] = { fieldSize * 2,fieldSize * 1,fieldSize,fieldSize };
+	textureSrcRect[WALL_TOP_L] = { fieldSize * 3,fieldSize * 1,fieldSize,fieldSize };
 }
 
 SDL_Texture* TextureManager::LoadTexture(const char* dir) {

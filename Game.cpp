@@ -22,11 +22,6 @@ void Game::run() {
 	player->setPosition(map->getCameraX(), map->getCameraY());
 	player->setAnimation(Walk);
 	player->setAnimation(Stand);
-	Unit *m = new MonRandMoveProjAround(map, player);
-	monsters.push_back(m);
-	m->setPosition(player->getPositionX(), player->getPositionY());
-	UpdateCollision::updateAllUnits(player, monsters, map->map);
-	UpdateCollision::updateAllUnits(player, monsters, map->map);
 	while (running()) {
 		if (clock() - timeCounter > CLOCKS_PER_SEC) {
 			std::cout << frameCounter << std::endl;
@@ -37,6 +32,8 @@ void Game::run() {
 		frameStart = SDL_GetTicks();
 		handleEvents();
 		updateGame();
+		if (!player->alive())
+			return;
 
 		frameCounter++;
 
@@ -111,7 +108,7 @@ void Game::updateGame() {
 			it_monsters++;
 	}
 
-	UpdateCollision::updateAllUnits(player, monsters, map->map);
+	UpdateCollision::updateAllUnits(player, monsters, map->map, map->fieldRect);
 	UpdateCollision::updateAllProjectiles(playerProjectiles, monsterAttacks, player, monsters);
 	map->setCamera(int(player->getPositionX()), int(player->getPositionY()));
 

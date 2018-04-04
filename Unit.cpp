@@ -2,6 +2,7 @@
 #include "Game.h"
 #include "UnitAction.h"
 #include "Attacks.h"
+#include <math.h>
 
 bool Unit::update(std::list <Projectile*>& monsterAttacks, Map* map, SDL_Rect& fieldRect) {
 	if (hp <= 0)
@@ -18,7 +19,7 @@ bool Unit::update(std::list <Projectile*>& monsterAttacks, Map* map, SDL_Rect& f
 			textureFrameTime = actions[*currAction]->textureFrameTime();
 			textureFrames = actions[*currAction]->textureFrames();
 
-			srcrect.y = dstrect.h * textureY;
+			srcRect.y = dstRect.h * textureY;
 		}
 		else
 			textureFrame++;
@@ -39,15 +40,15 @@ bool Unit::update(std::list <Projectile*>& monsterAttacks, Map* map, SDL_Rect& f
 }
 
 void Unit::draw(SDL_Point* startRender) {
-	srcrect.x = srcrect.w * textureFrame;
-	dstrect.x = position.x - startRender->x - positionShiftX;
-	dstrect.y = position.y - startRender->y - positionShiftY;
+	srcRect.x = srcRect.w * textureFrame;
+	dstRect.x = position.x - startRender->x - positionShiftX;
+	dstRect.y = position.y - startRender->y - positionShiftY;
 	if (velocity.x < 0)
 		flip = SDL_FLIP_HORIZONTAL;
 	else
 		flip = SDL_FLIP_NONE;
 
-	SDL_RenderCopyEx(Game::renderer, texture, &srcrect, &dstrect, NULL, NULL, flip);	
+	SDL_RenderCopyEx(Game::renderer, texture, &srcRect, &dstRect, NULL, NULL, flip);	
 	
 	SDL_Rect r;
 	r.h = 4;
@@ -70,8 +71,8 @@ void Unit::updateFrame() {
 	frameCounter++;
 }
 
-void Unit::addAction(ActionType action, Movement* move, Attack* attack, int yPosTexture, int frames, int frameTime, int attackFrame, int loops) {
-	actions[action] = new UnitAction(move, attack, yPosTexture, frames, frameTime, attackFrame, loops);
+void Unit::addAction(ActionType action, Movement* move, Attack* attack, int yPosTexture, int frames, int frameTime, int attackFrame) {
+	actions[action] = new UnitAction(move, attack, yPosTexture, frames, frameTime, attackFrame);
 }
 
 void  Unit::addPattern(ActionType actionType) {
@@ -85,7 +86,7 @@ void  Unit::addPattern(ActionType actionType) {
 		textureFrameTime = actions[*currAction]->textureFrameTime();
 		textureFrames = actions[*currAction]->textureFrames();
 
-		srcrect.y = dstrect.h * textureY;
+		srcRect.y = dstRect.h * textureY;
 	}
 	else
 		pattern.push_back(actionType);
@@ -97,9 +98,45 @@ void Unit::setPosition(int x, int y) {
 }
 
 void Unit::setPositionShift(float _positionShiftX, float _positionShiftY, float _hitboxRange) {
-	positionShiftX = _positionShiftX * dstrect.w;
-	positionShiftY = _positionShiftY * dstrect.h;
-	radius = (_hitboxRange * dstrect.w) / 2;
+	positionShiftX = _positionShiftX * dstRect.w;
+	positionShiftY = _positionShiftY * dstRect.h;
+	radius = (_hitboxRange * dstRect.w) / 2;
+}
+
+void Unit::collisionUnitFields(std::vector<std::vector<Field*>>& map, SDL_Rect& fieldRect) {
+	int fieldX, fieldY;
+	Field* field;
+	float minX, deltaX, minY, deltaY;
+
+	for (fieldX = (position.x - radius) / fieldRect.w; fieldX <= (position.x + radius) / fieldRect.w; fieldX++) {
+		for (fieldY = (position.y - radius) / fieldRect.h; fieldY <= (position.y + radius) / fieldRect.h; fieldY++) {
+			field = map[fieldX][fieldY];
+			if (field->type() != Floor) {
+				minX = position.x < (field->getPositionX() + field->getRadius()) ? position.x : (field->getPositionX() + field->getRadius());
+				deltaX = position.x - ((field->getPositionX() - field->getRadius()) > minX ? (field->getPositionX() - field->getRadius()) : minX);
+
+				minY = position.y < (field->getPositionY() + field->getRadius()) ? position.y : (field->getPositionY() + field->getRadius());
+				deltaY = position.y - ((field->getPositionY() - field->getRadius()) > minY ? (field->getPositionY() - field->getRadius()) : minY);
+				float d = (deltaX * deltaX + deltaY * deltaY);
+				float r2 = (radius * radius);
+				
+				if ((deltaX * deltaX + deltaY * deltaY) < (radius * radius)) {
+					if (abs(deltaX) > abs(deltaY) && deltaX) {
+						if (deltaX > 0)
+							position.x += radius - deltaX;
+						else
+							position.x -= radius + deltaX;
+					}
+					if (abs(deltaY) > abs(deltaX) && deltaY)
+						if (deltaY > 0)
+							position.y += radius - deltaY;
+						else
+							position.y -= radius + deltaY;
+				}
+			}
+		}
+	}
+	
 }
 
 Unit::Unit(SDL_Texture *txt, int width, int height) : GameObject(Dynamic, Circle) {
@@ -111,12 +148,12 @@ Unit::Unit(SDL_Texture *txt, int width, int height) : GameObject(Dynamic, Circle
 	velocity.x = 0;
 	velocity.y = 0;
 
-	dstrect.x = 100;
-	dstrect.y = 100;
-	srcrect.w = width;
-	dstrect.w = width;
-	srcrect.h = height;
-	dstrect.h = height;
+	dstRect.x = 100;
+	dstRect.y = 100;
+	srcRect.w = width;
+	dstRect.w = width;
+	srcRect.h = height;
+	dstRect.h = height;
 }
 
 

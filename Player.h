@@ -30,6 +30,8 @@ public:
 	void setAnimation(ActionType actionName);
 	void resetAnimation();
 
+	bool alive() { return hp > 0 ? true : false; }
+
 	Player(SDL_Texture* txt, SDL_Texture* _playerStatsTxt);
 	~Player();
 };
