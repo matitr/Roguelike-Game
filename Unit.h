@@ -18,11 +18,11 @@ protected:
 	std::list<ActionType> pattern;
 	std::list<ActionType>::iterator currAction;
 
-	int textureY = 0, textureFrame = 0, textureFrameTime = 100, textureFrames = 2, frameCounter = 0;
+	int textureY = 0, textureFrame = 0, textureFrameTime = 100, textureFrames = 2, frameCounter = 0, textureFramesInRow;
 
 	SDL_RendererFlip flip;
 
-	int speed;
+	float speed;
 	float hp;
 	float maxHp;
 
@@ -41,7 +41,6 @@ public:
 	void setPosition(int x, int y);
 	void setPositionShift(float positionShiftX, float positionShiftY, float hitboxRange);
 
-	void collisionUnitFields(std::vector<std::vector<Field*>>& map, SDL_Rect& fieldRect);
 
 	void setHp(int _hp) { hp = float(hp); }
 	void takeDamage(float damage) { hp -= damage; }

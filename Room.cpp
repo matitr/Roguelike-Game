@@ -53,7 +53,7 @@ void Room::addHallway(Room* otherRoom, SDL_Point& p1, SDL_Point& p2) {
 	hallway->connectedRooms.push_back(otherRoom);
 }
 
-void Room::spawnMonsters(std::list <Unit*>& monsters, Map* _map, Unit* _player) {
+void Room::spawnMonsters(Map* _map, Unit* _player) {
 	if (type == Monsters) {
 		Unit *m = new MonRandMoveProjAround(_map, _player);
 		monsters.push_back(m);
@@ -65,6 +65,11 @@ void Room::spawnMonsters(std::list <Unit*>& monsters, Map* _map, Unit* _player) 
 		m->setPosition((x1 + (x2 - x1) / 2) * 60, (y1 + (y2 - y1) / 2) * 60);
 
 	}
+}
+
+void Room::getRoomObjects(std::list <Unit*>*& _monsters, std::vector <InteractiveObject*>*& _interactiveObjects) {
+	_monsters = &monsters;
+	_interactiveObjects = &interactiveObjects;
 }
 
 Room::Room(int _x1, int _y1, int _x2, int _y2, RoomType _type) : type(_type) {

@@ -2,12 +2,16 @@
 #include <SDL.h>
 
 class SpriteAnimation {
-protected:
+private:
 
 	int frames, frameTime, currFrame, frameCounter;
-//	int yIter;
+	int framesInRow;
+	SDL_Rect &srcRectAnimation;
 public:
-	SpriteAnimation(SDL_Texture*txt, int width, int height, int _yIter, int _frames, int _frameTime);
+	bool lastFrameEnded() { return frameCounter == frames * frameTime ? true : false; }
+	void updateTexture();
+
+	SpriteAnimation(int _frames, int _frameTime, int _framesInRow, SDL_Rect &_srcRect);
 	~SpriteAnimation();
 };
 

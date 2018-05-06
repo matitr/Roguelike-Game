@@ -6,6 +6,7 @@
 #include "Field.h"
 #include "GameObject.h"
 #include "SDL.h"
+#include "InteractiveObject.h"
 
 
 void UpdateCollision::updateAllUnits(Player* player, std::list <Unit*>& monsters, std::vector<std::vector<Field*>>& map, SDL_Rect& fieldRect) {
@@ -46,6 +47,28 @@ void UpdateCollision::updateAllProjectiles(std::list <Projectile*>& playerProjec
 		}
 	}
 
+}
+
+void UpdateCollision::updateInteractiveObjects(std::vector <InteractiveObject*>& objects, std::unordered_map <SDL_Scancode, InteractiveObject*>& objectSelected, Player* player) {
+	std::unordered_map <SDL_Scancode, InteractiveObject*>::iterator it_objSelected;
+	float dist;
+
+	for (it_objSelected = objectSelected.begin(); it_objSelected != objectSelected.end(); it_objSelected++) {
+		interactiveObjDist[(*it_objSelected).first] = NO_COLLISION;
+		objectSelected[(*it_objSelected).first] = nullptr;
+	}
+
+	for (int i = 0; i < objects.size(); i++) {
+		dist = player->collisionDistance(objects[i]);
+		if (dist != NO_COLLISION) {
+			objects[i]->onPlayerTouch();
+
+			if (objects[i]->interactOnKey() && interactiveObjDist[objects[i]->interactKey()] > dist) {
+				interactiveObjDist[objects[i]->interactKey()] = dist;
+				objectSelected[objects[i]->interactKey()] = objects[i];
+			}
+		}
+	}
 }
 
 UpdateCollision::UpdateCollision() {

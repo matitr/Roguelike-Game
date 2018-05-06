@@ -4,10 +4,14 @@
 #include <math.h>
 
 
-bool Player::update(Map* map, SDL_Rect& fieldRect) {
+bool Player::update(std::list <Projectile*>& playerProjectiles, Map* map, SDL_Rect& fieldRect) {
+	if (attackFrame == ATTACK_POSSIBLE && attack)
+		makeAttack(playerProjectiles, TextureManager::textures[PROJECTILES]);
+	attack = false;
+
 	if (attackFrame > -1) {
 		if (attackFrame + 1 == attackFrames)
-			attackFrame = -1;
+			attackFrame = ATTACK_POSSIBLE;
 		else
 			attackFrame++;
 	}
@@ -103,20 +107,26 @@ void Player::movement(int x, int y) {
 }
 
 bool Player::attackPossible() {
-	if (attackFrame == -1)
+	if (attackFrame == ATTACK_POSSIBLE)
 		return true;
 
 	return false;
 }
 
-void Player::attack(std::list <Projectile*>& playerProjectiles, SDL_Texture* txt, int x, int y) {
+void Player::attackPressed(int x, int y) {
+	attackPos.x = x;
+	attackPos.y = y;
+	attack = true;
+}
+
+void Player::makeAttack(std::list <Projectile*>& playerProjectiles, SDL_Texture* txt) {
 	if (unitActionName == Roll)
 		return;
 	attackFrame = 0;
 
 	Projectile* p = new Projectile(txt, 25, 25, 0, 3, 10);
 
-	float dir = atan2(y - position.y, x - position.x);
+	float dir = atan2(attackPos.y - position.y, attackPos.x - position.x);
 
 	p->setDirection(dir);
 
@@ -168,14 +178,23 @@ void Player::resetAnimation() {
 	srcRect.y = dstRect.h * textureY;
 }
 
+void Player::takeMoney(int& m) {
+	if (money - m < 0) 
+		m = money - m; 
+	
+	money -= m; 
+}
+
 Player::Player(SDL_Texture* txt, SDL_Texture* _playerStatsTxt) : Unit(txt, 60, 60){
 	addAnimation(Stand, 0, 2, 15);
 	addAnimation(Walk, 1, 2, 15);
 	addAnimation(Roll, 2, 4, 10);
+
 	rollCooldown = 2 * 60;
 	lastRollFramesAgo = rollCooldown;
 	hp = 8;
 	maxHp = 8;
+	money = 0;
 	playerStatsTxt = _playerStatsTxt;
 	attackSpeed = 31.5;
 	attackFrames = 60 / attackSpeed;
@@ -185,8 +204,14 @@ Player::Player(SDL_Texture* txt, SDL_Texture* _playerStatsTxt) : Unit(txt, 60, 6
 	statusSrcRect.h = 20;
 	statusDstRest.w = 40;
 	statusDstRest.h = 40;
-	speed = 6;
+	speed = 5;
 	rollSpeed = 10;
+
+	attack = false;
+
+	setPositionShift(0.5, 0.9, 0.7);
+	setAnimation(Walk);
+	setAnimation(Stand);
 };
 
 

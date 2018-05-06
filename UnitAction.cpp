@@ -18,6 +18,8 @@ UnitAction::UnitAction( Movement* _move, Attack* _attack, int _yPosTexture, int 
 	frames = _frames;
 	frameTime = _frameTime;
 	attackFrame = _attackFrame;
+
+	framesInRow = _frames;
 }
 
 

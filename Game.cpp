@@ -3,33 +3,48 @@
 #include <iostream>
 #include <time.h>
 #include "Monsters.h"
-#include "UpdateCollision.h"
+#include "InteractiveObject.h"
+#include <chrono>
+#include <typeinfo>
+#include <thread>
 
+#include "Money.h"
+#include "Chest.h"
+
+typedef std::chrono::high_resolution_clock Clock;
 SDL_Renderer *Game::renderer = nullptr;;
 
+std::list <Unit*> emptyMonsters;
+std::vector <InteractiveObject*> emptyInteractiveObjects;
+
 void Game::run() {
-	Uint32 frameStart;
-	int frameTime;
-	int frameDelay = 1000 / FPS;
+	auto frameStart = Clock::now();
+	double frameTime;
+	double frameDelay = 1000000000.0 / FPS;
 	time_t timeCounter = clock();
 	int frameCounter=0;
 	TextureManager::loadAllTextures();
 
+	player = new Player(TextureManager::textures[PLAYER], TextureManager::textures[PLAYER_STATS]);
+	map->setPlayerPointer(player);
 	map->generateNewMap();
+	map->currentRoom()->getRoomObjects(monsters, interactiveObjects);
 	map->setFieldsPositions();
-	player = new Player(TextureManager::textures[PLAYER], TextureManager::textures[PLAYER_STATS]);	
-	player->setPositionShift(0.5, 0.9, 0.7);
 	player->setPosition(map->getCameraX(), map->getCameraY());
-	player->setAnimation(Walk);
-	player->setAnimation(Stand);
+
+	for (int i = 0; i < 0; i++) {
+			Unit *m = new MonRandMoveProjAround(map, player);
+			(*monsters).push_back(m);
+			m->setPosition(map->getCameraX() + 300, map->getCameraY() + 300);
+	}
 	while (running()) {
 		if (clock() - timeCounter > CLOCKS_PER_SEC) {
 			std::cout << frameCounter << std::endl;
 			frameCounter = 0;
-			timeCounter = clock();
+			timeCounter = clock() - timeCounter - CLOCKS_PER_SEC + clock();
 		}
 
-		frameStart = SDL_GetTicks();
+		frameStart = Clock::now();
 		handleEvents();
 		updateGame();
 		if (!player->alive())
@@ -37,16 +52,29 @@ void Game::run() {
 
 		frameCounter++;
 
-		frameTime = SDL_GetTicks() - frameStart;
+		frameTime = std::chrono::duration_cast<std::chrono::nanoseconds>(Clock::now() - frameStart).count();
 		if (frameDelay > frameTime)
-			SDL_Delay(frameDelay - frameTime);
+			std::this_thread::sleep_for(std::chrono::nanoseconds(int(frameDelay - frameTime) - 10000));
 	}
 
 }
 
 void Game::handleEvents() {
 	SDL_PumpEvents();
-	
+
+	while (SDL_PollEvent(&event)) {
+		switch (event.type) {
+		case SDL_QUIT:
+			_running = 0;
+			break;
+		case SDL_KEYDOWN:
+			if (objectSelected.find(event.key.keysym.scancode) != objectSelected.end() && objectSelected[event.key.keysym.scancode])
+				objectSelected[event.key.keysym.scancode]->onPlayerInteract(map, (*interactiveObjects), player);
+			break;
+		default:
+			break;
+		}
+	}
 	player->velocity.x = 0;
 	player->velocity.y = 0;
 
@@ -69,57 +97,84 @@ void Game::handleEvents() {
 	if (keystates[SDL_SCANCODE_SPACE]) {
 		player->setAnimation(Roll);
 	}
-	
+	if (keystates[SDL_SCANCODE_TAB]) {
+		map->changeMinimapSize(MinimapLarge);
+	}
+	else
+		map->changeMinimapSize(MinimapSmall);
+
 	if (!player->velocity.y && !player->velocity.x)
 		player->setAnimation(Stand);
 
-	int x, y;
+	int mouseX, mouseY;
 
-	if (SDL_GetMouseState(&x, &y) & SDL_BUTTON(SDL_BUTTON_LEFT)) {
+	if (SDL_GetMouseState(&mouseX, &mouseY) & SDL_BUTTON(SDL_BUTTON_LEFT)) {
 		if (player->attackPossible())
-			player->attack(playerProjectiles, TextureManager::textures[PROJECTILES], x + map->startRender.x, y + map->startRender.y);
+			player->attackPressed(mouseX + map->startRender.x, mouseY / HEIGHT_SCALE + map->startRender.y);
 	}
 }
 
 void Game::updateGame() {
 	SDL_RenderClear(renderer);
+	gameObjects.clear();
 
-	player->update(map, map->fieldRect);
+	player->update(playerProjectiles, map, map->fieldRect);
+	gameObjects.push_back(player);
+
+	if (map->roomChanged()) {
+		map->currentRoom()->getRoomObjects(monsters, interactiveObjects);
+		map->setRoomChanged(false);
+	}
 
 	if (!map->currentRoom()->visited && map->currentRoom()->battle) {
 		map->currentRoom()->setVisited(true);
-		map->currentRoom()->spawnMonsters(monsters, map, player);
 	}
+	std::list <Unit*>::iterator it_monsters = (*monsters).begin();
 
-	map->render();
-	player->drawStatus();
-	std::list <Unit*>::iterator it_monsters = monsters.begin();
-
-	while (it_monsters != monsters.end()) {
+	while (it_monsters != (*monsters).end()) {
 		if (!(*it_monsters)->update(monsterAttacks, map, map->fieldRect)) {
+			(*interactiveObjects).push_back(new Money((*it_monsters)->getPositionX(), (*it_monsters)->getPositionY())); // drop money
 			tempItMonster = it_monsters;
 			it_monsters++;
 			delete(*tempItMonster);
-			monsters.erase(tempItMonster);
-			if (monsters.empty())
+			(*monsters).erase(tempItMonster);
+			if ((*monsters).empty())
 				map->currentRoom()->setBattle(false);
 		}
-		else
+		else {
+			gameObjects.push_back((*it_monsters));
 			it_monsters++;
+		}
 	}
 
-	UpdateCollision::updateAllUnits(player, monsters, map->map, map->fieldRect);
-	UpdateCollision::updateAllProjectiles(playerProjectiles, monsterAttacks, player, monsters);
+	it_interactiveObj = (*interactiveObjects).begin();
+
+	while (it_interactiveObj != (*interactiveObjects).end()) {
+		if (!(*it_interactiveObj)->update(player)) {
+			itTemp_interactiveObj = it_interactiveObj;
+			delete(*itTemp_interactiveObj);
+			it_interactiveObj = (*interactiveObjects).erase(itTemp_interactiveObj);
+		}
+		else {
+			gameObjects.push_back(*it_interactiveObj);
+			it_interactiveObj++;
+		}
+	}
+
+	collision.updateAllUnits(player, (*monsters), map->map, map->fieldRect);
+	collision.updateAllProjectiles(playerProjectiles, monsterAttacks, player, (*monsters));
+	collision.updateInteractiveObjects((*interactiveObjects), objectSelected, player);
+
 	map->setCamera(int(player->getPositionX()), int(player->getPositionY()));
 
-	it_monsters = monsters.begin();
-	while (it_monsters != monsters.end()) {
-		(*it_monsters)->draw(&map->startRender);
-		it_monsters++;
-	}
-
-	player->draw(&map->startRender);
 	updateGameProjectiles();
+
+	map->render(gameObjects);
+	player->drawStatus();
+
+	for (it_objectSelected = objectSelected.begin(); it_objectSelected != objectSelected.end(); it_objectSelected++)
+		if ((*it_objectSelected).second && (*it_objectSelected).second->interacting())
+			(*it_objectSelected).second->updateInteraction(map, *interactiveObjects, player, event);
 
 	SDL_RenderPresent(renderer);
 }
@@ -135,7 +190,7 @@ void Game::updateGameProjectiles() {
 				monsterAttacks.erase(tempItProjectile);
 			}
 			else {
-				(*it)->draw(&map->startRender);
+				gameObjects.push_back((*it));
 				it++;
 			}
 		}
@@ -152,7 +207,7 @@ void Game::updateGameProjectiles() {
 				playerProjectiles.erase(tempItProjectile);
 			}
 			else {
-				(*it)->draw(&map->startRender);
+				gameObjects.push_back((*it));
 				it++;
 			}
 		}
@@ -167,12 +222,20 @@ Game::Game(const char* title, int w, int h, bool fullscreen) {
 	window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, w, h, flags);
 	renderer = SDL_CreateRenderer(window, -1, 0);
 
-	map = new Map(h / 2, w / 2);
+	windowResolution.x = w;
+	windowResolution.y = h;
+	map = new Map(player, h / 2, w / 2);
 
 	keystates = SDL_GetKeyboardState(NULL);
 	FPS = 60;
 	cameraMovePix = 5;
 	_running = true;
+	gameObjects.reserve(1000);
+	objectSelected.reserve(20);
+
+	// Keys that interact with objects
+	objectSelected[SDL_SCANCODE_E]; // Pick up
+	objectSelected[SDL_SCANCODE_T]; // Teleport
 }
 
 

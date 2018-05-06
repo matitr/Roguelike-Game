@@ -11,12 +11,16 @@
 #define MINIMAP_HEIGHT 140
 #define MINIMAP_WIDTH 180
 
+#define HEIGHT_SCALE 1
 
 class SDL_Texture;
+class GameObject;
 
 struct CameraPosition {
 	int xField, yField, xAdditionalPixels, yAdditionalPixels;
 };
+
+enum MinimapSize { MinimapLarge, MinimapSmall, MinimapClosed };
 
 class RenderMap{
 protected:
@@ -31,21 +35,28 @@ private:
 	int fieldCounterX, fieldCounterY;
 
 	SDL_Rect minimapSrcRect, minimapDstRect;
+	MinimapSize minimapSize;
 public:
 	SDL_Texture* minimap;
+	SDL_Texture* minimapBackground;
+
 	std::list<Room*> roomsOnMiniman;
 //	Uint32 * minimapPixels;
 
 	SDL_Rect fieldRect;
 	std::vector<std::vector<Field*>> map;
 	SDL_Point startRender;
+
 	void initValues();
-	void render();
+	void render(std::vector <GameObject*>& gameObjects);
 	void setSpawn(Room* room, float fieldX, float fieldY);
 	void setCamera(int x, int y);
 	void moveCamera(int x, int y);
 	int getCameraX() { return cameraPos.x; }
 	int getCameraY() { return cameraPos.y; }
+	void changeMinimapSize(MinimapSize show);
+
+	SDL_Point getResolution() { return resolution; }
 
 	RenderMap(int _hCenter, int _wCenter);
 	~RenderMap();

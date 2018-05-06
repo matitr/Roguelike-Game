@@ -55,18 +55,16 @@ bool Projectile::update(Map* map, SDL_Rect& fieldRect) {
 void Projectile::draw(SDL_Point* startRender) {
 	srcRect.x = srcRect.w * currFrame;
 	dstRect.x = position.x - startRender->x - dstRect.w / 2;
-	dstRect.y = position.y - startRender->y - dstRect.h / 2;
+	dstRect.y = (position.y - startRender->y) * HEIGHT_SCALE - dstRect.h / 2 - heightFromGround;
 
 	SDL_RenderCopy(Game::renderer, texture, &srcRect, &dstRect);
 }
 
 Projectile::Projectile(SDL_Texture*txt, int width, int height, int _yIter, int _frames, int _frameTime) 
-	: SpriteAnimation(txt,width,height,_yIter,_frames, _frameTime), GameObject(Dynamic, Circle) {
-	texture = txt;
+	: frames(_frames), frameTime(_frameTime), GameObject(txt, Dynamic, Circle, width / 2) {
 	speed = 5;
 	damage = 1;
 	enemyHitted = false;
-	radius = width / 2;
 
 	srcRect.w = width;
 	srcRect.h = height;
@@ -77,6 +75,7 @@ Projectile::Projectile(SDL_Texture*txt, int width, int height, int _yIter, int _
 	dstRect.y = 0;
 	dstRect.w = width;
 	dstRect.h = height;
+	heightFromGround = 20;
 }
 
 

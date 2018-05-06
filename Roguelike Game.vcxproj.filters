@@ -42,8 +42,24 @@
     <ClCompile Include="Projectile.cpp">
       <Filter>Combat</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="UpdateCollision.cpp" />
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="UpdateCollision.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Teleporter.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="InteractiveObject.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Chest.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Money.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
@@ -89,8 +105,24 @@
     <ClInclude Include="Movements.h">
       <Filter>Combat</Filter>
     </ClInclude>
-    <ClInclude Include="GameObject.h" />
-    <ClInclude Include="UpdateCollision.h" />
+    <ClInclude Include="GameObject.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="UpdateCollision.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Teleporter.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="InteractiveObject.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Chest.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Money.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Map">
@@ -104,6 +136,9 @@
     </Filter>
     <Filter Include="Combat">
       <UniqueIdentifier>{47714e46-156d-47b7-84a4-9fea32020901}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Objects">
+      <UniqueIdentifier>{ae9024cc-89de-4f35-9664-85a3a951538f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

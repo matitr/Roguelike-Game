@@ -7,28 +7,21 @@ void Field::setPosition(int _x, int _y) {
 	xPos = _x;
 	yPos = _y;
 
-	radius = dstRect.w / 2;
 	position.x = (_x * dstRect.w) + radius;
 	position.y = (_y * dstRect.h) + radius;
 }
 
-void Field::draw(int x, int y) {
+void Field::drawField(int x, int y) {
 	dstRect.x = x;
 	dstRect.y = y;
 
+	int h = dstRect.h;
+	dstRect.h *= HEIGHT_SCALE;
 	SDL_RenderCopy(Game::renderer, texture, &srcRect, &dstRect);
+	dstRect.h = h;
 }
 
-Field::Field() : GameObject(Static, Square) {
-	texture = nullptr;
-}
-
-Field::Field(SDL_Texture* txt) : GameObject(Static, Square) {
-	texture = txt;
-}
-
-Field::Field(SDL_Texture* txt, SDL_Rect& _srcRect, FieldType _type) : GameObject(Static, Square) {
-	texture = txt;
+Field::Field(SDL_Texture* txt, SDL_Rect& _srcRect, FieldType _type) : GameObject(txt, Static, Rectangle, _srcRect.w / 2) {
 	fieldType = _type;
 	if (_type == Floor)
 		isGround = true;
@@ -40,10 +33,6 @@ Field::Field(SDL_Texture* txt, SDL_Rect& _srcRect, FieldType _type) : GameObject
 	
 	dstRect.w = _srcRect.w;
 	dstRect.h = _srcRect.h;
-}
-
-Field::Field(SDL_Texture* txt, SDL_Rect* rectSize, int frames, int frameTime) : GameObject(Static, Square) {
-
 }
 
 Field::~Field() {

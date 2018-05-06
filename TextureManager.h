@@ -3,20 +3,31 @@
 #include <unordered_map>
 
 
-#define PLAYER 0
-#define PROJECTILES 1
-#define PLAYER_STATS 2
-#define LEVEL_1 3
 
+struct Rect {
+	int w, h;
+};
 
+//  { SDL_Rect srcRect = { x, y, w, h }, Rect dstRect = { w, h }, SDL_Texture* texture };
+struct TextureInfo { 
+	SDL_Rect srcRect;
+	Rect dstRect;
+	SDL_Texture* texture;
+};
 
-enum SingleTexture { WOOD_FLOOR , WALL_SIDE, WALL_TOP_T, WALL_TOP_R, WALL_TOP_B, WALL_TOP_L, DOORS};
+enum TextureFromFile { PLAYER, PROJECTILES, PLAYER_STATS, LEVEL_1, OBJECTS, COIN, CHEST };
+enum SingleFieldTexture { WOOD_FLOOR , WALL_SIDE, WALL_TOP_T, WALL_TOP_R, WALL_TOP_B, WALL_TOP_L, DOORS};
+enum SingleTexture { Chest, Coin, Teleport, TeleportOff, TeleportOn };
+enum TextureAnimation { ChestOpening, CoinSpin };
 
 class TextureManager{
 
 public:
-	static std::unordered_map <int, SDL_Texture*> textures;
-	static std::unordered_map <SingleTexture, SDL_Rect> textureSrcRect;
+	static std::unordered_map <TextureFromFile, SDL_Texture*> textures;
+	static std::unordered_map <SingleFieldTexture, SDL_Rect> fieldTextureSrcRect;
+
+	static std::unordered_map <SingleTexture, TextureInfo> textureParameters;
+
 
 	static void loadAllTextures();
 	static void loadAllTextureSrcRect();

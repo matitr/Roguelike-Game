@@ -4,12 +4,14 @@
 
 class Map;
 
-class Projectile : public SpriteAnimation, public GameObject {
+class Projectile : public GameObject {
 	int speed;
 	float direction;
 	float angle; // starting in middle right 
 	float damage;
 	bool enemyHitted;
+	int heightFromGround;
+	int frames, frameTime, currFrame, frameCounter;
 public:
 	void setDirection(float dir);
 	void setAngle(float ang);

@@ -2,6 +2,7 @@
 #include "TextureManager.h"
 #include <time.h>
 #include "Game.h"
+#include "Teleporter.h"
 
 
 void Map::generateNewMap() {
@@ -101,9 +102,17 @@ void Map::createRoom(Room* room) {
 	int xIter, yIter;
 	for (xIter = room->x1 + 1; xIter < room->x2; xIter++)
 		for (yIter = room->y1 + 1; yIter < room->y2; yIter++) {
-			map[xIter][yIter] = new Field(levelTexture, TextureManager::textureSrcRect[WOOD_FLOOR], Floor);
+			map[xIter][yIter] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[WOOD_FLOOR], Floor);
 		}
 
+	if (room->type == Monsters || room->type == Spawn) {
+		room->telporter = new Teleporter(((room->x2 - room->x1 + 1) / 2.0 + room->x1) * fieldRect.w, (room->y1 + (room->y2 - room->y1 + 1) / 2.0) * fieldRect.w);
+		room->interactiveObjects.push_back(room->telporter);
+	}
+
+	if (room->type == Monsters || room->type == Boss) {
+		room->spawnMonsters(this, player);
+	}
 }
 
 void Map::generateHallways(int &roomsNumber) {
@@ -125,7 +134,7 @@ void Map::generateHallways(int &roomsNumber) {
 
 					int ko = 0;
 					if (xij > 0) {
-						if (yij > -6) { // Hallway with angle  -|
+						if (yij > -6 || yji > -6) { // Hallway with angle  -|
 
 						}
 						else { // Hallway is straight line
@@ -187,14 +196,14 @@ void Map::createHallwayH(SDL_Point& p1, SDL_Point& p2) { // Horizontal
 	Field *field;
 
 	for (x = p1.x + 1; x < p2.x; x++) {
-		map[x][p1.y] = new Field(levelTexture, TextureManager::textureSrcRect[WOOD_FLOOR], Floor);
-		map[x][p1.y + 1] = new Field(levelTexture, TextureManager::textureSrcRect[WOOD_FLOOR], Floor);
+		map[x][p1.y] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[WOOD_FLOOR], Floor);
+		map[x][p1.y + 1] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[WOOD_FLOOR], Floor);
 	}
 
 	x = p1.x;
 	for (int i = 0; i < 2; i++) {
-		map[x][p1.y] = new Field(levelTexture, TextureManager::textureSrcRect[DOORS], Door);
-		map[x][p1.y + 1] = new Field(levelTexture, TextureManager::textureSrcRect[DOORS], Door);
+		map[x][p1.y] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[DOORS], Door);
+		map[x][p1.y + 1] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[DOORS], Door);
 		x = p2.x;
 	}
 }
@@ -204,14 +213,14 @@ void Map::createHallwayV(SDL_Point& p1, SDL_Point& p2) { // Vertical
 	Field *field;
 
 	for (y = p1.y + 1; y <= p2.y; y++) {
-		map[p1.x][y] = new Field(levelTexture, TextureManager::textureSrcRect[WOOD_FLOOR], Floor);
-		map[p2.x][y] = new Field(levelTexture, TextureManager::textureSrcRect[WOOD_FLOOR], Floor);
+		map[p1.x][y] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[WOOD_FLOOR], Floor);
+		map[p2.x][y] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[WOOD_FLOOR], Floor);
 	}
 
 	y = p1.y;
 	for (int i = 0; i < 2; i++) {
-		map[p1.x][y] = new Field(levelTexture, TextureManager::textureSrcRect[DOORS], Door);
-		map[p2.x][y] = new Field(levelTexture, TextureManager::textureSrcRect[DOORS], Door);
+		map[p1.x][y] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[DOORS], Door);
+		map[p2.x][y] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[DOORS], Door);
 		y = p2.y;
 	}
 }
@@ -219,39 +228,43 @@ void Map::createHallwayV(SDL_Point& p1, SDL_Point& p2) { // Vertical
 void Map::createRoomWalls(Room* room) {
 	for (int i = room->x1; i <= room->x2; i++) { // x walls
 		if (!map[i][room->y1]) { // TOP
-			map[i][room->y1] = new Field(levelTexture, TextureManager::textureSrcRect[WALL_SIDE], Wall);
-			map[i][room->y1 - 1] = new Field(levelTexture, TextureManager::textureSrcRect[WALL_SIDE], Wall);
-			map[i][room->y1 - 2] = new Field(levelTexture, TextureManager::textureSrcRect[WALL_TOP_T], Wall);
+			map[i][room->y1] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[WALL_SIDE], Wall);
+			map[i][room->y1 - 1] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[WALL_SIDE], Wall);
+			map[i][room->y1 - 2] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[WALL_TOP_T], Wall);
 		}
 
 		if (!map[i][room->y2]) { // BOTTOM
-			map[i][room->y2] = new Field(levelTexture, TextureManager::textureSrcRect[WALL_TOP_B], Wall);
+			map[i][room->y2] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[WALL_TOP_B], Wall);
 		}
 	}
 
 	for (int i = room->y1 - 1; i <= room->y2 - 1; i++) { // y walls
 		if (!map[room->x1][i]) { // LEFT
-			map[room->x1][i] = new Field(levelTexture, TextureManager::textureSrcRect[WALL_TOP_L], Wall);
+			map[room->x1][i] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[WALL_TOP_L], Wall);
 		}
 
 		if (!map[room->x2][i]) { // RIGHT
-			map[room->x2][i] = new Field(levelTexture, TextureManager::textureSrcRect[WALL_TOP_R], Wall);
+			map[room->x2][i] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[WALL_TOP_R], Wall);
 		}
 	}
 }
 
 void Map::createMinimap() {
 	SDL_SetRenderDrawColor(Game::renderer, 255, 184, 77, 200);
-	SDL_SetRenderTarget(Game::renderer, minimap);
 	SDL_Rect r;
 
 	r.h = MAP_HEIGHT;
 	r.w = MAP_WIDTH;
 	r.x = 0;
 	r.y = 0;
+
+	// Background color
+	SDL_SetRenderTarget(Game::renderer, minimapBackground);
 	SDL_SetRenderDrawColor(Game::renderer, 0, 51, 51, 100);
 	SDL_RenderFillRect(Game::renderer, &r);
 
+	// Minimap
+	SDL_SetRenderTarget(Game::renderer, minimap);
 	SDL_SetRenderDrawColor(Game::renderer, 255, 184, 77, 200);
 
 	r.w = 1;
@@ -284,6 +297,20 @@ void Map::addToMinimap(Room* room) {
 	r.h = 1;
 	int x, y;
 
+	// Render room on minimap if is not renderer already
+	if (std::find(roomsOnMiniman.begin(), roomsOnMiniman.end(), room) == roomsOnMiniman.end()){
+		for (x = room->x1; x < room->x2; x++) {
+			for (y = room->y1; y < room->y2; y++) {
+				if (map[x][y] && (map[x][y]->type() == Floor)) {
+					r.x = x;
+					r.y = y;
+					SDL_RenderFillRect(Game::renderer, &r);
+				}
+			}
+		}
+		roomsOnMiniman.push_back(room);
+	}
+
 	for (std::list<Room*>::iterator it = room->hallways.begin(); it != room->hallways.end(); it++) { // for every hallway in room
 		if (std::find(roomsOnMiniman.begin(), roomsOnMiniman.end(), (*it)) == roomsOnMiniman.end()) {
 			for (x = (*it)->x1; x <= (*it)->x2; x++) {
@@ -295,6 +322,7 @@ void Map::addToMinimap(Room* room) {
 					}
 				}
 			}
+			/*
 			for (std::list<Room*>::iterator it_room = (*it)->connectedRooms.begin(); it_room != (*it)->connectedRooms.end(); it_room++) { // for other room in hallway
 				if ((*it_room) != room) {
 					for (x = (*it_room)->x1; x < (*it_room)->x2; x++) {
@@ -309,12 +337,26 @@ void Map::addToMinimap(Room* room) {
 					roomsOnMiniman.push_back(*it_room);
 				}
 			}
+			*/
 			roomsOnMiniman.push_back(*it);
 		}
 	}
 
 	SDL_SetRenderTarget(Game::renderer, NULL);
 	SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 255);
+}
+
+void Map::createTeleportMap() {
+	// teleportMap background
+	teleportMap = SDL_CreateTexture(Game::renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, getResolution().x, getResolution().y);
+	SDL_SetTextureBlendMode(teleportMap, SDL_BLENDMODE_BLEND);
+
+	SDL_Rect r = { 0, 0, getResolution().x, getResolution().y };
+
+	SDL_SetRenderTarget(Game::renderer, teleportMap);
+	SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 100);
+	SDL_RenderFillRect(Game::renderer, &r);
+	SDL_SetRenderTarget(Game::renderer, NULL);
 }
 
 void Map::setFieldsPositions() {
@@ -362,12 +404,15 @@ void Map::changeRoom(Room* room, Field* fieldToMove) {
 	currRoom = room;
 	setCamera(newX, newY);
 	addToMinimap(room);
-
+	_roomChanged = true;
 }
 
-Map::Map(int _hCenter, int _wCenter) : RenderMap(_hCenter, _wCenter) {
+Map::Map(Player* p, int _hCenter, int _wCenter) : RenderMap(_hCenter, _wCenter) {
 	hCenter = _hCenter;
 	wCenter = _wCenter;
+	player = p;	
+
+	createTeleportMap();
 }
 
 Map::~Map() {

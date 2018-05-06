@@ -25,12 +25,10 @@ public:
 	int x() { return xPos; }
 	int y() { return yPos; }
 
-	void draw(int x, int y);
+	void drawField(int x, int y);
+	void draw(SDL_Point* startRender) {}
 
-	Field();
-	Field(SDL_Texture* txt);
 	Field(SDL_Texture* txt, SDL_Rect& _srcRect, FieldType);
-	Field(SDL_Texture* txt, SDL_Rect* rectSize, int frames, int frameTime);
 	~Field();
 
 };

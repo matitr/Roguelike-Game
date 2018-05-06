@@ -137,17 +137,21 @@
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Attacks.cpp" />
+    <ClCompile Include="Chest.cpp" />
     <ClCompile Include="Field.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="InteractiveObject.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map.cpp" />
+    <ClCompile Include="Money.cpp" />
     <ClCompile Include="Movements.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="RenderMap.cpp" />
     <ClCompile Include="Room.cpp" />
     <ClCompile Include="SpriteAnimation.cpp" />
+    <ClCompile Include="Teleporter.cpp" />
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="Unit.cpp" />
     <ClCompile Include="UnitAction.cpp" />
@@ -156,10 +160,13 @@
   <ItemGroup>
     <ClInclude Include="Animation.h" />
     <ClInclude Include="Attacks.h" />
+    <ClInclude Include="Chest.h" />
     <ClInclude Include="Field.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="InteractiveObject.h" />
     <ClInclude Include="Map.h" />
+    <ClInclude Include="Money.h" />
     <ClInclude Include="Monsters.h" />
     <ClInclude Include="Movements.h" />
     <ClInclude Include="Player.h" />
@@ -167,6 +174,7 @@
     <ClInclude Include="RenderMap.h" />
     <ClInclude Include="Room.h" />
     <ClInclude Include="SpriteAnimation.h" />
+    <ClInclude Include="Teleporter.h" />
     <ClInclude Include="TextureManager.h" />
     <ClInclude Include="Unit.h" />
     <ClInclude Include="UnitAction.h" />

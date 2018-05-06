@@ -5,23 +5,32 @@
 #include <vector>
 #include <unordered_map>
 
+class Player;
+
 #define ROOM_FIELD_MIN_RATIO 0.45
 #define MAX_MAP_GEN_DEPTH 6
 
 #define MIN_ROOM_SEPARATION 6
 #define MAX_ROOM_SEPARATION 30
 
-
 class Map: public RenderMap {
 	int hCenter, wCenter;
 	bool battle = false;
 	SDL_Texture* levelTexture;
+	bool _roomChanged = false;
+
+	Player* player = nullptr;
+	SDL_Texture* teleportMap;
 public:
 	std::vector<Room*> rooms; // rooms[0] is spawn
 
 	inline int fieldHeight() { return fieldRect.h; }
 	inline int fieldWidth() { return fieldRect.w; }
 
+	void setPlayerPointer(Player* p) { player = p; }
+	SDL_Texture* getTeleportMap() { return teleportMap; }
+	void setRoomChanged(bool changed) { _roomChanged = changed; }
+	bool roomChanged() { return _roomChanged; }
 	void setBattle(bool b) { battle = b; }
 	Room* currentRoom() { return currRoom; }
 
@@ -37,10 +46,12 @@ public:
 	void createMinimap();
 	void addToMinimap(Room* room);
 
+	void createTeleportMap();
+
 	void setFieldsPositions();
 	void changeRoom(Room* room, Field* fieldToMove);
 
-	Map(int _hCenter, int _wCenter);
+	Map(Player* p, int _hCenter, int _wCenter);
 	~Map();
 };
 

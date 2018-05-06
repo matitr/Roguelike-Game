@@ -2,8 +2,11 @@
 #include "SDL.h"
 #include <vector>
 
+#define NO_COLLISION 999999
+
 class Unit;
 class Field;
+struct Field;
 
 class PointFloat {
 public:
@@ -16,7 +19,8 @@ public:
 };
 
 enum GameObjectType {Static, Dynamic};
-enum ObjectHitboxType { Square, Circle };
+enum ObjectHitboxType { Rectangle, Circle };
+struct TextureInfo;
 
 class GameObject {
 
@@ -26,7 +30,8 @@ protected:
 	PointFloat velocity;
 	GameObjectType objectType;
 	ObjectHitboxType hitboxType;
-	int radius;
+	int radius = 0;
+	int radiusY = 0; // Only for Rectangle
 
 	SDL_Rect srcRect, dstRect;
 public:
@@ -36,11 +41,22 @@ public:
 	template <class T>
 	bool detectCollision(T *gameObj);
 
-	inline int getPositionX() { return position.x; }
-	inline int getPositionY() { return position.y; }
+	template <class T>
+	float collisionDistance(T *gameObj);
+
+	void collisionUnitFields(std::vector<std::vector<Field*>>& map, SDL_Rect& fieldRect);
+
+	void setRadiusY(int y) { radiusY = y; }
+
+	inline int getPositionX() const { return position.x; }
+	inline int getPositionY() const { return position.y; }
 	int getRadius() { return radius; }
 
-	GameObject(GameObjectType objType, ObjectHitboxType hitbType);
+	virtual void draw(SDL_Point* startRender) {}
+
+	GameObject(SDL_Texture* txt, GameObjectType objType, ObjectHitboxType hitbType, int radius);
+	GameObject(TextureInfo& txtInfo, GameObjectType objType, ObjectHitboxType hitbType, int radius);
+	GameObject(TextureInfo& txtInfo, GameObjectType objType, ObjectHitboxType hitbType);
 	~GameObject();
 };
 
