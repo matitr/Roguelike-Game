@@ -32,6 +32,7 @@ protected:
 	ObjectHitboxType hitboxType;
 	int radius = 0;
 	int radiusY = 0; // Only for Rectangle
+	bool flatObjOnFloor = false;
 
 	SDL_Rect srcRect, dstRect;
 public:
@@ -47,12 +48,17 @@ public:
 	void collisionUnitFields(std::vector<std::vector<Field*>>& map, SDL_Rect& fieldRect);
 
 	void setRadiusY(int y) { radiusY = y; }
+	void setFlatTextureOnFloor(bool f) { flatObjOnFloor = f; }
 
+	void setPositionX(float x) { position.x = x; }
+	void setPositionY(float y) { position.y = y; }
 	inline int getPositionX() const { return position.x; }
 	inline int getPositionY() const { return position.y; }
 	int getRadius() { return radius; }
+	bool flatTextureOnFloor() const { return flatObjOnFloor; }
 
-	virtual void draw(SDL_Point* startRender) {}
+	virtual void draw(SDL_Point* startRender);
+	void draw();
 
 	GameObject(SDL_Texture* txt, GameObjectType objType, ObjectHitboxType hitbType, int radius);
 	GameObject(TextureInfo& txtInfo, GameObjectType objType, ObjectHitboxType hitbType, int radius);

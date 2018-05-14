@@ -272,6 +272,7 @@ void Map::createMinimap() {
 	int x, y;
 	for (int i = 0; i < rooms.size(); i++) { // for every room
 		if (rooms[i]->visited && std::find(roomsOnMiniman.begin(), roomsOnMiniman.end(), rooms[i]) == roomsOnMiniman.end()) {
+			/*
 			for (x = rooms[i]->x1; x < rooms[i]->x2; x++) {
 				for (y = rooms[i]->y1; y < rooms[i]->y2; y++) {
 					if (map[x][y] && (map[x][y]->type() == Floor)) {
@@ -281,6 +282,7 @@ void Map::createMinimap() {
 					}
 				}
 			}
+			*/
 			addToMinimap(rooms[i]);
 		}
 	}
@@ -309,8 +311,23 @@ void Map::addToMinimap(Room* room) {
 			}
 		}
 		roomsOnMiniman.push_back(room);
+
+		// Draw teleport
+		if (room->telporter) {
+			SDL_SetRenderDrawColor(Game::renderer, 0, 102, 255, 200);
+			r.w = 3;
+			r.h = 3;
+			r.x = room->telporter->getPositionX() / fieldRect.w - 1;
+			r.y = room->telporter->getPositionY() / fieldRect.h - 1;
+			SDL_RenderFillRect(Game::renderer, &r);
+			// Undo color and r.w and r.h
+			SDL_SetRenderDrawColor(Game::renderer, 255, 184, 77, 200);
+			r.w = 1;
+			r.h = 1;
+		}
 	}
 
+	// Draw hallways
 	for (std::list<Room*>::iterator it = room->hallways.begin(); it != room->hallways.end(); it++) { // for every hallway in room
 		if (std::find(roomsOnMiniman.begin(), roomsOnMiniman.end(), (*it)) == roomsOnMiniman.end()) {
 			for (x = (*it)->x1; x <= (*it)->x2; x++) {
@@ -322,6 +339,7 @@ void Map::addToMinimap(Room* room) {
 					}
 				}
 			}
+			// Draw connected rooms
 			/*
 			for (std::list<Room*>::iterator it_room = (*it)->connectedRooms.begin(); it_room != (*it)->connectedRooms.end(); it_room++) { // for other room in hallway
 				if ((*it_room) != room) {
@@ -404,6 +422,12 @@ void Map::changeRoom(Room* room, Field* fieldToMove) {
 	currRoom = room;
 	setCamera(newX, newY);
 	addToMinimap(room);
+	_roomChanged = true;
+}
+
+void Map::changeRoom(Room* room, Teleporter* tele) {
+	currRoom = room;
+	player->setPosition(tele->getPositionX(), tele->getPositionY());
 	_roomChanged = true;
 }
 

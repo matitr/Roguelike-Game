@@ -22,9 +22,8 @@ public:
 
 	virtual void onPlayerTouch();
 	virtual void onPlayerInteract(Map* map, std::vector <InteractiveObject*>& objects, Player* player);
-	virtual void updateInteraction(Map* map, std::vector <InteractiveObject*>& objects, Player* player, SDL_Event& event);
+	virtual void updateInteraction(Map* map, std::vector <InteractiveObject*>& objects, Player* player);
 	virtual bool update(Player *player);
-	void draw(SDL_Point* startRender);
 
 	InteractiveObject(TextureInfo& txtInfo, GameObjectType objType, ObjectHitboxType hitbType);
 	InteractiveObject(TextureInfo& txtInfo, GameObjectType objType, ObjectHitboxType hitbType, int r);

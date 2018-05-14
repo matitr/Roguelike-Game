@@ -60,6 +60,10 @@
     <ClCompile Include="Money.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
+    <ClCompile Include="Inventory.cpp" />
+    <ClCompile Include="Item.cpp" />
+    <ClCompile Include="Input.cpp" />
+    <ClCompile Include="DataBase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
@@ -123,6 +127,10 @@
     <ClInclude Include="Money.h">
       <Filter>Objects</Filter>
     </ClInclude>
+    <ClInclude Include="Inventory.h" />
+    <ClInclude Include="Item.h" />
+    <ClInclude Include="Input.h" />
+    <ClInclude Include="DataBase.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Map">

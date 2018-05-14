@@ -5,7 +5,7 @@
 class Map;
 
 class Projectile : public GameObject {
-	int speed;
+	float speed;
 	float direction;
 	float angle; // starting in middle right 
 	float damage;

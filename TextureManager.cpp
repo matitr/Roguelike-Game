@@ -15,6 +15,7 @@ void TextureManager::loadAllTextures() {
 	textures[OBJECTS] = TextureManager::LoadTexture("Textures/objects.png");
 	textures[COIN] = TextureManager::LoadTexture("Textures/coin.png");
 	textures[CHEST] = TextureManager::LoadTexture("Textures/chest.png");
+	textures[INVENTORY] = TextureManager::LoadTexture("Textures/inventory.png");
 
 	TextureManager::loadAllTextureSrcRect();
 }
@@ -38,7 +39,6 @@ void TextureManager::loadAllTextureSrcRect() { // srcRect = { x, y, w, h }
 
 	textureParameters[Coin] = { { 0,0,16,16 },{ 16,16 }, textures[COIN] };
 	textureParameters[Chest] = { { 0,0,100,75 },{ 100,75 }, textures[CHEST] };
-
 }
 
 SDL_Texture* TextureManager::LoadTexture(const char* dir) {

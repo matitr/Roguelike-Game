@@ -1,11 +1,12 @@
 #pragma once
 #include "Unit.h"
+#include "Inventory.h"
 
 #define ATTACK_POSSIBLE -1
 
 class Projectile;
 
-class Player : public Unit {
+class Player : public Unit, public Inventory {
 	std::unordered_map <ActionType, Animation*> animations;
 	ActionType unitActionName;
 
@@ -38,6 +39,9 @@ public:
 	void addAnimation(ActionType actionName, int _yPosTexture, int _frames, int _frameTime);
 	void setAnimation(ActionType actionName);
 	void resetAnimation();
+
+	void changeInteractionBlock(bool block) { isInteractionBlocked = block; }
+	bool interactionBlocked() { return isInteractionBlocked; }
 
 	bool alive() { return hp > 0 ? true : false; }
 	void addMoney(int m) { money += m; }

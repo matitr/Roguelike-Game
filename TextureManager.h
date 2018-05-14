@@ -15,10 +15,12 @@ struct TextureInfo {
 	SDL_Texture* texture;
 };
 
-enum TextureFromFile { PLAYER, PROJECTILES, PLAYER_STATS, LEVEL_1, OBJECTS, COIN, CHEST };
+
+enum TextureFromFile { PLAYER, PROJECTILES, PLAYER_STATS, LEVEL_1, OBJECTS, COIN, CHEST, INVENTORY };
 enum SingleFieldTexture { WOOD_FLOOR , WALL_SIDE, WALL_TOP_T, WALL_TOP_R, WALL_TOP_B, WALL_TOP_L, DOORS};
 enum SingleTexture { Chest, Coin, Teleport, TeleportOff, TeleportOn };
 enum TextureAnimation { ChestOpening, CoinSpin };
+
 
 class TextureManager{
 

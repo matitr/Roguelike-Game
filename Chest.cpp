@@ -7,6 +7,7 @@
 
 void ChestObj::onPlayerInteract(Map* map, std::vector <InteractiveObject*>& objects, Player* player) {
 	open = true;
+	objCanInteract = false;
 }
 
 bool ChestObj::update(Player *player) {
@@ -21,6 +22,7 @@ ChestObj::ChestObj(float posX, float posY)
 	: InteractiveObject(TextureManager::textureParameters[SingleTexture::Chest], Static, Rectangle, SDL_SCANCODE_E), SpriteAnimation(3, 30, 3, srcRect) {
 	position.x = posX;
 	position.y = posY;
+	setOnEndOfFrame();
 }
 
 

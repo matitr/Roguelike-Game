@@ -1,15 +1,18 @@
 #include "Game.h"
 #include "TextureManager.h"
+#include "DataBase.h"
 #include <iostream>
 #include <time.h>
 #include "Monsters.h"
 #include "InteractiveObject.h"
+#include "Input.h"
 #include <chrono>
 #include <typeinfo>
 #include <thread>
 
 #include "Money.h"
 #include "Chest.h"
+#include "Item.h"
 
 typedef std::chrono::high_resolution_clock Clock;
 SDL_Renderer *Game::renderer = nullptr;;
@@ -24,6 +27,7 @@ void Game::run() {
 	time_t timeCounter = clock();
 	int frameCounter=0;
 	TextureManager::loadAllTextures();
+	DataBase::loadAllDataBases();
 
 	player = new Player(TextureManager::textures[PLAYER], TextureManager::textures[PLAYER_STATS]);
 	map->setPlayerPointer(player);
@@ -31,7 +35,7 @@ void Game::run() {
 	map->currentRoom()->getRoomObjects(monsters, interactiveObjects);
 	map->setFieldsPositions();
 	player->setPosition(map->getCameraX(), map->getCameraY());
-
+	interactiveObjects->push_back(new ChestObj(player->getPositionX(), player->getPositionY()));
 	for (int i = 0; i < 0; i++) {
 			Unit *m = new MonRandMoveProjAround(map, player);
 			(*monsters).push_back(m);
@@ -60,54 +64,62 @@ void Game::run() {
 }
 
 void Game::handleEvents() {
-	SDL_PumpEvents();
+	Input::update();
 
-	while (SDL_PollEvent(&event)) {
-		switch (event.type) {
-		case SDL_QUIT:
-			_running = 0;
-			break;
-		case SDL_KEYDOWN:
-			if (objectSelected.find(event.key.keysym.scancode) != objectSelected.end() && objectSelected[event.key.keysym.scancode])
-				objectSelected[event.key.keysym.scancode]->onPlayerInteract(map, (*interactiveObjects), player);
-			break;
-		default:
-			break;
+	if( Input::quit)
+		_running = 0;
+	else {
+		for (it_objectSelected = objectSelected.begin(); it_objectSelected != objectSelected.end(); it_objectSelected++) {
+			if (Input::keyPressed[it_objectSelected->first]) { // Interaction on key detected
+				if (objectSelected.find(it_objectSelected->first) != objectSelected.end() && objectSelected[it_objectSelected->first] && !objectSelected[it_objectSelected->first]->interacting()) {
+					objectSelected[it_objectSelected->first]->onPlayerInteract(map, (*interactiveObjects), player);
+				}
+			}
+		}
+		if (Input::keyPressed[SDL_SCANCODE_I]) {
+			if (player->inventoryIsOpened()) {
+				player->closeInventory();
+			}
+			else
+				player->openInventory();
 		}
 	}
+	
+
 	player->velocity.x = 0;
 	player->velocity.y = 0;
 
-	if (keystates[SDL_SCANCODE_W]) {
+	if (Input::keystates[SDL_SCANCODE_W]) {
 		player->velocity.y += -1;
 		player->setAnimation(Walk);
 	}
-	if (keystates[SDL_SCANCODE_S]) {
+	if (Input::keystates[SDL_SCANCODE_S]) {
 		player->velocity.y += 1;
 		player->setAnimation(Walk);
 	}
-	if (keystates[SDL_SCANCODE_A]) {
+	if (Input::keystates[SDL_SCANCODE_A]) {
 		player->velocity.x += -1;
 		player->setAnimation(Walk);
 	}
-	if (keystates[SDL_SCANCODE_D]) {
+	if (Input::keystates[SDL_SCANCODE_D]) {
 		player->velocity.x += 1;
 		player->setAnimation(Walk);
 	}
-	if (keystates[SDL_SCANCODE_SPACE]) {
+	if (Input::keystates[SDL_SCANCODE_SPACE]) {
 		player->setAnimation(Roll);
 	}
-	if (keystates[SDL_SCANCODE_TAB]) {
-		map->changeMinimapSize(MinimapLarge);
+	if (Input::keystates[SDL_SCANCODE_TAB]) {
+		if (map->getMinimapSize() != MinimapClosed)
+			map->changeMinimapSize(MinimapLarge);
 	}
-	else
+	else if (map->getMinimapSize() == MinimapLarge)
 		map->changeMinimapSize(MinimapSmall);
 
 	if (!player->velocity.y && !player->velocity.x)
 		player->setAnimation(Stand);
 
 	int mouseX, mouseY;
-
+	
 	if (SDL_GetMouseState(&mouseX, &mouseY) & SDL_BUTTON(SDL_BUTTON_LEFT)) {
 		if (player->attackPossible())
 			player->attackPressed(mouseX + map->startRender.x, mouseY / HEIGHT_SCALE + map->startRender.y);
@@ -124,6 +136,7 @@ void Game::updateGame() {
 	if (map->roomChanged()) {
 		map->currentRoom()->getRoomObjects(monsters, interactiveObjects);
 		map->setRoomChanged(false);
+		player->closeInventory();
 	}
 
 	if (!map->currentRoom()->visited && map->currentRoom()->battle) {
@@ -131,6 +144,7 @@ void Game::updateGame() {
 	}
 	std::list <Unit*>::iterator it_monsters = (*monsters).begin();
 
+	// Update monsters
 	while (it_monsters != (*monsters).end()) {
 		if (!(*it_monsters)->update(monsterAttacks, map, map->fieldRect)) {
 			(*interactiveObjects).push_back(new Money((*it_monsters)->getPositionX(), (*it_monsters)->getPositionY())); // drop money
@@ -149,6 +163,7 @@ void Game::updateGame() {
 
 	it_interactiveObj = (*interactiveObjects).begin();
 
+	// Ipdate interactiveObj
 	while (it_interactiveObj != (*interactiveObjects).end()) {
 		if (!(*it_interactiveObj)->update(player)) {
 			itTemp_interactiveObj = it_interactiveObj;
@@ -166,6 +181,7 @@ void Game::updateGame() {
 	collision.updateInteractiveObjects((*interactiveObjects), objectSelected, player);
 
 	map->setCamera(int(player->getPositionX()), int(player->getPositionY()));
+	map->upDateMinimapPos();
 
 	updateGameProjectiles();
 
@@ -174,7 +190,13 @@ void Game::updateGame() {
 
 	for (it_objectSelected = objectSelected.begin(); it_objectSelected != objectSelected.end(); it_objectSelected++)
 		if ((*it_objectSelected).second && (*it_objectSelected).second->interacting())
-			(*it_objectSelected).second->updateInteraction(map, *interactiveObjects, player, event);
+			(*it_objectSelected).second->updateInteraction(map, *interactiveObjects, player);
+
+	if (player->inventoryIsOpened())
+		player->updateInventory();
+
+	if (player->inventoryIsOpened())
+		player->drawInventory();
 
 	SDL_RenderPresent(renderer);
 }
@@ -226,7 +248,7 @@ Game::Game(const char* title, int w, int h, bool fullscreen) {
 	windowResolution.y = h;
 	map = new Map(player, h / 2, w / 2);
 
-	keystates = SDL_GetKeyboardState(NULL);
+	
 	FPS = 60;
 	cameraMovePix = 5;
 	_running = true;

@@ -55,6 +55,10 @@ public:
 	int getCameraX() { return cameraPos.x; }
 	int getCameraY() { return cameraPos.y; }
 	void changeMinimapSize(MinimapSize show);
+	void upDateMinimapPos();
+	MinimapSize getMinimapSize() { return minimapSize; }
+	SDL_Rect getMinimapSrcRect() { return minimapSrcRect; }
+	SDL_Rect& getMinimapDstRect() { return minimapDstRect; }
 
 	SDL_Point getResolution() { return resolution; }
 

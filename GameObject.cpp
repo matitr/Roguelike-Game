@@ -4,6 +4,7 @@
 #include "Field.h"
 #include "Projectile.h"
 #include "InteractiveObject.h"
+#include "Game.h"
 
 template <class T>
 void GameObject::collisionUnit(T *gameObj) {
@@ -166,6 +167,22 @@ void GameObject::collisionUnitFields(std::vector<std::vector<Field*>>& map, SDL_
 		}
 	}
 
+}
+
+void  GameObject::draw(SDL_Point* startRender) {
+	dstRect.x = position.x - startRender->x - dstRect.w / 2;
+	dstRect.y = (position.y - startRender->y) - dstRect.h / 2;
+
+
+	SDL_RenderCopy(Game::renderer, texture, &srcRect, &dstRect);
+}
+
+void GameObject::draw() {
+	dstRect.x = position.x - dstRect.w / 2;
+	dstRect.y = position.y - dstRect.h / 2;
+
+
+	SDL_RenderCopy(Game::renderer, texture, &srcRect, &dstRect);
 }
 
 GameObject::GameObject(SDL_Texture* txt, GameObjectType objType, ObjectHitboxType hitbType, int _radius)

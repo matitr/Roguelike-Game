@@ -64,11 +64,17 @@ void RenderMap::render(std::vector <GameObject*>& gameObjects) {
 		}
 	}
 
-	if (currRoom->telporter)
-		currRoom->telporter->draw(&startRender);
+	std::sort(gameObjects.begin(), gameObjects.end(),
+		[](const GameObject* a, const GameObject* b)->bool 
+	{return (a->flatTextureOnFloor() && !b->flatTextureOnFloor()) ||(a->flatTextureOnFloor() && b->flatTextureOnFloor() && a->getPositionY() < b->getPositionY()); });
 
-	std::sort(gameObjects.begin(), gameObjects.end(), [](const GameObject* a, const GameObject* b)->bool {return a->getPositionY() < b->getPositionY(); });
 	int numbOfGameObj = gameObjects.size(), iGameObject = 0;
+
+	// Draw objects that are flat on floor
+	while (iGameObject < numbOfGameObj && gameObjects[iGameObject]->flatTextureOnFloor()) {
+		gameObjects[iGameObject]->draw(&startRender);
+		iGameObject++;
+	}
 
 	// Draw rest
 	fieldY = startRenderPos.yField;
@@ -146,7 +152,7 @@ void RenderMap::moveCamera(int x, int y) {
 void RenderMap::changeMinimapSize(MinimapSize showM){
 	minimapSize = showM;
 
-	if (showM == MinimapLarge) {
+	if (minimapSize == MinimapLarge || minimapSize == MinimapClosed) {
 		minimapDstRect.x = resolution.x / 2 - MAP_WIDTH / 2;
 		minimapDstRect.y = resolution.y / 2 - MAP_HEIGHT / 2;
 		minimapDstRect.w = MAP_WIDTH;
@@ -157,7 +163,7 @@ void RenderMap::changeMinimapSize(MinimapSize showM){
 		minimapSrcRect.x = 0;
 		minimapSrcRect.y = 0;
 	}
-	else if (showM == MinimapSmall) {
+	else if (minimapSize == MinimapSmall) {
 		minimapDstRect.x = resolution.x - MINIMAP_WIDTH - 20;
 		minimapDstRect.y = 20;
 		minimapDstRect.w = MINIMAP_WIDTH;
@@ -165,6 +171,24 @@ void RenderMap::changeMinimapSize(MinimapSize showM){
 
 		minimapSrcRect.w = MINIMAP_WIDTH;
 		minimapSrcRect.h = MINIMAP_HEIGHT;
+		minimapSrcRect.x = cameraPos.x / fieldRect.w - MINIMAP_WIDTH / 2;
+		minimapSrcRect.y = HEIGHT_SCALE * cameraPos.y / fieldRect.h - MINIMAP_HEIGHT / 2;
+	}
+}
+
+void RenderMap::upDateMinimapPos() {
+
+	if (minimapSize == MinimapLarge) {
+		minimapDstRect.x = resolution.x / 2 - MAP_WIDTH / 2;
+		minimapDstRect.y = resolution.y / 2 - MAP_HEIGHT / 2;
+
+		minimapSrcRect.x = 0;
+		minimapSrcRect.y = 0;
+	}
+	else if (minimapSize == MinimapSmall) {
+		minimapDstRect.x = resolution.x - MINIMAP_WIDTH - 20;
+		minimapDstRect.y = 20;
+
 		minimapSrcRect.x = cameraPos.x / fieldRect.w - MINIMAP_WIDTH / 2;
 		minimapSrcRect.y = HEIGHT_SCALE * cameraPos.y / fieldRect.h - MINIMAP_HEIGHT / 2;
 	}

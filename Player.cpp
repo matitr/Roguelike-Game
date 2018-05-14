@@ -5,6 +5,12 @@
 
 
 bool Player::update(std::list <Projectile*>& playerProjectiles, Map* map, SDL_Rect& fieldRect) {
+	if (isInteractionBlocked) {
+		attack = false;
+		velocity.x = 0;
+		velocity.y = 0;
+	}
+
 	if (attackFrame == ATTACK_POSSIBLE && attack)
 		makeAttack(playerProjectiles, TextureManager::textures[PROJECTILES]);
 	attack = false;

@@ -50,6 +50,7 @@ public:
 
 	void setFieldsPositions();
 	void changeRoom(Room* room, Field* fieldToMove);
+	void changeRoom(Room* room, Teleporter* tele);
 
 	Map(Player* p, int _hCenter, int _wCenter);
 	~Map();

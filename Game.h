@@ -17,10 +17,9 @@ class Game{
 	int FPS;
 	Map* map;
 	bool _running;
-	const Uint8* keystates;
+	
 	int cameraMovePix;
 	SDL_Point windowResolution;
-	SDL_Event event;
 
 	Player* player;
 	std::list <Unit*>* monsters;
