@@ -11,18 +11,16 @@ Movement::Movement() {
 
 Movement::~Movement() {
 
+}	
+
+A_Star::FieldA::FieldA(int _x, int _y) {
+	x = _x;
+	x = _x;
 }
-
-A_Star::A_Star(Map* _map, Unit* _player) {
-	map = _map;
-	player = _player;
-//	roomW = map->currentRoom()->x1 - map->currentRoom()->x2 + 1;
-//	room.resize(roomW * (map->currentRoom()->y1 - map->currentRoom()->y2 + 1));
-
-}
-
-A_Star::~A_Star() {
-
+bool A_Star::FieldA::operator==(const FieldA& f) {
+	if (x == f.x && y == f.y)
+		return true;
+	return false;
 }
 
 void A_Star::createNeighbors(Field* field, std::stack<Field*>& neighbors) {
@@ -73,13 +71,12 @@ double A_Star::distance(int x1, int y1, int x2, int y2) {
 	return sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
 }
 
-SDL_Point* A_Star::getVelocityOfPath(Field* lastField, Field* start) {
-	SDL_Point velocity;
+void A_Star::getVelocityOfPath(Field* lastField, Field* start) {
 
 	if (lastField == start) {
 		velocity.x = 0;
 		velocity.y = 0;
-		return &velocity;
+		return;
 	}
 
 	while (lastField->prevField && lastField->prevField != start)
@@ -87,10 +84,10 @@ SDL_Point* A_Star::getVelocityOfPath(Field* lastField, Field* start) {
 
 	velocity.x = lastField->x() - start->x();
 	velocity.y = lastField->y() - start->y();
-	return &velocity;
+	return;
 }
 
-SDL_Point A_Star::findPath(Unit* unitToMove) {
+void A_Star::findPath(Unit* unitToMove) {
 	openSet.clear();
 	closedSet.clear();
 
@@ -112,8 +109,10 @@ SDL_Point A_Star::findPath(Unit* unitToMove) {
 			}
 		}
 		
-		if (lowestF == end)
-			return *getVelocityOfPath(lowestF, start);
+		if (lowestF == end) {
+			getVelocityOfPath(lowestF, start);
+			return;
+		}
 
 		openSet.remove(lowestF);
 		closedSet.push_back(lowestF);
@@ -140,11 +139,24 @@ SDL_Point A_Star::findPath(Unit* unitToMove) {
 		}
 	}
 
-	return SDL_Point();
+	velocity.x = 0;
+	velocity.y = 0;
+
+	return;
+}
+
+A_Star::A_Star(Map* _map, Unit* _player) {
+	map = _map;
+	player = _player;
+}
+
+A_Star::~A_Star() {
+
 }
 
 void MoveForwardPlayer::makeMove(Unit* unitToMove) {
-	SDL_Point* velocityPath = &findPath(unitToMove);
+	aStar.findPath(unitToMove);
+	SDL_Point* velocityPath = &aStar.velocity;
 	if (velocityPath) {
 		unitToMove->velocity.x = velocityPath->x;
 		unitToMove->velocity.y = velocityPath->y;
@@ -155,7 +167,7 @@ void MoveForwardPlayer::makeMove(Unit* unitToMove) {
 	}
 }
 
-MoveForwardPlayer::MoveForwardPlayer(Map* _map, Unit* _player) : A_Star(_map, _player) {
+MoveForwardPlayer::MoveForwardPlayer(Map* _map, Unit* _player) : aStar(_map, _player) {
 	
 }
 

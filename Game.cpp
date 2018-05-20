@@ -6,6 +6,7 @@
 #include "Monsters.h"
 #include "InteractiveObject.h"
 #include "Input.h"
+#include "GameObject.h"
 #include <chrono>
 #include <typeinfo>
 #include <thread>
@@ -29,13 +30,15 @@ void Game::run() {
 	TextureManager::loadAllTextures();
 	DataBase::loadAllDataBases();
 
-	player = new Player(TextureManager::textures[PLAYER], TextureManager::textures[PLAYER_STATS]);
-	map->setPlayerPointer(player);
-	map->generateNewMap();
+	player = new Player(TextureManager::textures[PLAYER], windowResolution);
+	map = new Map(player, windowResolution.y / 2, windowResolution.x / 2);
+
+//	map->setPlayerPointer(player);
+	map->generateNewLevel();
 	map->currentRoom()->getRoomObjects(monsters, interactiveObjects);
 	map->setFieldsPositions();
 	player->setPosition(map->getCameraX(), map->getCameraY());
-	interactiveObjects->push_back(new ChestObj(player->getPositionX(), player->getPositionY()));
+	interactiveObjects->push_back(new Item(player->getPositionX(), player->getPositionY()));
 	for (int i = 0; i < 0; i++) {
 			Unit *m = new MonRandMoveProjAround(map, player);
 			(*monsters).push_back(m);
@@ -64,6 +67,7 @@ void Game::run() {
 }
 
 void Game::handleEvents() {
+	std::unordered_map <SDL_Scancode, InteractiveObject*>::iterator it_objectSelected;
 	Input::update();
 
 	if( Input::quit)
@@ -77,11 +81,11 @@ void Game::handleEvents() {
 			}
 		}
 		if (Input::keyPressed[SDL_SCANCODE_I]) {
-			if (player->inventoryIsOpened()) {
-				player->closeInventory();
+			if (player->inventory().isOpened()) {
+				player->inventory().close();
 			}
 			else
-				player->openInventory();
+				player->inventory().open();
 		}
 	}
 	
@@ -127,8 +131,17 @@ void Game::handleEvents() {
 }
 
 void Game::updateGame() {
+	std::list<Unit*>::iterator tempItMonster;
+	std::vector <InteractiveObject*>::iterator it_interactiveObj;
+	std::vector <InteractiveObject*>::iterator itTemp_interactiveObj;
+	std::unordered_map <SDL_Scancode, InteractiveObject*>::iterator it_objectSelected;
+
+
 	SDL_RenderClear(renderer);
 	gameObjects.clear();
+
+	if (player->inventory().isOpened())
+		player->inventory().update(map, player);
 
 	player->update(playerProjectiles, map, map->fieldRect);
 	gameObjects.push_back(player);
@@ -136,7 +149,7 @@ void Game::updateGame() {
 	if (map->roomChanged()) {
 		map->currentRoom()->getRoomObjects(monsters, interactiveObjects);
 		map->setRoomChanged(false);
-		player->closeInventory();
+		player->inventory().close();
 	}
 
 	if (!map->currentRoom()->visited && map->currentRoom()->battle) {
@@ -176,6 +189,10 @@ void Game::updateGame() {
 		}
 	}
 
+	if (map->currentRoom()->type == Treasure)
+		int jfy = 0;
+
+
 	collision.updateAllUnits(player, (*monsters), map->map, map->fieldRect);
 	collision.updateAllProjectiles(playerProjectiles, monsterAttacks, player, (*monsters));
 	collision.updateInteractiveObjects((*interactiveObjects), objectSelected, player);
@@ -192,20 +209,21 @@ void Game::updateGame() {
 		if ((*it_objectSelected).second && (*it_objectSelected).second->interacting())
 			(*it_objectSelected).second->updateInteraction(map, *interactiveObjects, player);
 
-	if (player->inventoryIsOpened())
-		player->updateInventory();
-
-	if (player->inventoryIsOpened())
-		player->drawInventory();
+	if (player->inventory().isOpened())
+		player->inventory().draw();
 
 	SDL_RenderPresent(renderer);
 }
 
 void Game::updateGameProjectiles() {
+	std::list<Projectile*>::iterator it = playerProjectiles.begin();
+	std::list<Projectile*>::iterator tempItProjectile;
+	std::list<Unit*>::iterator itMonster;
+
 	it = monsterAttacks.begin();
 	while (it != monsterAttacks.end()) {
 		if (*it) {
-			if (!(*it)->update(map, map->fieldRect)) {
+			if (!(*it)->update(map, map->fieldRect, player)) {
 				delete (*it);
 				tempItProjectile = it;
 				it++;
@@ -222,7 +240,17 @@ void Game::updateGameProjectiles() {
 
 	while (it != playerProjectiles.end()) {
 		if (*it) {
-			if (!(*it)->update(map, map->fieldRect)) {
+			// Find closest monster
+			float closest = 9999999;
+			float tempDist;
+			Unit* closestMonster = nullptr;
+			if ((*it)->isHoming()) {
+				for (itMonster = monsters->begin(); itMonster != monsters->end(); itMonster++)
+					if ((tempDist = (*it)->distanceEdges(*itMonster)) < closest)
+						closestMonster = *itMonster;
+			}
+
+			if (!(*it)->update(map, map->fieldRect, closestMonster)) {
 				delete (*it);
 				tempItProjectile = it;
 				it++;
@@ -246,7 +274,7 @@ Game::Game(const char* title, int w, int h, bool fullscreen) {
 
 	windowResolution.x = w;
 	windowResolution.y = h;
-	map = new Map(player, h / 2, w / 2);
+	map = nullptr;
 
 	
 	FPS = 60;

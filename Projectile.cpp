@@ -2,10 +2,11 @@
 #include "Game.h"
 #include "Map.h"
 #include <math.h>
+#include <iostream>
 
 void Projectile::setDirection(float dir) {
 	direction = dir;
-	angle = dir * 180.0 / 3.14;
+	angle = dir * 180.0 / 3.14159265;
 
 	velocity.x = cos(direction) * speed;
 	velocity.y = sin(direction) * speed;
@@ -24,9 +25,17 @@ void Projectile::setPosition(int x, int y) {
 	position.y = y;
 }
 
-bool Projectile::update(Map* map, SDL_Rect& fieldRect) {
-	if (enemyHitted)
-		return false;
+bool Projectile::update(Map* map, SDL_Rect& fieldRect, Unit* closestUnit) {
+	if (enemyHitted) {
+		enemyHitted = false;
+
+		staticPassives[StaticPassiveName::pierceShots]--;
+		if (staticPassives[StaticPassiveName::pierceShots] == -1)
+			return false;
+	}
+
+	if (staticPassives[StaticPassiveName::homing] && closestUnit)
+		homingShot(closestUnit);
 
 	position.x += velocity.x;
 	position.y += velocity.y;
@@ -60,21 +69,60 @@ void Projectile::draw(SDL_Point* startRender) {
 	SDL_RenderCopy(Game::renderer, texture, &srcRect, &dstRect);
 }
 
-Projectile::Projectile(SDL_Texture*txt, int width, int height, int _yIter, int _frames, int _frameTime) 
-	: frames(_frames), frameTime(_frameTime), GameObject(txt, Dynamic, Circle, width / 2) {
+void Projectile::homingShot(Unit* closestUnit) {
+	double dist;
+	if ((dist = distanceEdges(closestUnit)) > 150)
+		return;
+
+	float x = closestUnit->getPositionX() - position.x;
+	float y = closestUnit->getPositionY() - position.y;
+	double vectorMultiply = x * velocity.x + y * velocity.y;
+	double distanceMultiply = sqrt(pow(x, 2) + pow(y, 2)) * sqrt(pow(velocity.x, 2) + pow(velocity.y, 2));
+	double direction2 = acos(vectorMultiply / distanceMultiply);
+	double angle2 = direction2 * 180.0 / 3.14159265;
+
+	double cross = velocity.x * y - velocity.y * x;
+
+//	if (cross < 0)
+//		direction2 *= -1;
+
+	float change = int(angle2 * 0.09 + 1);
+	if (dist < 40)
+		change = rand() % 22;
+
+	if (cross < 0) {
+		angle -= change;
+
+		if (angle < -180)
+			angle = 180 - (angle + 180);
+	}
+	else {
+		angle += change;
+		
+		if (angle > 180)
+			angle = -180 + (angle - 180);
+	}
+
+	velocity.x = cos(angle * 3.14 / 180.0) * speed;
+	velocity.y = sin(angle * 3.14 / 180.0) * speed;
+}
+
+Projectile::Projectile(AnimationDetails& animation, ItemPassives& passives)
+	: frames(animation.frames), frameTime(animation.frameTime), GameObject(animation.txt, Dynamic, Circle, animation.width / 2), staticPassives(passives) {
 	speed = 5;
 	damage = 1;
 	enemyHitted = false;
 
-	srcRect.w = width;
-	srcRect.h = height;
+	srcRect.w = animation.width;
+	srcRect.h = animation.height;
 	srcRect.x = 0;
-	srcRect.y = _yIter;
+	srcRect.y = animation.yIter;
 
 	dstRect.x = 0;
 	dstRect.y = 0;
-	dstRect.w = width;
-	dstRect.h = height;
+	dstRect.w = animation.width;
+	dstRect.h = animation.height;
+
 	heightFromGround = 20;
 }
 

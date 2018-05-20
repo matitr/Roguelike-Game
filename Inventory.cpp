@@ -2,44 +2,62 @@
 #include "Game.h"
 #include "Input.h"
 #include "Item.h"
+#include "Map.h"
+#include "Player.h"
 
 
-void Inventory::closeInventory() {
+void Inventory::close() {
 	if (clickedSlot) {
 		clickedSlot->item = clickedItem;
-		clickedItem->setPositionX(clickedSlot->coord.x + itemSize.x / 2);
-		clickedItem->setPositionY(clickedSlot->coord.y + itemSize.y / 2);
+		clickedItem->setPositionX(clickedSlot->rect.x + details.slotSize.x / 2);
+		clickedItem->setPositionY(clickedSlot->rect.y + details.slotSize.y / 2);
 	}
 
-	isOpened = false;
+	invIsOpened = false;
 	clickedSlot = nullptr;
 	clickedItem = nullptr;
 	slotUnderMouse = nullptr;
-	slotToShowOptions = nullptr;
 }
 
-void Inventory::updateInventory() {
-	if (!isOpened) {
-		isOpened = false;
+void Inventory::update(Map* map, Player* player) {
+	if (!invIsOpened || map->currentRoom()->battle) {
+		invIsOpened = false;
 		return;
 	}
 
 	int mouseX = Input::mousePosX, mouseY = Input::mousePosY;
-	double x = (mouseX - dstRectInv.x - startInventoryTab.x) / (float(itemSize.x) + float(spaceBetweenItems));
-	double y = (mouseY - dstRectInv.y - startInventoryTab.y) / (float(itemSize.y) + float(spaceBetweenItems));
+	double x = (mouseX - dstRectInv.x - details.startInventoryTab.x) / (float(details.slotSize.x) + float(details.spaceBetweenSlots));
+	double y = (mouseY - dstRectInv.y - details.startInventoryTab.y) / (float(details.slotSize.y) + float(details.spaceBetweenSlots));
 	slotUnderMouse = nullptr;
 
-	if (clickedSlot) {
+	// Mouse on inventory
+	if (mouseX >= dstRectInv.x && mouseX <= dstRectInv.x + dstRectInv.w && mouseY >= dstRectInv.y && mouseY <= dstRectInv.y + dstRectInv.h)
+		player->cancelAttack();
+
+	if (clickedSlot && clickedItem) {
 		clickedItem->setPositionX(mouseX);
 		clickedItem->setPositionY(mouseY);
 	}
 
 	// selected item in inventory
-	if (x >= 0 && x < numerOfItemsInv.x && y >= 0 && y < numerOfItemsInv.y
-		&& (x - int(x)) <= float(itemSize.x) / (itemSize.x + spaceBetweenItems) && (y - int(y)) <= float(itemSize.y) / (itemSize.y + spaceBetweenItems)) {
+	if (x >= 0 && x < details.numerOfSlots.x && y >= 0 && y < details.numerOfSlots.y
+		&& (x - int(x)) <= float(details.slotSize.x) / (details.slotSize.x + details.spaceBetweenSlots) 
+		&& (y - int(y)) <= float(details.slotSize.y) / (details.slotSize.y + details.spaceBetweenSlots)) {
 
-		slotUnderMouse = slots[int(x)][int(y)];
+		slotUnderMouse = inventorySlots[int(x)][int(y)];
 	}
+
+	slotUnderMouseEq = false;
+	for (int i = 0; i < equippedSlots.size(); i++) {
+		if (mouseX >= equippedSlots[i]->rect.x && mouseX <= equippedSlots[i]->rect.x + equippedSlots[i]->rect.w
+			&& mouseY >= equippedSlots[i]->rect.y && mouseY <= equippedSlots[i]->rect.y + equippedSlots[i]->rect.h) {
+
+			slotUnderMouseEq = true;
+			slotUnderMouse = equippedSlots[i];
+		}
+
+	}
+
 
 	updateFocusOnSlot();
 }
@@ -47,74 +65,81 @@ void Inventory::updateInventory() {
 void Inventory::updateFocusOnSlot() {
 	if (slotUnderMouse) {
 		if (Input::mousePressed[SDL_BUTTON_LEFT]) { // Move item
-			if (!clickedSlot) { // First click
+			if (!clickedSlot && slotUnderMouse->item) { // First click
 				clickedSlot = slotUnderMouse;
 				clickedItem = slotUnderMouse->item;
 				slotUnderMouse->item = nullptr;;
 			}
-			else { // Move item
-				clickedSlot->item = slotUnderMouse->item;
-				slotUnderMouse->item = clickedItem;
-				clickedItem->setPositionX(slotUnderMouse->coord.x + itemSize.x / 2);
-				clickedItem->setPositionY(slotUnderMouse->coord.y + itemSize.y / 2);
-				clickedSlot = nullptr;
-				clickedItem = nullptr;
+			else if (clickedSlot) { // Move item
+				if (!slotUnderMouseEq || (slotUnderMouse->itemType == clickedItem->itemType())) { // Check item type
+					clickedSlot->item = slotUnderMouse->item;
+					slotUnderMouse->item = clickedItem;
+					clickedItem->setPositionX(slotUnderMouse->rect.x + slotUnderMouse->rect.w / 2);
+					clickedItem->setPositionY(slotUnderMouse->rect.y + slotUnderMouse->rect.h / 2);
+					clickedSlot = nullptr;
+					clickedItem = nullptr;
+				}
 			}
 		}
 		else if (Input::mousePressed[SDL_BUTTON_RIGHT]) { // Show item options
-			slotToShowOptions = slotUnderMouse;
+			if (slotUnderMouseEq) {
+				unequipItem(slotUnderMouse);
+			}
+			else { // Slot in inventory
+				equipItem(slotUnderMouse);
+			}
 		}
 	}
 	else if (Input::mousePressed[SDL_BUTTON_LEFT] || Input::mousePressed[SDL_BUTTON_RIGHT]) { // Cancel selection / pickUp
-		if (slotToShowOptions) {
-			slotToShowOptions = nullptr;
-		}
-		else if (clickedSlot) {
+		if (clickedSlot) {
 			clickedSlot->item = clickedItem;
-			clickedItem->setPositionX(clickedSlot->coord.x + itemSize.x / 2);
-			clickedItem->setPositionY(clickedSlot->coord.y + itemSize.y / 2);
+			clickedItem->setPositionX(clickedSlot->rect.x + clickedSlot->rect.w / 2);
+			clickedItem->setPositionY(clickedSlot->rect.y + clickedSlot->rect.h / 2);
 			clickedSlot = nullptr;
 			clickedItem = nullptr;
 		}
 	}
 }
 
-void Inventory::drawInventory() {
-	SDL_RenderCopy(Game::renderer, texture, NULL, &dstRectInv);
+void Inventory::draw() {
+	SDL_RenderCopy(Game::renderer, details.texture, NULL, &dstRectInv);
 
-	if (slotToShowOptions) {
-		// Show item options
-
-	}
-	else if (!clickedSlot && slotUnderMouse) {
+	if (!clickedSlot && slotUnderMouse) {
 		// Show item details
 
 	}
 
-	// Draw items
-	for (int i = 0; i < slots.size(); i++)
-		for (int j = 0; j < slots[i].size(); j++) {
-			if (slots[i][j]->item)
-				slots[i][j]->item->draw();
+	// Draw inventory items
+	for (int i = 0; i < inventorySlots.size(); i++)
+		for (int j = 0; j < inventorySlots[i].size(); j++) {
+			if (inventorySlots[i][j]->item)
+				inventorySlots[i][j]->item->draw();
 		}
+
+	// Draw equipped items
+	for (int i = 0; i < equippedSlots.size(); i++)
+		if (equippedSlots[i]->item)
+			equippedSlots[i]->item->draw();
 
 	if (clickedItem)
 		clickedItem->draw();
+
+	highlightAllSlots();
 }
 
 void Inventory::pickUpItem(Item* item) {
 	InventorySlot* emptySlot = nullptr;
 
-	for (int i = 0; i < slots.size() && !emptySlot; i++)
-		for (int j = 0; j < slots[i].size() && !emptySlot; j++) {
-			if (!slots[i][j]->item)
-				emptySlot = slots[i][j];
+	for (int i = 0; i < inventorySlots.size() && !emptySlot; i++)
+		for (int j = 0; j < inventorySlots[i].size() && !emptySlot; j++) {
+			if (!inventorySlots[i][j]->item)
+				emptySlot = inventorySlots[i][j];
 		}
 
 	if (emptySlot) {
 		emptySlot->item = item;
-		item->setPositionX(emptySlot->coord.x + itemSize.x / 2);
-		item->setPositionY(emptySlot->coord.y + itemSize.y / 2);
+		item->setPositionX(emptySlot->rect.x + details.slotSize.x / 2);
+		item->setPositionY(emptySlot->rect.y + details.slotSize.y / 2);
 	}
 	else // Show message todo
 		int kgu = 0;
@@ -122,22 +147,113 @@ void Inventory::pickUpItem(Item* item) {
 
 void Inventory::dropItem(Item* item) {
 
+}	
+
+void Inventory::equipItem(InventorySlot* itemSlotToEquip) {
+	InventorySlot* toEquip = nullptr;
+
+	for (int i = 0; i < equippedSlots.size(); i++)
+		if (!equippedSlots[i]->item && equippedSlots[i]->itemType == itemSlotToEquip->item->itemType())
+			toEquip = equippedSlots[i];
+
+	if (toEquip) {
+		toEquip->item = itemSlotToEquip->item;
+		toEquip->item->setPositionX(toEquip->rect.x + toEquip->rect.w / 2);
+		toEquip->item->setPositionY(toEquip->rect.y + toEquip->rect.h / 2);
+		itemSlotToEquip->item = nullptr;
+	}
+
+	calculatePassives();
 }
 
-Inventory::Inventory() : InventoryDetails(DataBase::inventoryDelails) {
-	dstRectInv.w = width;
-	dstRectInv.h = height;
+void Inventory::unequipItem(InventorySlot* itemSlotToUnequip) {
+	InventorySlot* toUnequip = nullptr;
+
+	for (int i = 0; i < inventorySlots.size(); i++)
+		for (int j = 0; j < inventorySlots[i].size(); j++)
+			if (!toUnequip && !inventorySlots[i][j]->item)
+				toUnequip = inventorySlots[i][j];
+
+	if (toUnequip) {
+		toUnequip->item = itemSlotToUnequip->item;
+		toUnequip->item->setPositionX(toUnequip->rect.x + toUnequip->rect.w / 2);
+		toUnequip->item->setPositionY(toUnequip->rect.y + toUnequip->rect.h / 2);
+		itemSlotToUnequip->item = nullptr;
+	}
+
+	calculatePassives();
+}
+
+void Inventory::calculatePassives() {
+	// Default values
+	for (int i = 0; i < staticPassives.size(); i++)
+		staticPassives[i] = 0;
+
+	for (int i = 0; i < equippedSlots.size(); i++)
+		if (equippedSlots[i]->item) {
+
+			// Add values
+			for (int it_passive = 0; it_passive < staticPassives.size(); it_passive++) {
+				staticPassives[it_passive] += equippedSlots[i]->item->getStaticPassives()[it_passive];
+			}
+		}
+
+	// Limit passives values
+}
+
+void Inventory::highlightAllSlots() {
+	SDL_SetRenderDrawColor(Game::renderer, 255, 0, rand() % 30 + 70, 255);
+	SDL_Rect r;
+
+	// Inventory
+	r.w = details.slotSize.x;
+	r.h = details.slotSize.y;
+
+	for (int i = 0; i < inventorySlots.size(); i++) {
+		for (int j = 0; j < inventorySlots[i].size(); j++) {
+			r.x = inventorySlots[i][j]->rect.x;
+			r.y = inventorySlots[i][j]->rect.y;
+
+			SDL_RenderDrawRect(Game::renderer, &r);
+		}
+	}
+
+	// Equipped
+	for (int i = 0; i < equippedSlots.size(); i++) {
+		r.x = equippedSlots[i]->rect.x;
+		r.y = equippedSlots[i]->rect.y;
+		r.w = equippedSlots[i]->rect.w;
+		r.h = equippedSlots[i]->rect.h;
+
+		SDL_RenderDrawRect(Game::renderer, &r);
+
+	}
+}
+
+Inventory::Inventory(ItemPassives& passives, SDL_Point& windowResolution) : details(DataBase::inventoryDelails), staticPassives(passives) {
+	dstRectInv.w = details.width;
+	dstRectInv.h = details.height;
 
 	dstRectInv.x = 0;
 	dstRectInv.y = 0;
 
-	slots.resize(numerOfItemsInv.x);
-	for (int i = 0; i < slots.size(); i++) {
-		slots[i].resize(numerOfItemsInv.y);
+	dstRectInv.x = windowResolution.x - dstRectInv.w;
+	dstRectInv.y = (windowResolution.y - dstRectInv.h) / 2;
 
-		for (int j = 0; j < slots[i].size(); j++)
-			slots[i][j] = new InventorySlot(startInventoryTab.x + i * (float(itemSize.x) + spaceBetweenItems),
-				startInventoryTab.y + j * (float(itemSize.y) + spaceBetweenItems));
+	// Set inventory slots
+	inventorySlots.resize(details.numerOfSlots.x);
+	for (int i = 0; i < inventorySlots.size(); i++) {
+		inventorySlots[i].resize(details.numerOfSlots.y);
+
+		for (int j = 0; j < inventorySlots[i].size(); j++)
+			inventorySlots[i][j] = new InventorySlot(dstRectInv.x + details.startInventoryTab.x + i * (float(details.slotSize.x) + details.spaceBetweenSlots),
+				dstRectInv.y + details.startInventoryTab.y + j * (float(details.slotSize.y) + details.spaceBetweenSlots), details.slotSize);
+	}
+
+	// Set equipped slots
+	int numbSlits = details.eqDetails.size();
+	for (int i = 0; i < numbSlits; i++) {
+		equippedSlots.push_back(new InventorySlot(details.eqDetails[i].itemType, details.eqDetails[i].slotRect, dstRectInv));
 	}
 }
 

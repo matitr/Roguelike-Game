@@ -55,9 +55,11 @@ void Room::addHallway(Room* otherRoom, SDL_Point& p1, SDL_Point& p2) {
 
 void Room::spawnMonsters(Map* _map, Unit* _player) {
 	if (type == Monsters) {
-		Unit *m = new MonRandMoveProjAround(_map, _player);
-		monsters.push_back(m);
-		m->setPosition((x1 + (x2 - x1) / 2) * 60, (y1 + (y2 - y1) / 2) * 60);
+		for (int i = 0; i < 1; i++) {
+			Unit *m = new MonRandMoveProjAround(_map, _player);
+			monsters.push_back(m);
+			m->setPosition((x1 + (x2 - x1) / 2) * 60, (y1 + (y2 - y1) / 2) * 60);
+		}
 	}
 	else if (type == Boss) {
 		Unit *m = new Boss1(_map, _player);

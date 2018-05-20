@@ -1,44 +1,58 @@
 #pragma once
 #include <vector>
 #include "DataBase.h"
-
+#include "Item.h"
 class Item;
+class Map;
+class Player;
+enum class PassiveActivateOn;
 
 struct InventorySlot {
-	SDL_Point coord;
+	SDL_Rect rect;
 	Item* item = nullptr;
+	ItemType itemType;
 
-	InventorySlot(int x, int y) : coord({ x,y }) {
-		item = nullptr;
-	}
+	InventorySlot(int x, int y, SDL_Point s) : itemType(ItemType::Universal), rect({ x,y, s.x, s.y }), item(nullptr)  {}
+	InventorySlot(ItemType t, SDL_Rect& r, SDL_Rect& dstR) : itemType(t), rect({ r.x + dstR.x, r.y + dstR.y, r.w,r.h }), item(nullptr) {}
 };
 
-class Inventory : private InventoryDetails {
+
+class Inventory {
+	InventoryDetails details;
 	SDL_Rect dstRectInv;
 
-	bool isOpened = false;
-	std::vector<std::vector<InventorySlot*>> slots;
+	bool invIsOpened = false;
+	std::vector<std::vector<InventorySlot*>> inventorySlots;
+	std::vector<InventorySlot*> equippedSlots;
 
 	InventorySlot* slotUnderMouse = nullptr;
-	InventorySlot* slotToShowOptions = nullptr;
+	bool slotUnderMouseEq = false;
 
 	InventorySlot* clickedSlot = nullptr;
 	Item* clickedItem = nullptr;
 
+	ItemPassives& staticPassives;
+
 	void updateFocusOnSlot();
 public:
-	void openInventory() { isOpened = true; }
-	void closeInventory();
-	bool inventoryIsOpened() { return isOpened; }
+	void open() { invIsOpened = true; }
+	void close();
+	bool isOpened() { return invIsOpened; }
 
-	void updateInventory();
-	void drawInventory();
-
+	void update(Map* map, Player* player);
+	void draw();
 
 	void pickUpItem(Item* item);
 	void dropItem(Item* item);
 
-	Inventory();
+	void equipItem(InventorySlot* item);
+	void unequipItem(InventorySlot* item);
+
+	void calculatePassives();
+
+	void highlightAllSlots(); // For testing
+
+	Inventory(ItemPassives& passives, SDL_Point& windowResolution);
 	~Inventory();
 };
 

@@ -1,5 +1,6 @@
 #include "Attacks.h"
 #include "Unit.h"
+#include "DataBase.h"
 
 
 
@@ -15,7 +16,7 @@ Attack::~Attack() {
 void ProjectileDirection::makeAttack(Unit* unit, std::list <Projectile*>& monsterAttacks) {
 	angle = startAngle;
 	for (int i = 0; i < numbOfProj; i++) {
-		Projectile* p = new Projectile(TextureManager::textures[PROJECTILES], 25, 25, 0, 3, 10);
+		Projectile* p = new Projectile(DataBase::animations[AnimationName::Projectile], unit->getPassives());
 		angle = startAngle + (360.0 / (numbOfProj )) * i;
 		if (angle >= 360)
 			angle -= 360;

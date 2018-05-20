@@ -20,7 +20,7 @@ void Teleporter::onPlayerInteract(Map* map, std::vector <InteractiveObject*>& ob
 		map->getMinimapDstRect().x = map->getResolution().x / TELEPORT_MAP_SIZE_MULTIPLER - map->getMinimapDstRect().w / TELEPORT_MAP_SIZE_MULTIPLER;
 		map->getMinimapDstRect().y = map->getResolution().y / TELEPORT_MAP_SIZE_MULTIPLER - map->getMinimapDstRect().h / TELEPORT_MAP_SIZE_MULTIPLER;
 		player->changeInteractionBlock(true);
-		player->closeInventory();
+		player->inventory().close();
 	}
 	else {
 
@@ -64,7 +64,7 @@ void Teleporter::updateInteraction(Map* map, std::vector <InteractiveObject*>& o
 				interactingNow = false;
 				map->changeMinimapSize(MinimapSmall);
 				player->changeInteractionBlock(false);
-				player->closeInventory();
+				player->inventory().close();
 			}
 			break;
 		}
@@ -76,11 +76,6 @@ void Teleporter::updateInteraction(Map* map, std::vector <InteractiveObject*>& o
 		map->changeMinimapSize(MinimapSmall);
 		player->changeInteractionBlock(false);
 	}
-//	if (event.type == SDL_KEYDOWN && event.key.keysym.scancode == interactObjKey || event.key.keysym.scancode == SDL_SCANCODE_ESCAPE) {
-//		interactingNow = false;
-//		map->changeMinimapSize(MinimapSmall);
-//		player->changeInteractionBlock(false);
-//	}
 }
 
 Teleporter::Teleporter(float posX, float posY) : InteractiveObject(TextureManager::textureParameters[Teleport], Static, Circle, SDL_SCANCODE_T) {

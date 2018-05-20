@@ -45,6 +45,9 @@ public:
 	template <class T>
 	float collisionDistance(T *gameObj);
 
+	template <class T>
+	float distanceEdges(T *gameObj);
+
 	void collisionUnitFields(std::vector<std::vector<Field*>>& map, SDL_Rect& fieldRect);
 
 	void setRadiusY(int y) { radiusY = y; }

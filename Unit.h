@@ -4,6 +4,8 @@
 #include "Map.h"
 #include "Attacks.h"
 #include "GameObject.h"
+#include "Item.h"
+
 
 class Projectile;
 class UnitAction;
@@ -29,6 +31,7 @@ protected:
 	// Hitbox
 	int positionShiftX, positionShiftY;
 
+	ItemPassives staticPassives;
 public:
 	PointFloat velocity;
 	virtual bool update(std::list <Projectile*>& monsterAttacks, Map* map, SDL_Rect& fieldRect);
@@ -44,6 +47,7 @@ public:
 
 	void setHp(int _hp) { hp = float(hp); }
 	void takeDamage(float damage) { hp -= damage; }
+	ItemPassives& getPassives() { return staticPassives; }
 
 	Unit(SDL_Texture *txt, int width,int height);
 	~Unit();

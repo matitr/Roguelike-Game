@@ -60,10 +60,19 @@
     <ClCompile Include="Money.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Inventory.cpp" />
-    <ClCompile Include="Item.cpp" />
     <ClCompile Include="Input.cpp" />
-    <ClCompile Include="DataBase.cpp" />
+    <ClCompile Include="Inventory.cpp">
+      <Filter>Items</Filter>
+    </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <Filter>Items</Filter>
+    </ClCompile>
+    <ClCompile Include="DataBase.cpp">
+      <Filter>Items</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelGenerator.cpp">
+      <Filter>Map</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
@@ -127,10 +136,19 @@
     <ClInclude Include="Money.h">
       <Filter>Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Inventory.h" />
-    <ClInclude Include="Item.h" />
     <ClInclude Include="Input.h" />
-    <ClInclude Include="DataBase.h" />
+    <ClInclude Include="Inventory.h">
+      <Filter>Items</Filter>
+    </ClInclude>
+    <ClInclude Include="Item.h">
+      <Filter>Items</Filter>
+    </ClInclude>
+    <ClInclude Include="DataBase.h">
+      <Filter>Items</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelGenerator.h">
+      <Filter>Map</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Map">
@@ -148,5 +166,11 @@
     <Filter Include="Objects">
       <UniqueIdentifier>{ae9024cc-89de-4f35-9664-85a3a951538f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Items">
+      <UniqueIdentifier>{d4d20c2a-7d69-4ed5-98a8-a03b2939703e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="toDo.txt" />
   </ItemGroup>
 </Project>

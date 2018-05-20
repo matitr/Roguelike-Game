@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "Game.h"
 #include "Map.h"
+#include "DataBase.h"
 #include <math.h>
 
 
@@ -12,7 +13,7 @@ bool Player::update(std::list <Projectile*>& playerProjectiles, Map* map, SDL_Re
 	}
 
 	if (attackFrame == ATTACK_POSSIBLE && attack)
-		makeAttack(playerProjectiles, TextureManager::textures[PROJECTILES]);
+		makeAttack(playerProjectiles, DataBase::animations[AnimationName::Projectile]);
 	attack = false;
 
 	if (attackFrame > -1) {
@@ -125,14 +126,14 @@ void Player::attackPressed(int x, int y) {
 	attack = true;
 }
 
-void Player::makeAttack(std::list <Projectile*>& playerProjectiles, SDL_Texture* txt) {
+void Player::makeAttack(std::list <Projectile*>& playerProjectiles, AnimationDetails& animationD) {
 	if (unitActionName == Roll)
 		return;
 	attackFrame = 0;
 
-	Projectile* p = new Projectile(txt, 25, 25, 0, 3, 10);
+	Projectile* p = new Projectile(animationD, staticPassives);
 
-	float dir = atan2(attackPos.y - position.y, attackPos.x - position.x);
+	float dir = atan2((attackPos.y - position.y), (attackPos.x - position.x));
 
 	p->setDirection(dir);
 
@@ -184,6 +185,10 @@ void Player::resetAnimation() {
 	srcRect.y = dstRect.h * textureY;
 }
 
+void Player::cancelAttack() {
+	attack = false;
+}
+
 void Player::takeMoney(int& m) {
 	if (money - m < 0) 
 		m = money - m; 
@@ -191,7 +196,7 @@ void Player::takeMoney(int& m) {
 	money -= m; 
 }
 
-Player::Player(SDL_Texture* txt, SDL_Texture* _playerStatsTxt) : Unit(txt, 60, 60){
+Player::Player(SDL_Texture* txt, SDL_Point& windowResolution) : Unit(txt, 60, 60), playerIntentory(staticPassives, windowResolution) {
 	addAnimation(Stand, 0, 2, 15);
 	addAnimation(Walk, 1, 2, 15);
 	addAnimation(Roll, 2, 4, 10);
@@ -201,8 +206,8 @@ Player::Player(SDL_Texture* txt, SDL_Texture* _playerStatsTxt) : Unit(txt, 60, 6
 	hp = 8;
 	maxHp = 8;
 	money = 0;
-	playerStatsTxt = _playerStatsTxt;
-	attackSpeed = 31.5;
+	playerStatsTxt = TextureManager::textures[PLAYER_STATS];
+	attackSpeed = 9.5;
 	attackFrames = 60 / attackSpeed;
 	attackFrame = -1;
 

@@ -29,14 +29,7 @@ class Game{
 	std::vector <GameObject*> gameObjects;
 	std::vector <InteractiveObject*>* interactiveObjects;
 
-	std::list<Projectile*>::iterator it = playerProjectiles.begin();
-	std::list<Projectile*>::iterator tempItProjectile;
-	std::list<Unit*>::iterator tempItMonster;
-	std::vector <InteractiveObject*>::iterator it_interactiveObj;
-	std::vector <InteractiveObject*>::iterator itTemp_interactiveObj;
-
 	std::unordered_map <SDL_Scancode, InteractiveObject*> objectSelected;
-	std::unordered_map <SDL_Scancode, InteractiveObject*>::iterator it_objectSelected;
 
 public:
 	static SDL_Renderer* renderer;

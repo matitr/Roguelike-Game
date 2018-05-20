@@ -133,6 +133,44 @@ float GameObject::collisionDistance(T *gameObj) {
 }
 
 template float GameObject::collisionDistance<InteractiveObject>(InteractiveObject *gameObj);
+template float GameObject::collisionDistance<Unit>(Unit *gameObj);
+
+
+template <class T>
+float GameObject::distanceEdges(T *gameObj) {
+	if (hitboxType == Circle) {
+		if (gameObj->hitboxType == Circle) {
+			return sqrt((position.x - gameObj->position.x)*(position.x - gameObj->position.x) + (position.y - gameObj->position.y)*(position.y - gameObj->position.y)) - radius - gameObj->radius;
+		}
+		else { // Rectangle
+			float minX = position.x < (gameObj->position.x + gameObj->radius) ? position.x : (gameObj->position.x + gameObj->radius);
+			float deltaX = position.x - ((gameObj->position.x - gameObj->radius) > minX ? (gameObj->position.x - gameObj->radius) : minX);
+
+			float minY = position.y < (gameObj->position.y + gameObj->radiusY) ? position.y : (gameObj->position.y + gameObj->radiusY);
+			float deltaY = position.y - ((gameObj->position.y - gameObj->radiusY) > minY ? (gameObj->position.y - gameObj->radiusY) : minY);
+
+			return sqrt(deltaX * deltaX + deltaY * deltaY);
+		}
+	}
+	else { // this obj hitbox is Rectangle
+		if (gameObj->hitboxType == Circle) {
+			float minX = gameObj->position.x < (position.x + radius) ? gameObj->position.x : (position.x + radius);
+			float deltaX = gameObj->position.x - ((position.x - radius) > minX ? (position.x - radius) : minX);
+
+			float minY = gameObj->position.y < (position.y + radiusY) ? gameObj->position.y : (position.y + radiusY);
+			float deltaY = gameObj->position.y - ((position.y - radiusY) > minY ? (position.y - radiusY) : minY);
+
+			return sqrt(deltaX * deltaX + deltaY * deltaY);
+		}
+		else { // Collision Rectangle - Rectangle
+
+		}
+	}
+
+	return NO_COLLISION;
+}
+
+template float GameObject::distanceEdges<Unit>(Unit *gameObj);
 
 
 void GameObject::collisionUnitFields(std::vector<std::vector<Field*>>& map, SDL_Rect& fieldRect) {

@@ -10,7 +10,7 @@ class MonRandMoveProjAround : public Unit {
 
 public:
 	MonRandMoveProjAround(Map* _map, Unit* _player) : Unit(TextureManager::textures[PLAYER], 60, 60) {
-		addAction(AttackProj, new MoveForwardPlayer(_map, _player), NULL, 0, 2, 100, 50);
+		addAction(AttackProj, NULL, NULL, 0, 2, 100, 50);
 		//		addAction(AttackProj, NULL, NULL, 0, 2, 100, 50);
 //		addAction(Walk, NULL, NULL, 1, 2, 100);
 //		addAction(Roll, NULL, NULL, 2, 4, 100);
