@@ -18,7 +18,7 @@ void DataBase::loadAllDataBases() {
 }
 
 void DataBase::loadInventoryDetails() {
-	DataBase::inventoryDelails.texture = TextureManager::textures[INVENTORY];
+	DataBase::inventoryDelails.texture = TextureManager::textures[TextureFile::INVENTORY];
 
 	DataBase::inventoryDelails.width = 431;
 	DataBase::inventoryDelails.height = 927;
@@ -54,7 +54,15 @@ void DataBase::loadInventoryDetails() {
 }
 
 void DataBase::loadAnimationsDetails() {
-	animations[AnimationName::Projectile] = { TextureManager::textures[PROJECTILES], 25, 25, 0, 3, 10 };
+	animations[AnimationName::Projectile] = { {0,0}, 3, 10, 3 };
+	animations[AnimationName::ChestOpening] = { { 0,0 }, 3, 30, 3 };
+	animations[AnimationName::CoinSpin] = { { 0,0 }, 8, 5, 8 };
+
+
+	animations[AnimationName::PlayerWalkN] = { { 0,512 }, 8, 5, 8 };
+	animations[AnimationName::PlayerWalkW] = { { 0,576 }, 8, 5, 8 };
+	animations[AnimationName::PlayerWalkS] = { { 0,640 }, 8, 5, 8 };
+	animations[AnimationName::PlayerWalkE] = { { 0,704 }, 8, 5, 8 };
 }
 
 void DataBase::loadFontData() {

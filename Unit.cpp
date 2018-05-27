@@ -4,34 +4,49 @@
 #include "Attacks.h"
 #include <math.h>
 
+void Unit::updateActionFrame() {
+	Direction::Name dirCurrent;
+	Direction::Name dirPast = actions[*currAction]->getDirection();
+
+	if (actions[*currAction]->actionEnded()) { // Next action
+		Direction::Name dirPast = actions[*currAction]->getDirection();
+
+		if (++currAction == pattern.end()) // Last action
+			currAction = pattern.begin();
+
+		actions[*currAction]->setFirstFrame();
+	}
+
+	if (velocity.x || velocity.y) {
+		if (velocity.x > 0)
+			dirCurrent = Direction::E;
+		else if (velocity.x < 0)
+			dirCurrent = Direction::W;
+		else if (velocity.y > 0)
+			dirCurrent = Direction::S;
+		else if (velocity.y < 0)
+			dirCurrent = Direction::N;
+
+		actions[*currAction]->setDirection(dirCurrent);
+	}
+	else {
+		actions[*currAction]->setDirection(dirPast);
+		actions[*currAction]->setFirstFrame();
+	}
+
+	actions[*currAction]->updateFrame();
+}
+
 bool Unit::update(std::list <Projectile*>& monsterAttacks, Map* map) {
 	if (hp <= 0)
 		return false;
 
-	if (!(frameCounter % textureFrameTime)) { // Next texture frame
-		if (textureFrame == textureFrames - 1) { // The last texture frame has ended
-			if (++currAction == pattern.end()) // Last action
-				currAction = pattern.begin();
+	updateActionFrame();
 
-			frameCounter = 0;
-			textureY = actions[*currAction]->texturePosY();
-			textureFrame = 0;
-			textureFrameTime = actions[*currAction]->textureFrameTime();
-			textureFrames = actions[*currAction]->textureFrames();
 
-			srcRect.y = dstRect.h * textureY;
-			velocity.x = 0;
-			velocity.y = 0;
-		}
-		else
-			textureFrame++;
-	}
-	frameCounter++;
+	SDL_Point p = { map->getPlayer()->getPositionX(), map->getPlayer()->getPositionY() };
+	actions[*currAction]->makeAttack(this, monsterAttacks, &p);
 
-	if (frameCounter == actions[*currAction]->makeAttackFrame() && actions[*currAction]->attackExists()) {
-		SDL_Point p = { map->getPlayer()->getPositionX(), map->getPlayer()->getPositionY() };
-		actions[*currAction]->makeAttack(this, monsterAttacks, &p);
-	}
 
 	if (actions[*currAction]->movementExists())
 		actions[*currAction]->makeMove(this);
@@ -44,12 +59,12 @@ bool Unit::update(std::list <Projectile*>& monsterAttacks, Map* map) {
 }
 
 void Unit::draw(SDL_Point* startRender) {
-	srcRect.x = srcRect.w * textureFrame;
+//	srcRect.x = srcRect.w * textureFrame;
 	dstRect.x = position.x - startRender->x - positionShiftX;
 	dstRect.y = (position.y - startRender->y) * HEIGHT_SCALE - positionShiftY;
-	if (velocity.x < 0)
-		flip = SDL_FLIP_HORIZONTAL;
-	else
+//	if (velocity.x < 0)
+//		flip = SDL_FLIP_HORIZONTAL;
+//	else
 		flip = SDL_FLIP_NONE;
 
 	SDL_RenderCopyEx(Game::renderer, texture, &srcRect, &dstRect, NULL, NULL, flip);	
@@ -64,19 +79,12 @@ void Unit::draw(SDL_Point* startRender) {
 	//	SDL_RenderFillRect(Game::renderer, &r);
 }
 
-void Unit::updateFrame() {
-	if (frameCounter == textureFrameTime) { // Next texture frame
-		frameCounter = 0;
-		if (textureFrame == textureFrames - 1) // The last texture frame has ended
-			textureFrame = 0;
-		else
-			textureFrame++;
-	}
-	frameCounter++;
+void Unit::addAction(ActionType action, Movement* move, AttackPattern* attack, int attackFrame) {
+	actions[action] = new UnitAction(move, attack, attackFrame);
 }
 
-void Unit::addAction(ActionType action, Movement* move, AttackPattern* attack, int yPosTexture, int frames, int frameTime, int attackFrame) {
-	actions[action] = new UnitAction(move, attack, yPosTexture, frames, frameTime, attackFrame);
+void Unit::addAnimation(ActionType action, Direction::Name dir, AnimationDetails& animationD) {
+	actions[action]->addAnimation(dir, animationD, srcRect);
 }
 
 void  Unit::addPattern(ActionType actionType) {
@@ -84,31 +92,29 @@ void  Unit::addPattern(ActionType actionType) {
 		pattern.push_back(actionType);
 		currAction = pattern.begin();
 
-		frameCounter = 0;
-		textureY = actions[*currAction]->texturePosY();
-		textureFrame = 0;
-		textureFrameTime = actions[*currAction]->textureFrameTime();
-		textureFrames = actions[*currAction]->textureFrames();
+//		frameCounter = 0;
+//		textureY = actions[*currAction]->texturePosY();
+//		textureFrame = 0;
+//		textureFrameTime = actions[*currAction]->textureFrameTime();
+//		textureFrames = actions[*currAction]->textureFrames();
 
-		srcRect.y = dstRect.h * textureY;
+//		srcRect.y = dstRect.h * textureY;
 	}
 	else
 		pattern.push_back(actionType);
 }
 
-Unit::Unit(SDL_Texture *txt, int width, int height) : GameObject(txt, Dynamic, Circle, width / 2) {
+void Unit::setStartingAction(ActionType action, Direction::Name dir) {
+	actions[action]->setDirection(dir);
+	actions[action]->setFirstFrame();
+}
+
+Unit::Unit(TextureInfo& txtInfo) : GameObject(txtInfo, Dynamic, Circle) {
 	speed = 3;
 	hp = 10;
 
 	velocity.x = 0;
 	velocity.y = 0;
-
-	dstRect.x = 100;
-	dstRect.y = 100;
-	srcRect.w = width;
-	dstRect.w = width;
-	srcRect.h = height;
-	dstRect.h = height;
 }
 
 

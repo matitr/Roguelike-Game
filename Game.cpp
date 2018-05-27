@@ -30,7 +30,7 @@ void Game::run() {
 	TextureManager::loadAllTextures();
 	DataBase::loadAllDataBases();
 
-	player = new Player(TextureManager::textures[PLAYER], windowResolution);
+	player = new Player(TextureManager::textures[TextureFile::PLAYER], windowResolution);
 	map = new Map(player, windowResolution.y / 2, windowResolution.x / 2);
 
 //	map->setPlayerPointer(player);

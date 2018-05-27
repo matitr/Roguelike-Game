@@ -12,7 +12,7 @@ void LevelGenerator::generateNewMap() {
 	int roomsNumber = 1 + 1 + 2 + 2 + rand() % 5 + 10;
 	rooms.resize(roomsNumber);
 	generateSpecialRooms(roomsNumber);
-	levelTexture = TextureManager::textures[LEVEL_1];
+	levelTexture = TextureManager::textures[TextureFile::LEVEL_1];
 	int x, y;
 	int i, j;
 

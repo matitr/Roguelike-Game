@@ -9,6 +9,7 @@ class Projectile;
 class Player : public Unit {
 	std::unordered_map <ActionType, Animation*> animations;
 	ActionType unitActionName;
+	int textureY = 0, textureFrame = 0, textureFrameTime = 100, textureFrames = 2, frameCounter = 0, textureFramesInRow;
 
 	float attackSpeed;
 	int attackFrames;
@@ -39,7 +40,7 @@ public:
 	void attackPressed(int x, int y);
 	void makeAttack(std::list <Projectile*>&, AnimationDetails& animationD);
 
-	void addAnimation(ActionType actionName, int _yPosTexture, int _frames, int _frameTime);
+//	void addAnimation(ActionType actionName, int _yPosTexture, int _frames, int _frameTime);
 	void setAnimation(ActionType actionName);
 	void resetAnimation();
 

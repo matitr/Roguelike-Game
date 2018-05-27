@@ -18,6 +18,8 @@ class Projectile : public GameObject {
 
 	ItemPassives staticPassives;
 	std::vector<Unit*> unitsHitted;
+
+	SpriteAnimation animation;
 public:
 	void setDirection(float dir);
 	void setAngle(float ang);

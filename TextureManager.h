@@ -4,7 +4,7 @@
 
 
 namespace Direction {
-	enum DirectionName { N, E, S, W, enum_size };
+	enum Name { N, E, S, W, enum_size };
 }
 
 struct Rect {
@@ -19,16 +19,16 @@ struct TextureInfo {
 };
 
 
-enum TextureFromFile { PLAYER, PROJECTILES, PLAYER_STATS, LEVEL_1, OBJECTS, COIN, CHEST, INVENTORY, UNIT };
+enum class TextureFile { PLAYER, PROJECTILES, PLAYER_STATS, LEVEL_1, OBJECTS, COIN, CHEST, INVENTORY, UNIT };
 enum SingleFieldTexture { WOOD_FLOOR , WALL_SIDE, WALL_TOP_T, WALL_TOP_R, WALL_TOP_B, WALL_TOP_L, DOORS};
-enum SingleTexture { Chest, Coin, Teleport, TeleportOff, TeleportOn };
+enum SingleTexture { Chest, Coin, Teleport, TeleportOff, TeleportOn, PlayerT, ProjectileT };
 enum TextureAnimation { ChestOpening, CoinSpin };
 
 
 class TextureManager{
 
 public:
-	static std::unordered_map <TextureFromFile, SDL_Texture*> textures;
+	static std::unordered_map <TextureFile, SDL_Texture*> textures;
 	static std::unordered_map <SingleFieldTexture, SDL_Rect> fieldTextureSrcRect;
 
 	static std::unordered_map <SingleTexture, TextureInfo> textureParameters;

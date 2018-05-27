@@ -126,21 +126,13 @@ void Projectile::delHittedUnitPointer(Unit* u) {
 }
 
 Projectile::Projectile(AnimationDetails& animation, ItemPassives& passives)
-	: frames(animation.frames), frameTime(animation.frameTime), GameObject(animation.txt, Dynamic, Circle, animation.width / 2), staticPassives(passives) {
+	: frames(animation.frames), frameTime(animation.frameTime), GameObject(TextureManager::textureParameters[ProjectileT], Dynamic, Circle), staticPassives(passives),
+	animation(animation, srcRect) {
+
 	speed = 5;
 	damage = 1;
 	enemyHitted = false;
 	destroyObj = false;
-
-	srcRect.w = animation.width;
-	srcRect.h = animation.height;
-	srcRect.x = 0;
-	srcRect.y = animation.yIter;
-
-	dstRect.x = 0;
-	dstRect.y = 0;
-	dstRect.w = animation.width;
-	dstRect.h = animation.height;
 
 	heightFromGround = 20;
 

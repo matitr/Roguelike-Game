@@ -1,22 +1,22 @@
 #include "TextureManager.h"
 #include "Game.h"
 
-std::unordered_map <TextureFromFile, SDL_Texture*> TextureManager::textures;
+std::unordered_map <TextureFile, SDL_Texture*> TextureManager::textures;
 std::unordered_map <SingleFieldTexture, SDL_Rect> TextureManager::fieldTextureSrcRect;
 std::unordered_map <SingleTexture, TextureInfo> TextureManager::textureParameters;
 
 void TextureManager::loadAllTextures() {
-	textures[PLAYER] = TextureManager::LoadTexture("Textures/player.png");
+	textures[TextureFile::PLAYER] = TextureManager::LoadTexture("Textures/player.png");
 	
-	textures[PROJECTILES] = TextureManager::LoadTexture("Textures/projectiles.png");
-	textures[PLAYER_STATS] = TextureManager::LoadTexture("Textures/playerStats.png"); 
+	textures[TextureFile::PROJECTILES] = TextureManager::LoadTexture("Textures/projectiles.png");
+	textures[TextureFile::PLAYER_STATS] = TextureManager::LoadTexture("Textures/playerStats.png"); 
 
-	textures[LEVEL_1] = TextureManager::LoadTexture("Textures/level_1.png");
-	textures[OBJECTS] = TextureManager::LoadTexture("Textures/objects.png");
-	textures[COIN] = TextureManager::LoadTexture("Textures/coin.png");
-	textures[CHEST] = TextureManager::LoadTexture("Textures/chest.png");
-	textures[INVENTORY] = TextureManager::LoadTexture("Textures/inventory.png");
-	textures[UNIT] = TextureManager::LoadTexture("Textures/unit.png");
+	textures[TextureFile::LEVEL_1] = TextureManager::LoadTexture("Textures/level_1.png");
+	textures[TextureFile::OBJECTS] = TextureManager::LoadTexture("Textures/objects.png");
+	textures[TextureFile::COIN] = TextureManager::LoadTexture("Textures/coin.png");
+	textures[TextureFile::CHEST] = TextureManager::LoadTexture("Textures/chest.png");
+	textures[TextureFile::INVENTORY] = TextureManager::LoadTexture("Textures/inventory.png");
+	textures[TextureFile::UNIT] = TextureManager::LoadTexture("Textures/unit.png");
 
 	TextureManager::loadAllTextureSrcRect();
 }
@@ -34,12 +34,15 @@ void TextureManager::loadAllTextureSrcRect() { // srcRect = { x, y, w, h }
 
 	// Parameters:
 	//  { SDL_Rect srcRect = { x, y, w, h }, Rect dstRect = { w, h }, SDL_Texture* texture };
-	textureParameters[Teleport] = { { 0, 0, 468, 468 },{ 120,120 }, textures[OBJECTS] };
-	textureParameters[TeleportOff] = { { 470,0,468,468 },{ 120,120 }, textures[OBJECTS] };
-	textureParameters[TeleportOn] = { { 940,0,468,468 },{ 120,120 }, textures[OBJECTS] };
+	textureParameters[Teleport] = { { 0, 0, 468, 468 },{ 120,120 }, textures[TextureFile::OBJECTS] };
+	textureParameters[TeleportOff] = { { 470,0,468,468 },{ 120,120 }, textures[TextureFile::OBJECTS] };
+	textureParameters[TeleportOn] = { { 940,0,468,468 },{ 120,120 }, textures[TextureFile::OBJECTS] };
 
-	textureParameters[Coin] = { { 0,0,16,16 },{ 16,16 }, textures[COIN] };
-	textureParameters[Chest] = { { 0,0,100,75 },{ 100,75 }, textures[CHEST] };
+	textureParameters[Coin] = { { 0,0,16,16 },{ 16,16 }, textures[TextureFile::COIN] };
+	textureParameters[Chest] = { { 0,0,100,75 },{ 100,75 }, textures[TextureFile::CHEST] };
+
+	textureParameters[SingleTexture::PlayerT] = { { 0,0,64,64 },{ 64,64 }, textures[TextureFile::UNIT] };
+	textureParameters[SingleTexture::ProjectileT] = { { 0,0,25,25 },{ 25,25 }, textures[TextureFile::PROJECTILES] };
 }
 
 SDL_Texture* TextureManager::LoadTexture(const char* dir) {

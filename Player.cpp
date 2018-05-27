@@ -88,7 +88,8 @@ bool Player::update(std::list <Projectile*>& playerProjectiles, Map* map, SDL_Re
 		}
 	}
 
-	updateFrame();
+	updateActionFrame();
+
 	return true;
 }
 
@@ -155,11 +156,12 @@ void Player::makeAttack(std::list <Projectile*>& playerProjectiles, AnimationDet
 	attackP->makeAttack(this, playerProjectiles, &attackPos);
 }
 
-void Player::addAnimation(ActionType actionName, int _yPosTexture, int _frames, int _frameTime) {
-	animations[actionName] = new Animation(_yPosTexture, _frames, _frameTime);
-}
+//void Player::addAnimation(ActionType actionName, int _yPosTexture, int _frames, int _frameTime) {
+//	animations[actionName] = new Animation(_yPosTexture, _frames, _frameTime);
+//}
 
 void Player::setAnimation(ActionType actionName) {
+	return;
 	if (unitActionName == actionName)
 		return;
 
@@ -186,6 +188,7 @@ void Player::setAnimation(ActionType actionName) {
 }
 
 void Player::resetAnimation() {
+	return;
 	attackFrame = -1;
 	lastRollFramesAgo = 100000;
 
@@ -210,17 +213,25 @@ void Player::takeMoney(int& m) {
 	money -= m; 
 }
 
-Player::Player(SDL_Texture* txt, SDL_Point& windowResolution) : Unit(txt, 60, 60), playerIntentory(staticPassives, windowResolution) {
-	addAnimation(Stand, 0, 2, 15);
-	addAnimation(Walk, 1, 2, 15);
-	addAnimation(Roll, 2, 4, 10);
+Player::Player(SDL_Texture* txt, SDL_Point& windowResolution) : Unit(TextureManager::textureParameters[SingleTexture::PlayerT]), playerIntentory(staticPassives, windowResolution) {
+//	addAnimation(Stand, 10, 1, 15);
+//	addAnimation(Walk, 1, 2, 15);
+//	addAnimation(Roll, 2, 4, 10);
+
+	addAction(Walk, NULL, NULL);
+	addAnimation(Walk, Direction::N, DataBase::animations[AnimationName::PlayerWalkN]);
+	addAnimation(Walk, Direction::E, DataBase::animations[AnimationName::PlayerWalkE]);
+	addAnimation(Walk, Direction::S, DataBase::animations[AnimationName::PlayerWalkS]);
+	addAnimation(Walk, Direction::W, DataBase::animations[AnimationName::PlayerWalkW]);
+	setStartingAction(Walk, Direction::S);
+	addPattern(Walk);
 
 	rollCooldown = 2 * 60;
 	lastRollFramesAgo = rollCooldown;
 	hp = 8;
 	maxHp = 8;
 	money = 0;
-	playerStatsTxt = TextureManager::textures[PLAYER_STATS];
+	playerStatsTxt = TextureManager::textures[TextureFile::PLAYER_STATS];
 	attackSpeed = 9.5;
 	attackFrames = 60 / attackSpeed;
 	attackFrame = -1;
