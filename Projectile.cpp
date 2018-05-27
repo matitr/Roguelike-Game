@@ -26,11 +26,13 @@ void Projectile::setPosition(int x, int y) {
 }
 
 bool Projectile::update(Map* map, SDL_Rect& fieldRect, Unit* closestUnit) {
+	if (destroyObj)
+		return false;
+
 	if (enemyHitted) {
 		enemyHitted = false;
 
-		staticPassives[StaticPassiveName::pierceShots]--;
-		if (staticPassives[StaticPassiveName::pierceShots] == -1)
+		if (staticPassives[StaticPassiveName::pierceShots] <= -1)
 			return false;
 	}
 
@@ -39,15 +41,6 @@ bool Projectile::update(Map* map, SDL_Rect& fieldRect, Unit* closestUnit) {
 
 	position.x += velocity.x;
 	position.y += velocity.y;
-
-	if (!map->map[(position.x) / fieldRect.w][(position.y + radius) / fieldRect.h]->ground())
-		return false;
-	else if (!map->map[(position.x + radius) / fieldRect.w][(position.y) / fieldRect.h]->ground())
-		return false;
-	else if (!map->map[(position.x) / fieldRect.w][(position.y - radius) / fieldRect.h]->ground())
-		return false;
-	else if (!map->map[(position.x - radius) / fieldRect.w][(position.y) / fieldRect.h]->ground())
-		return false;
 	
 	if (frameCounter == frameTime) {
 		frameCounter = 0;
@@ -71,22 +64,29 @@ void Projectile::draw(SDL_Point* startRender) {
 
 void Projectile::homingShot(Unit* closestUnit) {
 	double dist;
-	if ((dist = distanceEdges(closestUnit)) > 150)
+	if ((dist = distanceEdges(closestUnit)) > 33150)
 		return;
 
-	float x = closestUnit->getPositionX() - position.x;
-	float y = closestUnit->getPositionY() - position.y;
+	double x = closestUnit->getPositionX() - position.x;
+	double y = closestUnit->getPositionY() - position.y;
 	double vectorMultiply = x * velocity.x + y * velocity.y;
 	double distanceMultiply = sqrt(pow(x, 2) + pow(y, 2)) * sqrt(pow(velocity.x, 2) + pow(velocity.y, 2));
-	double direction2 = acos(vectorMultiply / distanceMultiply);
+	double cosValue = (vectorMultiply / distanceMultiply);
+
+	// Have to check whatever cosValue is not out if range, because of very small miss calculations
+	if (cosValue > 1)
+		cosValue = 1.0;
+	else if (cosValue < 1)
+		cosValue = -1.0;
+
+	double direction2 = acos(cosValue);
 	double angle2 = direction2 * 180.0 / 3.14159265;
-
 	double cross = velocity.x * y - velocity.y * x;
+	double change = (angle2 * 0.01);
 
-//	if (cross < 0)
-//		direction2 *= -1;
+	if (dist < 150)
+		change = (angle2 * 0.09) + 1;
 
-	float change = int(angle2 * 0.09 + 1);
 	if (dist < 40)
 		change = rand() % 22;
 
@@ -103,8 +103,26 @@ void Projectile::homingShot(Unit* closestUnit) {
 			angle = -180 + (angle - 180);
 	}
 
-	velocity.x = cos(angle * 3.14 / 180.0) * speed;
-	velocity.y = sin(angle * 3.14 / 180.0) * speed;
+	velocity.x = cos(angle * 3.14159265 / 180.0) * speed;
+	velocity.y = sin(angle * 3.14159265 / 180.0) * speed;
+}
+
+void Projectile::setEnemyHitted(Unit* u) {
+	enemyHitted = true;
+
+	staticPassives[StaticPassiveName::pierceShots]--;
+	unitsHitted.push_back(u);
+}
+
+bool Projectile::canBeHitted(Unit* u) {
+	return std::find(unitsHitted.begin(), unitsHitted.end(), u) == unitsHitted.end();
+}
+
+void Projectile::delHittedUnitPointer(Unit* u) {
+	std::vector<Unit*>::iterator findPos = std::find(unitsHitted.begin(), unitsHitted.end(), u);
+
+	if (findPos != unitsHitted.end())
+		unitsHitted.erase(findPos);
 }
 
 Projectile::Projectile(AnimationDetails& animation, ItemPassives& passives)
@@ -112,6 +130,7 @@ Projectile::Projectile(AnimationDetails& animation, ItemPassives& passives)
 	speed = 5;
 	damage = 1;
 	enemyHitted = false;
+	destroyObj = false;
 
 	srcRect.w = animation.width;
 	srcRect.h = animation.height;
@@ -124,6 +143,8 @@ Projectile::Projectile(AnimationDetails& animation, ItemPassives& passives)
 	dstRect.h = animation.height;
 
 	heightFromGround = 20;
+
+	unitsHitted.reserve(50);
 }
 
 

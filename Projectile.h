@@ -8,14 +8,16 @@ class AnimationDetails;
 
 class Projectile : public GameObject {
 	float speed;
-	float direction;
-	float angle; // starting in middle right. Upper "-", Bottom "+"
+	double direction;
+	double angle; // starting in middle right. Upper "-", Bottom "+"
 	float damage;
 	bool enemyHitted;
+	bool destroyObj;
 	int heightFromGround;
 	int frames, frameTime, currFrame, frameCounter;
 
 	ItemPassives staticPassives;
+	std::vector<Unit*> unitsHitted;
 public:
 	void setDirection(float dir);
 	void setAngle(float ang);
@@ -26,8 +28,12 @@ public:
 
 	void homingShot(Unit* closestUnit);
 
+	void setEnemyHitted(Unit* u);
+	bool canBeHitted(Unit* u);
+	void delHittedUnitPointer(Unit* u);
+	void destroy() { destroyObj = true; }
+
 	float getDamage() { return damage; }
-	void setEnemyHitted(bool hitted) { enemyHitted = hitted; }
 	bool isHoming() { return staticPassives[StaticPassiveName::homing]; }
 
 	Projectile(AnimationDetails& animation, ItemPassives& passives);

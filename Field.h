@@ -13,6 +13,7 @@ class Field : public GameObject {
 	FieldType fieldType;
 	int xPos, yPos;
 
+	std::vector<GameObject*> collisionObjects;
 public:
 	double f, g, h; // A* search algorithm
 	Field* prevField; // A* search algorithm
@@ -27,6 +28,9 @@ public:
 
 	void drawField(int x, int y);
 	void draw(SDL_Point* startRender) {}
+
+	void addCollisionObj(GameObject* obj) { collisionObjects.push_back(obj); }
+	std::vector<GameObject*>& getCollisionObj() { return collisionObjects; }
 
 	Field(SDL_Texture* txt, SDL_Rect& _srcRect, FieldType);
 	~Field();

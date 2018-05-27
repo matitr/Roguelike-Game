@@ -2,6 +2,8 @@
 #include "Game.h"
 #include "Map.h"
 #include "DataBase.h"
+#include "Attacks.h"
+#include "Input.h"
 #include <math.h>
 
 
@@ -11,10 +13,12 @@ bool Player::update(std::list <Projectile*>& playerProjectiles, Map* map, SDL_Re
 		velocity.x = 0;
 		velocity.y = 0;
 	}
-
-	if (attackFrame == ATTACK_POSSIBLE && attack)
+	if (staticPassives[StaticPassiveName::numbOfProjectiles])
+		attackP->setNumberOfProj(staticPassives[StaticPassiveName::numbOfProjectiles]);
+	else
+		attackP->setNumberOfProj(1);
+	if (attackFrame == ATTACK_POSSIBLE)
 		makeAttack(playerProjectiles, DataBase::animations[AnimationName::Projectile]);
-	attack = false;
 
 	if (attackFrame > -1) {
 		if (attackFrame + 1 == attackFrames)
@@ -69,16 +73,17 @@ bool Player::update(std::list <Projectile*>& playerProjectiles, Map* map, SDL_Re
 	if (!velocity.y && !velocity.x)
 		setAnimation(Stand);
 	else {
+		double speedMultiplier = staticPassives[StaticPassiveName::unitSpeed] ? 1 + staticPassives[StaticPassiveName::unitSpeed] / 100 : 1;
 		if (unitActionName == Roll) {
 			float dir = atan2(velocity.y, velocity.x);
-			position.x += cos(dir) * rollSpeed;
-			position.y += sin(dir) * rollSpeed;
+			position.x += cos(dir) * rollSpeed * speedMultiplier;
+			position.y += sin(dir) * rollSpeed * speedMultiplier;
 			map->setCamera(int(position.x), int(position.y));
 		}
 		else {
 			float dir = atan2(velocity.y, velocity.x);
-			position.x += cos(dir) * speed;
-			position.y += sin(dir) * speed;
+			position.x += cos(dir) * speed * speedMultiplier;
+			position.y += sin(dir) * speed * speedMultiplier;
 			map->setCamera(int(position.x), int(position.y));
 		}
 	}
@@ -129,16 +134,25 @@ void Player::attackPressed(int x, int y) {
 void Player::makeAttack(std::list <Projectile*>& playerProjectiles, AnimationDetails& animationD) {
 	if (unitActionName == Roll)
 		return;
+
+	if (Input::mouseStates[SDL_BUTTON_LEFT]) {
+		if (staticPassives[StaticPassiveName::chargeProjectiles]) {
+			attack++;
+			return;
+		}
+	}
+	else {
+		if (!staticPassives[StaticPassiveName::chargeProjectiles])
+			return;
+		else if (!attack)
+			return;
+
+
+	}
+
 	attackFrame = 0;
-
-	Projectile* p = new Projectile(animationD, staticPassives);
-
-	float dir = atan2((attackPos.y - position.y), (attackPos.x - position.x));
-
-	p->setDirection(dir);
-
-	p->setPosition(position.x, position.y);
-	playerProjectiles.push_back(p);
+	attack = 0;
+	attackP->makeAttack(this, playerProjectiles, &attackPos);
 }
 
 void Player::addAnimation(ActionType actionName, int _yPosTexture, int _frames, int _frameTime) {
@@ -219,6 +233,7 @@ Player::Player(SDL_Texture* txt, SDL_Point& windowResolution) : Unit(txt, 60, 60
 	rollSpeed = 10;
 
 	attack = false;
+	attackP = new MultipleProjectiles(5);
 
 	setPositionShift(0.5, 0.9, 0.7);
 	setAnimation(Walk);

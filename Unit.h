@@ -9,7 +9,7 @@
 
 class Projectile;
 class UnitAction;
-class Attack;
+class AttackPattern;
 class Movement;
 
 enum ActionType {Stand, Walk, Roll, AttackProj};
@@ -28,22 +28,15 @@ protected:
 	float hp;
 	float maxHp;
 
-	// Hitbox
-	int positionShiftX, positionShiftY;
-
 	ItemPassives staticPassives;
 public:
 	PointFloat velocity;
-	virtual bool update(std::list <Projectile*>& monsterAttacks, Map* map, SDL_Rect& fieldRect);
+	virtual bool update(std::list <Projectile*>& monsterAttacks, Map* map);
 	virtual void draw(SDL_Point* startRender);
 	void updateFrame();
 
-	void addAction(ActionType action, Movement* move, Attack* attack, int yPosTexture, int frames, int frameTime, int attackFrame = -1);
+	void addAction(ActionType action, Movement* move, AttackPattern* attack, int yPosTexture, int frames, int frameTime, int attackFrame = -1);
 	void addPattern(ActionType actionType);
-
-	void setPosition(int x, int y);
-	void setPositionShift(float positionShiftX, float positionShiftY, float hitboxRange);
-
 
 	void setHp(int _hp) { hp = float(hp); }
 	void takeDamage(float damage) { hp -= damage; }

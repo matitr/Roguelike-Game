@@ -106,7 +106,8 @@ void Inventory::draw() {
 
 	if (!clickedSlot && slotUnderMouse) {
 		// Show item details
-
+		if (slotUnderMouse->item)
+			slotUnderMouse->item->drawDescription(slotUnderMouse->rect, windowResolution);
 	}
 
 	// Draw inventory items
@@ -230,15 +231,15 @@ void Inventory::highlightAllSlots() {
 	}
 }
 
-Inventory::Inventory(ItemPassives& passives, SDL_Point& windowResolution) : details(DataBase::inventoryDelails), staticPassives(passives) {
+Inventory::Inventory(ItemPassives& passives, SDL_Point& _windowResolution) : details(DataBase::inventoryDelails), staticPassives(passives), windowResolution(_windowResolution){
 	dstRectInv.w = details.width;
 	dstRectInv.h = details.height;
 
 	dstRectInv.x = 0;
 	dstRectInv.y = 0;
 
-	dstRectInv.x = windowResolution.x - dstRectInv.w;
-	dstRectInv.y = (windowResolution.y - dstRectInv.h) / 2;
+	dstRectInv.x = _windowResolution.x - dstRectInv.w;
+	dstRectInv.y = (_windowResolution.y - dstRectInv.h) / 2;
 
 	// Set inventory slots
 	inventorySlots.resize(details.numerOfSlots.x);

@@ -1,14 +1,20 @@
 #include "DataBase.h"
 #include "TextureManager.h"
 #include "Item.h"
+#include "Game.h"
 #include <string>
+#include <iomanip>
+#include <sstream>
 
 InventoryDetails DataBase::inventoryDelails;
 std::unordered_map<AnimationName, AnimationDetails> DataBase::animations;
+std::unordered_map<TextColor, SDL_Color> DataBase::colors;
+std::unordered_map<FontPurpose, TTF_Font*> DataBase::fonts;
 
 void DataBase::loadAllDataBases() {
 	DataBase::loadInventoryDetails();
-	loadAnimationsDetails();
+	DataBase::loadAnimationsDetails();
+	DataBase::loadFontData();
 }
 
 void DataBase::loadInventoryDetails() {
@@ -51,27 +57,65 @@ void DataBase::loadAnimationsDetails() {
 	animations[AnimationName::Projectile] = { TextureManager::textures[PROJECTILES], 25, 25, 0, 3, 10 };
 }
 
- std::string DataBase::getPassiveText(int passive, float value) {
-	if (passive == StaticPassiveName::numbOfProjectiles) {
-		return "Increase number of projectiles by " + std::to_string(int(value));
-	}
-	else if (passive == StaticPassiveName::pierceShots) {
-		return "Increase pierce by " + std::to_string(int(value));
-	}
-	else if (passive == StaticPassiveName::homing) {
-		return "Increase homing by " + std::to_string(int(value));
-	}
+void DataBase::loadFontData() {
+	TTF_Init();
+	fonts[FontPurpose::ItemDescription] = TTF_OpenFont("Font/font.ttf", 18);
+
+	colors[TextColor::ItemPassivesText] = { 0, 153, 255,255 };
+	colors[TextColor::ItemType] = { 255, 204, 0,255 };
+
 }
 
- std::string DataBase::getItemTypeText(enum ItemType itemType) {
+void DataBase::getPassiveText(int passive, float value, SDL_Texture*& firstTexture) {
+	std::string passiveText = "";
+
+	if (passive == StaticPassiveName::numbOfProjectiles) {
+		passiveText = "Increase number of projectiles by " + std::to_string(int(value));
+	}
+	else if (passive == StaticPassiveName::pierceShots) {
+		passiveText = "Increase pierce by " + std::to_string(int(value));
+	}
+	else if (passive == StaticPassiveName::homing) {
+		passiveText = "Increase homing by " + std::to_string(int(value));
+	}
+	else if (passive == StaticPassiveName::unitSpeed) {
+		std::stringstream stream;
+		stream << std::fixed << std::setprecision(1) << value;
+		passiveText = "Increase movement speed by " + stream.str() + "%";
+	}
+	else if (passive == StaticPassiveName::chargeProjectiles) {
+		passiveText = "Charge shots";
+	}
+
+
+	char text[100];
+	strcpy_s(text, passiveText.c_str());
+	SDL_Surface* surfaceMessage = TTF_RenderText_Blended(fonts[FontPurpose::ItemDescription], text, colors[TextColor::ItemPassivesText]);
+
+	firstTexture = SDL_CreateTextureFromSurface(Game::renderer, surfaceMessage);
+	SDL_FreeSurface(surfaceMessage);
+}
+
+SDL_Texture* DataBase::getItemTypeText(enum ItemType itemType) {
+	std::string itemTypeStr = "";
+
 	 if (itemType == Universal)
-		 return "Universal";
+		 itemTypeStr = "Universal";
 	 else if (itemType == MainWeapon)
-		 return "MainWeapon";
+		 itemTypeStr = "Main Weapon";
 	 else if (itemType == Active)
-		 return "Active";
+		 itemTypeStr = "Active";
 	 else if (itemType == Passive)
-		 return "Passive";
+		 itemTypeStr = "Passive";
+
+
+	 char text[100];
+	 strcpy_s(text, itemTypeStr.c_str());
+	 SDL_Surface* surfaceMessage = TTF_RenderText_Blended(fonts[FontPurpose::ItemDescription], text, colors[TextColor::ItemType]);
+
+	 SDL_Texture* messageTexture = SDL_CreateTextureFromSurface(Game::renderer, surfaceMessage);
+	 SDL_FreeSurface(surfaceMessage);
+	 return messageTexture;
  }
 
 DataBase::DataBase() {

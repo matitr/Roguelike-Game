@@ -16,6 +16,7 @@ void TextureManager::loadAllTextures() {
 	textures[COIN] = TextureManager::LoadTexture("Textures/coin.png");
 	textures[CHEST] = TextureManager::LoadTexture("Textures/chest.png");
 	textures[INVENTORY] = TextureManager::LoadTexture("Textures/inventory.png");
+	textures[UNIT] = TextureManager::LoadTexture("Textures/unit.png");
 
 	TextureManager::loadAllTextureSrcRect();
 }

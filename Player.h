@@ -23,8 +23,10 @@ class Player : public Unit {
 	SDL_Texture* playerStatsTxt;
 	SDL_Rect statusSrcRect, statusDstRest;
 
-	bool attack;
+	int attack;
 	SDL_Point attackPos;
+	MultipleProjectiles* attackP;
+
 	bool isInteractionBlocked = false;
 
 	Inventory playerIntentory;

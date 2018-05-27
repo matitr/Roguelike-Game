@@ -92,6 +92,7 @@ template bool GameObject::detectCollision<Player>(Player *gameObj);
 template bool GameObject::detectCollision<Field>(Field *gameObj);
 template bool GameObject::detectCollision<Projectile>(Projectile *gameObj);
 template bool GameObject::detectCollision<InteractiveObject>(InteractiveObject *gameObj);
+template bool GameObject::detectCollision<GameObject>(GameObject *gameObj);
 
 
 template <class T>
@@ -207,6 +208,17 @@ void GameObject::collisionUnitFields(std::vector<std::vector<Field*>>& map, SDL_
 
 }
 
+void GameObject::setPosition(int x, int y) {
+	position.x = x;
+	position.y = y;
+}
+
+void GameObject::setPositionShift(float _positionShiftX, float _positionShiftY, float _hitboxRange) {
+	positionShiftX = _positionShiftX * dstRect.w;
+	positionShiftY = _positionShiftY * dstRect.h;
+	radius = (_hitboxRange * dstRect.w) / 2;
+}
+
 void  GameObject::draw(SDL_Point* startRender) {
 	dstRect.x = position.x - startRender->x - dstRect.w / 2;
 	dstRect.y = (position.y - startRender->y) - dstRect.h / 2;
@@ -244,6 +256,9 @@ GameObject::GameObject(TextureInfo& txtInfo, GameObjectType objType, ObjectHitbo
 	srcRect = txtInfo.srcRect;
 	dstRect.w = txtInfo.dstRect.w;
 	dstRect.h = txtInfo.dstRect.h;
+
+	positionShiftX = dstRect.w / 2;
+	positionShiftY = dstRect.h / 2;
 }
 
 GameObject::~GameObject() {

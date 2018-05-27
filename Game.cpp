@@ -61,9 +61,9 @@ void Game::run() {
 
 		frameTime = std::chrono::duration_cast<std::chrono::nanoseconds>(Clock::now() - frameStart).count();
 		if (frameDelay > frameTime)
-			std::this_thread::sleep_for(std::chrono::nanoseconds(int(frameDelay - frameTime) - 10000));
+			std::this_thread::sleep_for(std::chrono::nanoseconds(int(frameDelay - frameTime) + 10000));
 	}
-
+	TTF_Quit();
 }
 
 void Game::handleEvents() {
@@ -159,8 +159,15 @@ void Game::updateGame() {
 
 	// Update monsters
 	while (it_monsters != (*monsters).end()) {
-		if (!(*it_monsters)->update(monsterAttacks, map, map->fieldRect)) {
-			(*interactiveObjects).push_back(new Money((*it_monsters)->getPositionX(), (*it_monsters)->getPositionY())); // drop money
+		if (!(*it_monsters)->update(monsterAttacks, map)) {
+			(*interactiveObjects).push_back(new Money((*it_monsters)->getPositionX(), (*it_monsters)->getPositionY())); // drop money	
+			std::list<Projectile*>::iterator it_projPlayer = playerProjectiles.begin(); // Delete Unit pointers in projectiles
+			while (it_projPlayer != playerProjectiles.end()) {
+				if (*it_projPlayer)
+					(*it_projPlayer)->delHittedUnitPointer(*it_monsters);
+				it_projPlayer++;
+			}
+
 			tempItMonster = it_monsters;
 			it_monsters++;
 			delete(*tempItMonster);
@@ -194,8 +201,10 @@ void Game::updateGame() {
 
 
 	collision.updateAllUnits(player, (*monsters), map->map, map->fieldRect);
-	collision.updateAllProjectiles(playerProjectiles, monsterAttacks, player, (*monsters));
+	collision.projectilesWithUnits(playerProjectiles, monsterAttacks, player, (*monsters));
 	collision.updateInteractiveObjects((*interactiveObjects), objectSelected, player);
+	collision.projectilesWithWalls(playerProjectiles, map);
+	collision.projectilesWithWalls(monsterAttacks, map);
 
 	map->setCamera(int(player->getPositionX()), int(player->getPositionY()));
 	map->upDateMinimapPos();

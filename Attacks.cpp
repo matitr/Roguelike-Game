@@ -4,16 +4,16 @@
 
 
 
-Attack::Attack() {
+AttackPattern::AttackPattern() {
 
 }
 
 
-Attack::~Attack() {
+AttackPattern::~AttackPattern() {
 
 }
 
-void ProjectileDirection::makeAttack(Unit* unit, std::list <Projectile*>& monsterAttacks) {
+void ProjectileDirection::makeAttack(Unit* unit, std::list <Projectile*>& attacksContainer, SDL_Point* attackPoint) {
 	angle = startAngle;
 	for (int i = 0; i < numbOfProj; i++) {
 		Projectile* p = new Projectile(DataBase::animations[AnimationName::Projectile], unit->getPassives());
@@ -27,8 +27,65 @@ void ProjectileDirection::makeAttack(Unit* unit, std::list <Projectile*>& monste
 			p->setAngle(-1 * angle);
 
 		p->setPosition(unit->getPositionX(), unit->getPositionY());
-		monsterAttacks.push_back(p);
+		attacksContainer.push_back(p);
 		if (i > 25)
 			i = i;
 	}
 }
+
+void MultipleProjectiles::makeAttack(Unit* unit, std::list <Projectile*>& attacksContainer, SDL_Point* posToShot) {
+	
+	float dir = atan2((posToShot->y - unit->getPositionY()), (posToShot->x - unit->getPositionX()));
+	int startingAngle = dir * 180.0 / 3.14159265;
+	double cross = unit->getPositionX() * posToShot->y - unit->getPositionY() * posToShot->x;
+
+	double angleBetween = 5;
+	double change = angleBetween * (numbOfProjectiles - 1) / 2;
+	double angle =  startingAngle;
+
+	angle -= change;
+
+	if (angle < -180)
+		angle = 180 - (angle + 180);
+
+	for (int i = 0; i < numbOfProjectiles; i++) {
+		Projectile* p = new Projectile(DataBase::animations[AnimationName::Projectile], unit->getPassives());
+		p->setAngle(angle);
+		p->setPosition(unit->getPositionX(), unit->getPositionY());
+		attacksContainer.push_back(p);
+
+		angle += angleBetween;
+
+		if (angle > 180)
+			angle = -180 + (angle - 180);
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

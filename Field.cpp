@@ -12,8 +12,8 @@ void Field::setPosition(int _x, int _y) {
 }
 
 void Field::drawField(int x, int y) {
-	dstRect.x = x;
-	dstRect.y = y;
+	dstRect.x = x - positionShiftX;
+	dstRect.y = y - positionShiftY;
 
 	int h = dstRect.h;
 	dstRect.h *= HEIGHT_SCALE;
@@ -33,6 +33,8 @@ Field::Field(SDL_Texture* txt, SDL_Rect& _srcRect, FieldType _type) : GameObject
 	
 	dstRect.w = _srcRect.w;
 	dstRect.h = _srcRect.h;
+
+	collisionObjects.reserve(4);
 }
 
 Field::~Field() {

@@ -3,12 +3,12 @@
 #include "Projectile.h"
 
 class Movement;
-class Attack;
+class AttackPattern;
 class Unit;
 
 class UnitAction {
 	Movement *movement;
-	Attack *attack;
+	AttackPattern *attack;
 	int yPosTexture;
 	int frames;
 	int frameTime;
@@ -23,10 +23,10 @@ public:
 	inline bool movementExists() { return movement ? true : false; }
 	inline bool attackExists() { return attack ? true : false; }
 
-	void makeAttack(Unit* unit, std::list <Projectile*>& monsterAttacks);
+	void makeAttack(Unit* unit, std::list <Projectile*>& monsterAttacks, SDL_Point* attackPoint);
 	void makeMove(Unit* unitToMove);
 
-	UnitAction(Movement* move, Attack* attack, int yPosTexture, int frames, int frameTime, int attackFrame);
+	UnitAction(Movement* move, AttackPattern* attack, int yPosTexture, int frames, int frameTime, int attackFrame);
 	~UnitAction();
 };
 

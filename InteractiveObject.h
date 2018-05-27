@@ -6,7 +6,7 @@ class Map;
 
 class InteractiveObject : public GameObject {
 protected:
-	bool objCanInteract;
+	bool objCanInteract = true;
 	bool solidObj;
 	bool pickupObj = false;
 	bool interactingNow = false;
@@ -16,7 +16,9 @@ protected:
 
 public:
 	bool solid() { return solidObj; }
+	bool canInteract() { return objCanInteract; }
 	bool interactOnKey() { return interactObjOnKey; }
+
 	SDL_Scancode interactKey() { return interactObjKey; }
 	bool interacting() { return interactingNow; }
 

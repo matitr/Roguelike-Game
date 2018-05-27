@@ -4,7 +4,7 @@
 #include "Attacks.h"
 #include <math.h>
 
-bool Unit::update(std::list <Projectile*>& monsterAttacks, Map* map, SDL_Rect& fieldRect) {
+bool Unit::update(std::list <Projectile*>& monsterAttacks, Map* map) {
 	if (hp <= 0)
 		return false;
 
@@ -28,8 +28,10 @@ bool Unit::update(std::list <Projectile*>& monsterAttacks, Map* map, SDL_Rect& f
 	}
 	frameCounter++;
 
-	if (frameCounter == actions[*currAction]->makeAttackFrame() && actions[*currAction]->attackExists())
-		actions[*currAction]->makeAttack(this, monsterAttacks);
+	if (frameCounter == actions[*currAction]->makeAttackFrame() && actions[*currAction]->attackExists()) {
+		SDL_Point p = { map->getPlayer()->getPositionX(), map->getPlayer()->getPositionY() };
+		actions[*currAction]->makeAttack(this, monsterAttacks, &p);
+	}
 
 	if (actions[*currAction]->movementExists())
 		actions[*currAction]->makeMove(this);
@@ -73,7 +75,7 @@ void Unit::updateFrame() {
 	frameCounter++;
 }
 
-void Unit::addAction(ActionType action, Movement* move, Attack* attack, int yPosTexture, int frames, int frameTime, int attackFrame) {
+void Unit::addAction(ActionType action, Movement* move, AttackPattern* attack, int yPosTexture, int frames, int frameTime, int attackFrame) {
 	actions[action] = new UnitAction(move, attack, yPosTexture, frames, frameTime, attackFrame);
 }
 
@@ -92,17 +94,6 @@ void  Unit::addPattern(ActionType actionType) {
 	}
 	else
 		pattern.push_back(actionType);
-}
-
-void Unit::setPosition(int x, int y) {
-	position.x = x;
-	position.y = y;
-}
-
-void Unit::setPositionShift(float _positionShiftX, float _positionShiftY, float _hitboxRange) {
-	positionShiftX = _positionShiftX * dstRect.w;
-	positionShiftY = _positionShiftY * dstRect.h;
-	radius = (_hitboxRange * dstRect.w) / 2;
 }
 
 Unit::Unit(SDL_Texture *txt, int width, int height) : GameObject(txt, Dynamic, Circle, width / 2) {

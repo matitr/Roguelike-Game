@@ -33,6 +33,8 @@ class Inventory {
 
 	ItemPassives& staticPassives;
 
+	SDL_Point windowResolution;
+
 	void updateFocusOnSlot();
 public:
 	void open() { invIsOpened = true; }

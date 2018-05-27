@@ -8,10 +8,10 @@
 
 
 namespace StaticPassiveName {
-	enum StaticPassiveName { numbOfProjectiles, pierceShots, homing, enum_size };
+	enum StaticPassiveName { numbOfProjectiles, pierceShots, chargeProjectiles, homing, unitSpeed, enum_size };
 }
 
-typedef std::array<int, StaticPassiveName::enum_size> ItemPassives;
+typedef std::array<float, StaticPassiveName::enum_size> ItemPassives;
 
 enum ItemType;
 enum class PassiveActivateOn { RoomClear, size_of_enum };
@@ -21,6 +21,7 @@ class Item : public InteractiveObject {
 	ItemType type;
 
 	ItemPassives staticPassives;
+
 	SDL_Texture* itemDescription;
 	SDL_Rect descriptionDstRect;
 public:
@@ -30,6 +31,7 @@ public:
 	void onPlayerInteract(Map* map, std::vector <InteractiveObject*>& objects, Player* player) override;
 
 	void createDescriptionTxt();
+	void drawDescription(SDL_Rect& slotRect, SDL_Point& WindowResolution);
 
 	Item(float posX, float posY);
 	~Item();

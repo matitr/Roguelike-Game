@@ -5,22 +5,22 @@
 
 class Unit;
 
-class Attack {
+class AttackPattern {
 
 public:
-	virtual void makeAttack(Unit* unit, std::list <Projectile*>& monsterAttacks) = 0;
+	virtual void makeAttack(Unit* unit, std::list <Projectile*>& attacksContainer, SDL_Point* attackPoint) = 0;
 
-	Attack();
-	~Attack();
+	AttackPattern();
+	~AttackPattern();
 };
 
-class ProjectileDirection : public Attack {
+class ProjectileDirection : public AttackPattern {
 	float startAngle;
 	float angle;
 	int numbOfProj;
 
 public:
-	void makeAttack(Unit* unit, std::list <Projectile*>& monsterAttacks);
+	void makeAttack(Unit* unit, std::list <Projectile*>& attacksContainer, SDL_Point* attackPoint);
 
 	ProjectileDirection(float _angle, int _numbOfProj) {
 		startAngle = _angle;
@@ -30,4 +30,18 @@ public:
 	~ProjectileDirection() {
 
 	}
+};
+
+class MultipleProjectiles : public AttackPattern {
+	int numbOfProjectiles;
+
+public:
+	void setNumberOfProj(int i) { numbOfProjectiles = i; }
+	void makeAttack(Unit* unit, std::list <Projectile*>& attacksContainer, SDL_Point* attackPoint);
+
+	MultipleProjectiles(int _numbOfProjectiles) : numbOfProjectiles(_numbOfProjectiles) {
+
+	}
+
+	~MultipleProjectiles() { }
 };

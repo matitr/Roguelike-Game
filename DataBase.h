@@ -1,11 +1,14 @@
 #pragma once
 #include "SDL.h"
+#include "SDL_ttf.h"
 #include <vector>
 #include <unordered_map>
 
 
 enum ItemType { Universal, MainWeapon, Active, Passive };
 enum class AnimationName { Projectile };
+enum class TextColor { ItemPassivesText, ItemType };
+enum class FontPurpose { ItemDescription };
 
 struct InventoryDetails {
 
@@ -43,13 +46,17 @@ class DataBase {
 public:
 	static InventoryDetails inventoryDelails;
 	static std::unordered_map<AnimationName, AnimationDetails> animations;
+	static std::unordered_map<TextColor, SDL_Color> colors;
+	static std::unordered_map<FontPurpose, TTF_Font*> fonts;
+
 
 	static void loadAllDataBases();
 	static void loadInventoryDetails();
 	static void loadAnimationsDetails();
+	static void loadFontData();
 
-	static std::string getPassiveText(int passive, float value);
-	static std::string getItemTypeText(enum ItemType);
+	static void getPassiveText(int passive, float value, SDL_Texture*& first);
+	static SDL_Texture* getItemTypeText(enum ItemType);
 
 	DataBase();
 	~DataBase();

@@ -18,6 +18,16 @@ public:
 	}
 };
 
+class PointDouble {
+public:
+	double x, y;
+
+	PointDouble() {
+		x = 0;
+		y = 0;
+	}
+};
+
 enum GameObjectType {Static, Dynamic};
 enum ObjectHitboxType { Rectangle, Circle };
 struct TextureInfo;
@@ -27,7 +37,7 @@ class GameObject {
 protected:
 	SDL_Texture* texture;
 	PointFloat position;
-	PointFloat velocity;
+	PointDouble velocity;
 	GameObjectType objectType;
 	ObjectHitboxType hitboxType;
 	int radius = 0;
@@ -35,6 +45,9 @@ protected:
 	bool flatObjOnFloor = false;
 
 	SDL_Rect srcRect, dstRect;
+
+	// Hitbox
+	int positionShiftX, positionShiftY;
 public:
 	template <class T>
 	void collisionUnit(T *gameObj);
@@ -55,9 +68,13 @@ public:
 
 	void setPositionX(float x) { position.x = x; }
 	void setPositionY(float y) { position.y = y; }
+	void setPosition(int x, int y);
+	void setPositionShift(float positionShiftX, float positionShiftY, float hitboxRange);
+
 	inline int getPositionX() const { return position.x; }
 	inline int getPositionY() const { return position.y; }
 	int getRadius() { return radius; }
+	int getRadiusY() { return radiusY; }
 	bool flatTextureOnFloor() const { return flatObjOnFloor; }
 
 	virtual void draw(SDL_Point* startRender);

@@ -114,7 +114,16 @@ void LevelGenerator::createRoom(Room* room) {
 	}
 
 	if (room->type == Treasure) {
-		room->interactiveObjects.push_back(new ChestObj(room->roomCenterX(fieldRect.w), room->roomCenterY(fieldRect.h)));
+		ChestObj* chestO = new ChestObj(room->roomCenterX(fieldRect.w), room->roomCenterY(fieldRect.h));
+		room->interactiveObjects.push_back(chestO);
+
+		int x = (chestO->getPositionX() - chestO->getRadius()) / fieldRect.w;
+		for (x; x <= (chestO->getPositionX() + chestO->getRadius()) / fieldRect.w; x++) {
+			int y = (chestO->getPositionY() - chestO->getRadiusY()) / fieldRect.h;
+			for (y; y <= (chestO->getPositionY() + chestO->getRadiusY()) / fieldRect.h; y++) {
+				map[x][y]->addCollisionObj(chestO);
+			}
+		}
 	}
 }
 

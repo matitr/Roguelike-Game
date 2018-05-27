@@ -9,14 +9,10 @@ class UnitAction;
 class MonRandMoveProjAround : public Unit {
 
 public:
-	MonRandMoveProjAround(Map* _map, Unit* _player) : Unit(TextureManager::textures[PLAYER], 60, 60) {
-		addAction(AttackProj, NULL, NULL, 0, 2, 100, 50);
-		//		addAction(AttackProj, NULL, NULL, 0, 2, 100, 50);
-//		addAction(Walk, NULL, NULL, 1, 2, 100);
-//		addAction(Roll, NULL, NULL, 2, 4, 100);
-		addPattern(AttackProj);
-//		addPattern(Walk);
-//		addPattern(Roll);
+	MonRandMoveProjAround(Map* _map, Unit* _player) : Unit(TextureManager::textures[UNIT], 64, 64) {
+		addAction(Walk, NULL, NULL, 8, 9, 20, 50);
+		//		addAction(AttackProj, new MoveForwardPlayer(_map, _player), new ProjectileDirection(90, 4), 0, 2, 100, 50);
+		addPattern(Walk);
 
 		setPositionShift(0.5, 0.9, 0.7);
 	}
