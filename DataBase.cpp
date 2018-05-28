@@ -48,7 +48,7 @@ void DataBase::loadInventoryDetails() {
 	slot.x = 330;
 
 	for (int i = 0; i < 5; i++)
-		inventoryDelails.eqDetails.push_back({ ItemType::Active,
+		inventoryDelails.eqDetails.push_back({ ItemType::Passive,
 			{ slot.x,slot.y + (slot.h + space) * i,inventoryDelails.slotSize.x,inventoryDelails.slotSize.x } });
 
 }
@@ -63,6 +63,11 @@ void DataBase::loadAnimationsDetails() {
 	animations[AnimationName::PlayerWalkW] = { { 0,576 }, 8, 5, 8 };
 	animations[AnimationName::PlayerWalkS] = { { 0,640 }, 8, 5, 8 };
 	animations[AnimationName::PlayerWalkE] = { { 0,704 }, 8, 5, 8 };
+
+	animations[AnimationName::SlashN] = { { 0,768 }, 5, 5, 5 };
+	animations[AnimationName::SlashW] = { { 0,832 }, 5, 5, 5 };
+	animations[AnimationName::SlashS] = { { 0,896 }, 5, 5, 5 };
+	animations[AnimationName::SlashE] = { { 0,960 }, 5, 5, 5 };
 }
 
 void DataBase::loadFontData() {

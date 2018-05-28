@@ -19,7 +19,7 @@ bool Player::update(std::list <Projectile*>& playerProjectiles, Map* map, SDL_Re
 		attackP->setNumberOfProj(1);
 	if (attackFrame == ATTACK_POSSIBLE)
 		makeAttack(playerProjectiles, DataBase::animations[AnimationName::Projectile]);
-
+	attackCancel = false;
 	if (attackFrame > -1) {
 		if (attackFrame + 1 == attackFrames)
 			attackFrame = ATTACK_POSSIBLE;
@@ -88,7 +88,7 @@ bool Player::update(std::list <Projectile*>& playerProjectiles, Map* map, SDL_Re
 		}
 	}
 
-	updateActionFrame();
+	updateAction();
 
 	return true;
 }
@@ -133,7 +133,7 @@ void Player::attackPressed(int x, int y) {
 }
 
 void Player::makeAttack(std::list <Projectile*>& playerProjectiles, AnimationDetails& animationD) {
-	if (unitActionName == Roll)
+	if (unitActionName == Roll || attackCancel)
 		return;
 
 	if (Input::mouseStates[SDL_BUTTON_LEFT]) {
@@ -147,9 +147,8 @@ void Player::makeAttack(std::list <Projectile*>& playerProjectiles, AnimationDet
 			return;
 		else if (!attack)
 			return;
-
-
 	}
+
 
 	attackFrame = 0;
 	attack = 0;
@@ -203,7 +202,7 @@ void Player::resetAnimation() {
 }
 
 void Player::cancelAttack() {
-	attack = false;
+	attackCancel = true;
 }
 
 void Player::takeMoney(int& m) {

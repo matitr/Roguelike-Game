@@ -46,7 +46,7 @@ void MultipleProjectiles::makeAttack(Unit* unit, std::list <Projectile*>& attack
 	angle -= change;
 
 	if (angle < -180)
-		angle = 180 - (angle + 180);
+		angle = 180 + (angle + 180);
 
 	for (int i = 0; i < numbOfProjectiles; i++) {
 		Projectile* p = new Projectile(DataBase::animations[AnimationName::Projectile], unit->getPassives());

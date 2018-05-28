@@ -20,9 +20,14 @@ struct TextureInfo {
 
 
 enum class TextureFile { PLAYER, PROJECTILES, PLAYER_STATS, LEVEL_1, OBJECTS, COIN, CHEST, INVENTORY, UNIT };
-enum SingleFieldTexture { WOOD_FLOOR , WALL_SIDE, WALL_TOP_T, WALL_TOP_R, WALL_TOP_B, WALL_TOP_L, DOORS};
-enum SingleTexture { Chest, Coin, Teleport, TeleportOff, TeleportOn, PlayerT, ProjectileT };
+
+enum SingleFieldTexture { WOOD_FLOOR ,
+	WALL_SIDE0, WALL_SIDE1, WALL_TOP_T, WALL_TOP_R, WALL_TOP_B, WALL_TOP_L, WALL_CORSEN_LT, WALL_CORSEN_RT, WALL_CORSEN_LB, WALL_CORSEN_RB, 
+	DOORS};
+
+enum SingleTexture { Chest, Coin, Teleport, TeleportOff, TeleportOn, PlayerT, UnitT, ProjectileT };
 enum TextureAnimation { ChestOpening, CoinSpin };
+
 
 
 class TextureManager{

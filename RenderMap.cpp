@@ -18,7 +18,7 @@ void RenderMap::initValues() {
 	startRenderPos.yAdditionalPixels = fieldRect.h * HEIGHT_SCALE * float(cameraPos.y % fieldRect.h) / fieldRect.h;
 
 	// Render only room, not empty fields after room
-	if (startRenderPos.xField < currRoom->x1) {
+	if (startRenderPos.xField < currRoom->x1) { // X
 		startRenderPos.xField = currRoom->x1;
 		startRenderPos.xAdditionalPixels = 0;
 	}
@@ -27,8 +27,8 @@ void RenderMap::initValues() {
 		startRenderPos.xAdditionalPixels = (currRoom->x2 * fieldRect.w - resolution.x) % fieldRect.w;
 	}
 
-	if (startRenderPos.yField + 1 < currRoom->y1) {
-		startRenderPos.yField = currRoom->y1 - 1;
+	if (startRenderPos.yField + 2 < currRoom->y1) { // Y
+		startRenderPos.yField = currRoom->y1 - 2;
 		startRenderPos.yAdditionalPixels = 0;
 	}
 	else if (startRenderPos.yField * fieldRect.h * HEIGHT_SCALE + startRenderPos.yAdditionalPixels > (currRoom->y2 + 1) * fieldRect.h  * HEIGHT_SCALE - resolution.y) {

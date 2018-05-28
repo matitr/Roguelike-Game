@@ -172,6 +172,7 @@ float GameObject::distanceEdges(T *gameObj) {
 }
 
 template float GameObject::distanceEdges<Unit>(Unit *gameObj);
+template float GameObject::distanceEdges<Player>(Player *gameObj);
 
 
 void GameObject::collisionUnitFields(std::vector<std::vector<Field*>>& map, SDL_Rect& fieldRect) {

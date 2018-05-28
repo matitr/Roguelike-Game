@@ -6,7 +6,10 @@
 
 
 enum ItemType { Universal, MainWeapon, Active, Passive };
-enum class AnimationName { Projectile, ChestOpening, CoinSpin, PlayerWalkN, PlayerWalkE, PlayerWalkS, PlayerWalkW};
+
+enum class AnimationName { Projectile, ChestOpening, CoinSpin, PlayerWalkN, PlayerWalkE, PlayerWalkS, PlayerWalkW,
+	SlashN, SlashE, SlashS, SlashW };
+
 enum class TextColor { ItemPassivesText, ItemType };
 enum class FontPurpose { ItemDescription };
 struct TextureInfo;

@@ -26,7 +26,13 @@ void TextureManager::loadAllTextureSrcRect() { // srcRect = { x, y, w, h }
 
 	fieldTextureSrcRect[WOOD_FLOOR] = { fieldSize * 0,fieldSize * 0,fieldSize,fieldSize };
 	fieldTextureSrcRect[DOORS] = { fieldSize * 1,fieldSize * 0,fieldSize,fieldSize };
-	fieldTextureSrcRect[WALL_SIDE] = { fieldSize * 2,fieldSize * 0,fieldSize,fieldSize };
+	fieldTextureSrcRect[WALL_SIDE0] = { fieldSize * 2,fieldSize * 0,fieldSize,fieldSize };
+	fieldTextureSrcRect[WALL_SIDE1] = { fieldSize * 3,fieldSize * 0,fieldSize,fieldSize };
+	fieldTextureSrcRect[WALL_CORSEN_LT] = { fieldSize * 5,fieldSize * 1,fieldSize,fieldSize };
+	fieldTextureSrcRect[WALL_CORSEN_RT] = { fieldSize * 4,fieldSize * 1,fieldSize,fieldSize };
+	fieldTextureSrcRect[WALL_CORSEN_LB] = { fieldSize * 5,fieldSize * 0,fieldSize,fieldSize };
+	fieldTextureSrcRect[WALL_CORSEN_RB] = { fieldSize * 4,fieldSize * 0,fieldSize,fieldSize };
+
 	fieldTextureSrcRect[WALL_TOP_T] = { fieldSize * 0,fieldSize * 1,fieldSize,fieldSize };
 	fieldTextureSrcRect[WALL_TOP_R] = { fieldSize * 1,fieldSize * 1,fieldSize,fieldSize };
 	fieldTextureSrcRect[WALL_TOP_B] = { fieldSize * 2,fieldSize * 1,fieldSize,fieldSize };
@@ -41,8 +47,10 @@ void TextureManager::loadAllTextureSrcRect() { // srcRect = { x, y, w, h }
 	textureParameters[Coin] = { { 0,0,16,16 },{ 16,16 }, textures[TextureFile::COIN] };
 	textureParameters[Chest] = { { 0,0,100,75 },{ 100,75 }, textures[TextureFile::CHEST] };
 
-	textureParameters[SingleTexture::PlayerT] = { { 0,0,64,64 },{ 64,64 }, textures[TextureFile::UNIT] };
 	textureParameters[SingleTexture::ProjectileT] = { { 0,0,25,25 },{ 25,25 }, textures[TextureFile::PROJECTILES] };
+
+	textureParameters[SingleTexture::PlayerT] = { { 0,0,64,64 },{ 64,64 }, textures[TextureFile::PLAYER] };
+	textureParameters[SingleTexture::UnitT] = { { 0,0,64,64 },{ 64,64 }, textures[TextureFile::UNIT] };
 }
 
 SDL_Texture* TextureManager::LoadTexture(const char* dir) {

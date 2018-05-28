@@ -81,12 +81,14 @@ void Inventory::updateFocusOnSlot() {
 				}
 			}
 		}
-		else if (Input::mousePressed[SDL_BUTTON_RIGHT]) { // Show item options
-			if (slotUnderMouseEq) {
-				unequipItem(slotUnderMouse);
-			}
-			else { // Slot in inventory
-				equipItem(slotUnderMouse);
+		else if (Input::mousePressed[SDL_BUTTON_RIGHT]) { // Equip / Unequip
+			if (slotUnderMouse->item) {
+				if (slotUnderMouseEq) {
+					unequipItem(slotUnderMouse);
+				}
+				else { // Slot in inventory
+					equipItem(slotUnderMouse);
+				}
 			}
 		}
 	}

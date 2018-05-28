@@ -17,6 +17,10 @@ void UpdateCollision::updateAllUnits(Player* player, std::list <Unit*>& monsters
 	for (it_mon = monsters.begin(); it_mon != monsters.end(); it_mon++) {
 		player->collisionUnit(*it_mon);
 
+		// Monster player dist
+		double dist = (*it_mon)->distanceEdges(player);
+		(*it_mon)->setClosestEnemy(player, dist);
+
 		(*it_mon)->collisionUnitFields(map, fieldRect);
 
 		for (it_mon_second = monsters.begin(); it_mon_second != monsters.end(); it_mon_second++) {

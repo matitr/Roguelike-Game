@@ -27,6 +27,7 @@ class Player : public Unit {
 	int attack;
 	SDL_Point attackPos;
 	MultipleProjectiles* attackP;
+	bool attackCancel = false;
 
 	bool isInteractionBlocked = false;
 

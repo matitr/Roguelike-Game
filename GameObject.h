@@ -37,7 +37,6 @@ class GameObject {
 protected:
 	SDL_Texture* texture;
 	PointFloat position;
-	PointDouble velocity;
 	GameObjectType objectType;
 	ObjectHitboxType hitboxType;
 	int radius = 0;
@@ -49,6 +48,7 @@ protected:
 	// Hitbox
 	int positionShiftX, positionShiftY;
 public:
+	PointDouble velocity;
 	template <class T>
 	void collisionUnit(T *gameObj);
 

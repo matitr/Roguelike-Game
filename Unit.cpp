@@ -4,34 +4,28 @@
 #include "Attacks.h"
 #include <math.h>
 
-void Unit::updateActionFrame() {
-	Direction::Name dirCurrent;
+void Unit::updateAction() {
 	Direction::Name dirPast = actions[*currAction]->getDirection();
 
 	if (actions[*currAction]->actionEnded()) { // Next action
 		Direction::Name dirPast = actions[*currAction]->getDirection();
 
-		if (++currAction == pattern.end()) // Last action
-			currAction = pattern.begin();
+		do {
+			if (++currAction == pattern.end()) // Last action
+				currAction = pattern.begin();
+		} while (!actions[*currAction]->isEnabled());
 
 		actions[*currAction]->setFirstFrame();
 	}
 
 	if (velocity.x || velocity.y) {
-		if (velocity.x > 0)
-			dirCurrent = Direction::E;
-		else if (velocity.x < 0)
-			dirCurrent = Direction::W;
-		else if (velocity.y > 0)
-			dirCurrent = Direction::S;
-		else if (velocity.y < 0)
-			dirCurrent = Direction::N;
-
-		actions[*currAction]->setDirection(dirCurrent);
+		actions[*currAction]->setDirection(velocity.x, velocity.y);
 	}
 	else {
+		if (actions[*currAction]->isEnabled())
+			actions[*currAction]->setFirstFrame();
+
 		actions[*currAction]->setDirection(dirPast);
-		actions[*currAction]->setFirstFrame();
 	}
 
 	actions[*currAction]->updateFrame();
@@ -41,8 +35,41 @@ bool Unit::update(std::list <Projectile*>& monsterAttacks, Map* map) {
 	if (hp <= 0)
 		return false;
 
-	updateActionFrame();
+	if (closestEnemy) {
+		// Force change action
+		std::vector<std::list<ActionType>::iterator> actionsToForceChange;
+		std::list<ActionType>::iterator temp_itAction = currAction;
+		do {
+			if (++temp_itAction == pattern.end()) // Last action
+				temp_itAction = pattern.begin();
 
+			if (actions[*temp_itAction]->canForceActivation(closestEnemyDist))
+				actionsToForceChange.push_back(temp_itAction);
+
+		} while (temp_itAction != currAction);
+
+		if (!actionsToForceChange.empty()) {
+			if (std::find(actionsToForceChange.begin(), actionsToForceChange.end(), currAction) == actionsToForceChange.end()) {
+
+				int sizeVector = actionsToForceChange.size();
+				if (sizeVector == 1)
+					changeAction(actionsToForceChange[0]);
+				else
+					changeAction(actionsToForceChange[rand() % actionsToForceChange.size()]);
+			}
+			else if (actions[*currAction]->actionEnded()) { // Current action was forced changed. Change to it once more
+				int sizeVector = actionsToForceChange.size();
+				if (sizeVector == 1)
+					changeAction(actionsToForceChange[0]);
+				else
+					changeAction(actionsToForceChange[rand() % actionsToForceChange.size()]);
+				
+			}
+			actions[*currAction]->setDirection(closestEnemy->position.x - position.x, closestEnemy->position.y - position.y);
+		}
+	}
+
+	updateAction();
 
 	SDL_Point p = { map->getPlayer()->getPositionX(), map->getPlayer()->getPositionY() };
 	actions[*currAction]->makeAttack(this, monsterAttacks, &p);
@@ -50,6 +77,10 @@ bool Unit::update(std::list <Projectile*>& monsterAttacks, Map* map) {
 
 	if (actions[*currAction]->movementExists())
 		actions[*currAction]->makeMove(this);
+	else {
+		velocity.x = 0;
+		velocity.y = 0;
+	}
 	if (!(!velocity.y && !velocity.x)) {
 		float dir = atan2(velocity.y, velocity.x);
 		position.x += cos(dir) * speed;
@@ -59,15 +90,10 @@ bool Unit::update(std::list <Projectile*>& monsterAttacks, Map* map) {
 }
 
 void Unit::draw(SDL_Point* startRender) {
-//	srcRect.x = srcRect.w * textureFrame;
 	dstRect.x = position.x - startRender->x - positionShiftX;
 	dstRect.y = (position.y - startRender->y) * HEIGHT_SCALE - positionShiftY;
-//	if (velocity.x < 0)
-//		flip = SDL_FLIP_HORIZONTAL;
-//	else
-		flip = SDL_FLIP_NONE;
 
-	SDL_RenderCopyEx(Game::renderer, texture, &srcRect, &dstRect, NULL, NULL, flip);	
+	SDL_RenderCopy(Game::renderer, texture, &srcRect, &dstRect);	
 
 	SDL_Rect r;
 	r.h = 4;
@@ -77,6 +103,11 @@ void Unit::draw(SDL_Point* startRender) {
 	SDL_SetRenderDrawColor(Game::renderer, rand() % 225, 0, 102, 255);
 	renderCircle(position.x - startRender->x, (position.y - startRender->y) * HEIGHT_SCALE, radius);
 	//	SDL_RenderFillRect(Game::renderer, &r);
+}
+
+void Unit::setClosestEnemy(Unit* u, double dist) {
+	closestEnemy = u;
+	closestEnemyDist = dist;
 }
 
 void Unit::addAction(ActionType action, Movement* move, AttackPattern* attack, int attackFrame) {
@@ -107,6 +138,16 @@ void  Unit::addPattern(ActionType actionType) {
 void Unit::setStartingAction(ActionType action, Direction::Name dir) {
 	actions[action]->setDirection(dir);
 	actions[action]->setFirstFrame();
+}
+
+void Unit::setActionDistActivation(ActionType action, double dist) {
+	actions[action]->setDistActivation(dist);
+}
+
+void Unit::changeAction(std::list<ActionType>::iterator actionIt) {
+	actions[*actionIt]->setFirstFrame();
+	actions[*actionIt]->setDirection(*actions[*currAction]);
+	currAction = actionIt;
 }
 
 Unit::Unit(TextureInfo& txtInfo) : GameObject(txtInfo, Dynamic, Circle) {

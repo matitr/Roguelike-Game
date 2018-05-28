@@ -12,7 +12,7 @@ class UnitAction;
 class AttackPattern;
 class Movement;
 
-enum ActionType {Stand, Walk, Roll, AttackProj};
+enum ActionType {Stand, Walk, Roll, AttackProj, Attack};
 
 class Unit : public GameObject {
 protected:
@@ -20,25 +20,28 @@ protected:
 
 	std::list<ActionType> pattern;
 	std::list<ActionType>::iterator currAction;
-
-
-	SDL_RendererFlip flip;
+	Unit* closestEnemy = nullptr;
+	double closestEnemyDist;
 
 	float speed;
 	float hp;
 	float maxHp;
 
 	ItemPassives staticPassives;
-	void setStartingAction(ActionType action, Direction::Name dir);
-public:
-	PointFloat velocity;
-	virtual void updateActionFrame();
-	virtual bool update(std::list <Projectile*>& monsterAttacks, Map* map);
-	virtual void draw(SDL_Point* startRender);
 
 	void addAction(ActionType action, Movement* move, AttackPattern* attack, int attackFrame = -1);
 	void addAnimation(ActionType action, Direction::Name dir, AnimationDetails& animationD);
 	void addPattern(ActionType actionType);
+	void setStartingAction(ActionType action, Direction::Name dir);
+
+	void setActionDistActivation(ActionType action, double dist);
+	void changeAction(std::list<ActionType>::iterator actionIt);
+public:
+	virtual void updateAction();
+	virtual bool update(std::list <Projectile*>& monsterAttacks, Map* map);
+	virtual void draw(SDL_Point* startRender);
+
+	void setClosestEnemy(Unit* u, double dist);
 
 	void setHp(int _hp) { hp = float(hp); }
 	void takeDamage(float damage) { hp -= damage; }
