@@ -47,7 +47,7 @@ void TextureManager::loadAllTextureSrcRect() { // srcRect = { x, y, w, h }
 	textureParameters[Coin] = { { 0,0,16,16 },{ 16,16 }, textures[TextureFile::COIN] };
 	textureParameters[Chest] = { { 0,0,100,75 },{ 100,75 }, textures[TextureFile::CHEST] };
 
-	textureParameters[SingleTexture::ProjectileT] = { { 0,0,25,25 },{ 25,25 }, textures[TextureFile::PROJECTILES] };
+	textureParameters[SingleTexture::ProjectileT] = { { 0,0,64,64 },{ 32,32 }, textures[TextureFile::PROJECTILES] };
 
 	textureParameters[SingleTexture::PlayerT] = { { 0,0,64,64 },{ 64,64 }, textures[TextureFile::PLAYER] };
 	textureParameters[SingleTexture::UnitT] = { { 0,0,64,64 },{ 64,64 }, textures[TextureFile::UNIT] };

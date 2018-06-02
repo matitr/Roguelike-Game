@@ -36,7 +36,7 @@ class GameObject {
 
 protected:
 	SDL_Texture* texture;
-	PointFloat position;
+	PointDouble position;
 	GameObjectType objectType;
 	ObjectHitboxType hitboxType;
 	int radius = 0;

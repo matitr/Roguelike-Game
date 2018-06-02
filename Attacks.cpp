@@ -1,6 +1,7 @@
 #include "Attacks.h"
 #include "Unit.h"
 #include "DataBase.h"
+#include "Projectile.h"
 
 
 
@@ -13,10 +14,10 @@ AttackPattern::~AttackPattern() {
 
 }
 
-void ProjectileDirection::makeAttack(Unit* unit, std::list <Projectile*>& attacksContainer, SDL_Point* attackPoint) {
+void ProjectileDirection::makeAttack(Unit* unit, std::list <AttackType*>& attacksContainer, SDL_Point* attackPoint) {
 	angle = startAngle;
 	for (int i = 0; i < numbOfProj; i++) {
-		Projectile* p = new Projectile(DataBase::animations[AnimationName::Projectile], unit->getPassives());
+		Projectile* p = new Projectile(animationD, unit->getPassives());
 		angle = startAngle + (360.0 / (numbOfProj )) * i;
 		if (angle >= 360)
 			angle -= 360;
@@ -33,7 +34,7 @@ void ProjectileDirection::makeAttack(Unit* unit, std::list <Projectile*>& attack
 	}
 }
 
-void MultipleProjectiles::makeAttack(Unit* unit, std::list <Projectile*>& attacksContainer, SDL_Point* posToShot) {
+void MultipleProjectiles::makeAttack(Unit* unit, std::list <AttackType*>& attacksContainer, SDL_Point* posToShot) {
 	
 	float dir = atan2((posToShot->y - unit->getPositionY()), (posToShot->x - unit->getPositionX()));
 	int startingAngle = dir * 180.0 / 3.14159265;
@@ -49,7 +50,7 @@ void MultipleProjectiles::makeAttack(Unit* unit, std::list <Projectile*>& attack
 		angle = 180 + (angle + 180);
 
 	for (int i = 0; i < numbOfProjectiles; i++) {
-		Projectile* p = new Projectile(DataBase::animations[AnimationName::Projectile], unit->getPassives());
+		Projectile* p = new Projectile(animationD, unit->getPassives());
 		p->setAngle(angle);
 		p->setPosition(unit->getPositionX(), unit->getPositionY());
 		attacksContainer.push_back(p);

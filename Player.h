@@ -4,11 +4,10 @@
 
 #define ATTACK_POSSIBLE -1
 
-class Projectile;
+class AttackType;
 
 class Player : public Unit {
 	std::unordered_map <ActionType, Animation*> animations;
-	ActionType unitActionName;
 	int textureY = 0, textureFrame = 0, textureFrameTime = 100, textureFrames = 2, frameCounter = 0, textureFramesInRow;
 
 	float attackSpeed;
@@ -19,7 +18,7 @@ class Player : public Unit {
 	int lastRollFramesAgo;
 
 	int rollSpeed;
-	SDL_Point rollVelocity;
+	PointDouble rollVelocity;
 
 	SDL_Texture* playerStatsTxt;
 	SDL_Rect statusSrcRect, statusDstRest;
@@ -34,12 +33,12 @@ class Player : public Unit {
 	Inventory playerIntentory;
 	int money;
 public:
-	bool update(std::list <Projectile*>&, Map* map, SDL_Rect& fieldRect);
+	bool update(std::list <AttackType*>&, Map* map, SDL_Rect& fieldRect);
 	void drawStatus();
 	void movement(int x, int y);
 	bool attackPossible();
 	void attackPressed(int x, int y);
-	void makeAttack(std::list <Projectile*>&, AnimationDetails& animationD);
+	void makeAttack(std::list <AttackType*>&, AnimationDetails& animationD);
 
 //	void addAnimation(ActionType actionName, int _yPosTexture, int _frames, int _frameTime);
 	void setAnimation(ActionType actionName);

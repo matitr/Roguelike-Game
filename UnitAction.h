@@ -1,6 +1,6 @@
 #pragma once
 #include <list>
-#include "Projectile.h"
+#include "AttackType.h"
 #include "TextureManager.h"
 
 class Movement;
@@ -12,14 +12,18 @@ class UnitAction {
 	AttackPattern *attack;
 	std::vector<SpriteAnimation*> animations;
 	bool actionEnable;
-	double distanceActivation = -1;
+	double distActivationMax = -1;
+	double distActivationMin = -1;
+	bool dynamicEnableOnly = false;
 
 	int attackFrame = 0;
 	Direction::Name currentDirection;
 public:
-	bool isEnabled() { return distanceActivation == -1; }
-	void setDistActivation(double dist) { distanceActivation = dist; }
-	bool canForceActivation(double dist);
+	bool dynamicActivationOnly() { return (dynamicEnableOnly || distActivationMax != -1); }
+	void setDistActivationMax(double dist) { distActivationMax = dist; }
+	void setDistActivationMin(double dist) { distActivationMin = dist; }
+	bool canDynamicActivation(double dist);
+	void setDynamicActivationOnly() { dynamicEnableOnly = true; }
 
 	inline int makeAttackFrame() { return attackFrame; }
 	inline bool movementExists() { return movement ? true : false; }
@@ -35,7 +39,7 @@ public:
 	bool actionEnded();
 	void updateFrame();
 
-	void makeAttack(Unit* unit, std::list <Projectile*>& monsterAttacks, SDL_Point* attackPoint);
+	void makeAttack(Unit* unit, std::list <AttackType*>& monsterAttacks, SDL_Point* attackPoint);
 	void makeMove(Unit* unitToMove);
 
 	UnitAction(Movement* move, AttackPattern* attack, int attackFrame);

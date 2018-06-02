@@ -90,7 +90,7 @@ Item::Item(float posX, float posY) : InteractiveObject(TextureManager::texturePa
 	staticPassives[StaticPassiveName::pierceShots] = 2;
 	staticPassives[StaticPassiveName::homing] = 99;
 	staticPassives[StaticPassiveName::unitSpeed] = 25.0;
-	staticPassives[StaticPassiveName::numbOfProjectiles] = 5;
+	staticPassives[StaticPassiveName::numbOfProjectiles] = 15;
 //	staticPassives[StaticPassiveName::chargeProjectiles] = 1;
 
 	createDescriptionTxt();

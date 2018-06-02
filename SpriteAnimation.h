@@ -10,14 +10,15 @@ private:
 	int framesInRow;
 	SDL_Rect &srcRectAnimation;
 public:
-	int getFrameCounter() { return frameCounter; }
 	bool lastFrameEnded() { return frameCounter == frames * frameTime ? true : false; }
 	void setOnEndOfFrame() { frameCounter = frameTime; }
+
+	void updateTexture();
 
 	void setFirstFrame();
 	void setLastFrame();
 	void setFrameCounter(SpriteAnimation& animationOther);
-	void updateTexture();
+	bool firstTimuUnitOfFrame(int frame);
 
 	SpriteAnimation(AnimationDetails& animationD, SDL_Rect &_srcRect);
 	~SpriteAnimation();

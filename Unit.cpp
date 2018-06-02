@@ -4,83 +4,17 @@
 #include "Attacks.h"
 #include <math.h>
 
-void Unit::updateAction() {
-	Direction::Name dirPast = actions[*currAction]->getDirection();
-
-	if (actions[*currAction]->actionEnded()) { // Next action
-		Direction::Name dirPast = actions[*currAction]->getDirection();
-
-		do {
-			if (++currAction == pattern.end()) // Last action
-				currAction = pattern.begin();
-		} while (!actions[*currAction]->isEnabled());
-
-		actions[*currAction]->setFirstFrame();
-	}
-
-	if (velocity.x || velocity.y) {
-		actions[*currAction]->setDirection(velocity.x, velocity.y);
-	}
-	else {
-		if (actions[*currAction]->isEnabled())
-			actions[*currAction]->setFirstFrame();
-
-		actions[*currAction]->setDirection(dirPast);
-	}
-
-	actions[*currAction]->updateFrame();
-}
-
-bool Unit::update(std::list <Projectile*>& monsterAttacks, Map* map) {
+bool Unit::update(std::list <AttackType*>& monsterAttacks, Map* map) {
 	if (hp <= 0)
 		return false;
 
-	if (closestEnemy) {
-		// Force change action
-		std::vector<std::list<ActionType>::iterator> actionsToForceChange;
-		std::list<ActionType>::iterator temp_itAction = currAction;
-		do {
-			if (++temp_itAction == pattern.end()) // Last action
-				temp_itAction = pattern.begin();
-
-			if (actions[*temp_itAction]->canForceActivation(closestEnemyDist))
-				actionsToForceChange.push_back(temp_itAction);
-
-		} while (temp_itAction != currAction);
-
-		if (!actionsToForceChange.empty()) {
-			if (std::find(actionsToForceChange.begin(), actionsToForceChange.end(), currAction) == actionsToForceChange.end()) {
-
-				int sizeVector = actionsToForceChange.size();
-				if (sizeVector == 1)
-					changeAction(actionsToForceChange[0]);
-				else
-					changeAction(actionsToForceChange[rand() % actionsToForceChange.size()]);
-			}
-			else if (actions[*currAction]->actionEnded()) { // Current action was forced changed. Change to it once more
-				int sizeVector = actionsToForceChange.size();
-				if (sizeVector == 1)
-					changeAction(actionsToForceChange[0]);
-				else
-					changeAction(actionsToForceChange[rand() % actionsToForceChange.size()]);
-				
-			}
-			actions[*currAction]->setDirection(closestEnemy->position.x - position.x, closestEnemy->position.y - position.y);
-		}
-	}
-
-	updateAction();
+	actionsManager.onClosestObj(closestEnemy, closestEnemyDist);
+	actionsManager.updateAction();
 
 	SDL_Point p = { map->getPlayer()->getPositionX(), map->getPlayer()->getPositionY() };
-	actions[*currAction]->makeAttack(this, monsterAttacks, &p);
+	actionsManager.makeAttack(this, monsterAttacks, &p);
+	actionsManager.makeMove(this);
 
-
-	if (actions[*currAction]->movementExists())
-		actions[*currAction]->makeMove(this);
-	else {
-		velocity.x = 0;
-		velocity.y = 0;
-	}
 	if (!(!velocity.y && !velocity.x)) {
 		float dir = atan2(velocity.y, velocity.x);
 		position.x += cos(dir) * speed;
@@ -110,47 +44,7 @@ void Unit::setClosestEnemy(Unit* u, double dist) {
 	closestEnemyDist = dist;
 }
 
-void Unit::addAction(ActionType action, Movement* move, AttackPattern* attack, int attackFrame) {
-	actions[action] = new UnitAction(move, attack, attackFrame);
-}
-
-void Unit::addAnimation(ActionType action, Direction::Name dir, AnimationDetails& animationD) {
-	actions[action]->addAnimation(dir, animationD, srcRect);
-}
-
-void  Unit::addPattern(ActionType actionType) {
-	if (pattern.empty()) {
-		pattern.push_back(actionType);
-		currAction = pattern.begin();
-
-//		frameCounter = 0;
-//		textureY = actions[*currAction]->texturePosY();
-//		textureFrame = 0;
-//		textureFrameTime = actions[*currAction]->textureFrameTime();
-//		textureFrames = actions[*currAction]->textureFrames();
-
-//		srcRect.y = dstRect.h * textureY;
-	}
-	else
-		pattern.push_back(actionType);
-}
-
-void Unit::setStartingAction(ActionType action, Direction::Name dir) {
-	actions[action]->setDirection(dir);
-	actions[action]->setFirstFrame();
-}
-
-void Unit::setActionDistActivation(ActionType action, double dist) {
-	actions[action]->setDistActivation(dist);
-}
-
-void Unit::changeAction(std::list<ActionType>::iterator actionIt) {
-	actions[*actionIt]->setFirstFrame();
-	actions[*actionIt]->setDirection(*actions[*currAction]);
-	currAction = actionIt;
-}
-
-Unit::Unit(TextureInfo& txtInfo) : GameObject(txtInfo, Dynamic, Circle) {
+Unit::Unit(TextureInfo& txtInfo) : GameObject(txtInfo, Dynamic, Circle), actionsManager(srcRect, velocity, position) {
 	speed = 3;
 	hp = 10;
 

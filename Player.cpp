@@ -4,10 +4,11 @@
 #include "DataBase.h"
 #include "Attacks.h"
 #include "Input.h"
+#include "UnitAction.h"
 #include <math.h>
 
 
-bool Player::update(std::list <Projectile*>& playerProjectiles, Map* map, SDL_Rect& fieldRect) {
+bool Player::update(std::list <AttackType*>& playerProjectiles, Map* map, SDL_Rect& fieldRect) {
 	if (isInteractionBlocked) {
 		attack = false;
 		velocity.x = 0;
@@ -30,8 +31,8 @@ bool Player::update(std::list <Projectile*>& playerProjectiles, Map* map, SDL_Re
 	if (lastRollFramesAgo < rollCooldown)
 		lastRollFramesAgo++;
 
-	if (unitActionName == Roll) {
-		velocity.x = rollVelocity.x;
+	if (actionsManager.currActionType() == Dash) {
+ 		velocity.x = rollVelocity.x;
 		velocity.y = rollVelocity.y;
 	}
 
@@ -50,7 +51,7 @@ bool Player::update(std::list <Projectile*>& playerProjectiles, Map* map, SDL_Re
 			setPosition(map->getCameraX(), map->getCameraY());
 			velocity.x = 0;
 			velocity.y = 0;
-			setAnimation(Stand);
+//			setAnimation(Stand);
 			return true;
 		}
 
@@ -66,15 +67,16 @@ bool Player::update(std::list <Projectile*>& playerProjectiles, Map* map, SDL_Re
 			setPosition(map->getCameraX(), map->getCameraY());
 			velocity.x = 0;
 			velocity.y = 0;
-			setAnimation(Stand);
+//			setAnimation(Stand);
 			return true;
 		}
 
 	if (!velocity.y && !velocity.x)
-		setAnimation(Stand);
+		//		setAnimation(Stand);
+		;
 	else {
 		double speedMultiplier = staticPassives[StaticPassiveName::unitSpeed] ? 1 + staticPassives[StaticPassiveName::unitSpeed] / 100 : 1;
-		if (unitActionName == Roll) {
+		if (actionsManager.currActionType() == Dash) {
 			float dir = atan2(velocity.y, velocity.x);
 			position.x += cos(dir) * rollSpeed * speedMultiplier;
 			position.y += sin(dir) * rollSpeed * speedMultiplier;
@@ -88,7 +90,7 @@ bool Player::update(std::list <Projectile*>& playerProjectiles, Map* map, SDL_Re
 		}
 	}
 
-	updateAction();
+	actionsManager.updateAction();
 
 	return true;
 }
@@ -132,8 +134,8 @@ void Player::attackPressed(int x, int y) {
 	attack = true;
 }
 
-void Player::makeAttack(std::list <Projectile*>& playerProjectiles, AnimationDetails& animationD) {
-	if (unitActionName == Roll || attackCancel)
+void Player::makeAttack(std::list <AttackType*>& playerProjectiles, AnimationDetails& animationD) {
+	if (actionsManager.currActionType() == Dash || attackCancel)
 		return;
 
 	if (Input::mouseStates[SDL_BUTTON_LEFT]) {
@@ -160,30 +162,23 @@ void Player::makeAttack(std::list <Projectile*>& playerProjectiles, AnimationDet
 //}
 
 void Player::setAnimation(ActionType actionName) {
-	return;
-	if (unitActionName == actionName)
+	if (actionsManager.currActionType() == actionName)
 		return;
 
-	if (actionName == Roll && (lastRollFramesAgo < rollCooldown || (velocity.x == 0 && velocity.y == 0)))
+	if (actionName == Dash && (lastRollFramesAgo < rollCooldown || (velocity.x == 0 && velocity.y == 0)))
+  		return;
+
+	if (actionsManager.currActionType() == Dash)
 		return;
 
-	if (unitActionName == Roll && lastRollFramesAgo < animations[Roll]->frames * animations[Roll]->frameTime)
+	if (!actionsManager.changeActionType(actionName))
 		return;
 
-	if (actionName == Roll) {
+	if (actionName == Dash) {
 		rollVelocity.x = velocity.x;
 		rollVelocity.y = velocity.y;
 		lastRollFramesAgo = -1;
 	}
-
-	unitActionName = actionName;
-	frameCounter = 0;
-	textureY = animations[actionName]->yPosTexture;
-	textureFrame = 0;
-	textureFrameTime = animations[actionName]->frameTime;
-	textureFrames = animations[actionName]->frames;
-
-	srcRect.y = dstRect.h * textureY;
 }
 
 void Player::resetAnimation() {
@@ -191,7 +186,7 @@ void Player::resetAnimation() {
 	attackFrame = -1;
 	lastRollFramesAgo = 100000;
 
-	unitActionName = Stand;
+	actionsManager.changeActionType(Stand);
 	frameCounter = 0;
 	textureY = animations[Stand]->yPosTexture;
 	textureFrame = 0;
@@ -215,15 +210,23 @@ void Player::takeMoney(int& m) {
 Player::Player(SDL_Texture* txt, SDL_Point& windowResolution) : Unit(TextureManager::textureParameters[SingleTexture::PlayerT]), playerIntentory(staticPassives, windowResolution) {
 //	addAnimation(Stand, 10, 1, 15);
 //	addAnimation(Walk, 1, 2, 15);
-//	addAnimation(Roll, 2, 4, 10);
+//	addAnimation(Dash, 2, 4, 10);
 
-	addAction(Walk, NULL, NULL);
-	addAnimation(Walk, Direction::N, DataBase::animations[AnimationName::PlayerWalkN]);
-	addAnimation(Walk, Direction::E, DataBase::animations[AnimationName::PlayerWalkE]);
-	addAnimation(Walk, Direction::S, DataBase::animations[AnimationName::PlayerWalkS]);
-	addAnimation(Walk, Direction::W, DataBase::animations[AnimationName::PlayerWalkW]);
-	setStartingAction(Walk, Direction::S);
-	addPattern(Walk);
+	actionsManager.addAction(Walk, NULL, NULL);
+	actionsManager.addAnimation(Walk, Direction::N, DataBase::animations[AnimationName::PlayerWalkN]);
+	actionsManager.addAnimation(Walk, Direction::E, DataBase::animations[AnimationName::PlayerWalkE]);
+	actionsManager.addAnimation(Walk, Direction::S, DataBase::animations[AnimationName::PlayerWalkS]);
+	actionsManager.addAnimation(Walk, Direction::W, DataBase::animations[AnimationName::PlayerWalkW]);
+
+	actionsManager.addAction(Dash, NULL, NULL);
+	actionsManager.addAnimation(Dash, Direction::N, DataBase::animations[AnimationName::DashN]);
+	actionsManager.addAnimation(Dash, Direction::E, DataBase::animations[AnimationName::DashE]);
+	actionsManager.addAnimation(Dash, Direction::S, DataBase::animations[AnimationName::DashS]);
+	actionsManager.addAnimation(Dash, Direction::W, DataBase::animations[AnimationName::DashW]);
+	actionsManager.setActionDynamicOnly(Dash);
+	actionsManager.setStartingAction(Walk, Direction::S);
+	actionsManager.addPattern(Walk);
+	actionsManager.addPattern(Dash);
 
 	rollCooldown = 2 * 60;
 	lastRollFramesAgo = rollCooldown;
@@ -243,9 +246,9 @@ Player::Player(SDL_Texture* txt, SDL_Point& windowResolution) : Unit(TextureMana
 	rollSpeed = 10;
 
 	attack = false;
-	attackP = new MultipleProjectiles(5);
+	attackP = new MultipleProjectiles(DataBase::animations[AnimationName::Projectile], 5);
 
-	setPositionShift(0.5, 0.9, 0.7);
+	setPositionShift(0.5, 0.8, 0.55);
 	setAnimation(Walk);
 	setAnimation(Stand);
 };

@@ -1,7 +1,7 @@
 #include "UpdateCollision.h"
 #include "Player.h"
 #include "Field.h"
-#include "Projectile.h"
+#include "AttackType.h"
 #include "Player.h"
 #include "Field.h"
 #include "GameObject.h"
@@ -31,8 +31,8 @@ void UpdateCollision::updateAllUnits(Player* player, std::list <Unit*>& monsters
 	}
 }
 
-void UpdateCollision::projectilesWithUnits(std::list <Projectile*>& playerProjectiles, std::list <Projectile*>& monsterAttacks, Player* player, std::list <Unit*>& monsters) {
-	std::list <Projectile*>::iterator it_projectile;
+void UpdateCollision::projectilesWithUnits(std::list <AttackType*>& playerProjectiles, std::list <AttackType*>& monsterAttacks, Player* player, std::list <Unit*>& monsters) {
+	std::list <AttackType*>::iterator it_projectile;
 	std::list <Unit*>::iterator it_monster;
 	
 	for (it_projectile = monsterAttacks.begin(); it_projectile != monsterAttacks.end(); it_projectile++) {
@@ -53,8 +53,8 @@ void UpdateCollision::projectilesWithUnits(std::list <Projectile*>& playerProjec
 
 }
 
-void UpdateCollision::projectilesWithWalls(std::list <Projectile*>& playerProjectiles, Map* map) {
-	std::list <Projectile*>::iterator it_proj = playerProjectiles.begin();
+void UpdateCollision::projectilesWithWalls(std::list <AttackType*>& playerProjectiles, Map* map) {
+	std::list <AttackType*>::iterator it_proj = playerProjectiles.begin();
 
 	while (it_proj != playerProjectiles.end()) {
 		int x = ((*it_proj)->getPositionX() - (*it_proj)->getRadius()) / map->fieldRect.w;

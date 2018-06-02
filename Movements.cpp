@@ -13,6 +13,7 @@ Movement::~Movement() {
 
 }	
 
+#pragma region A_Star
 A_Star::FieldA::FieldA(int _x, int _y) {
 	x = _x;
 	x = _x;
@@ -153,7 +154,9 @@ A_Star::A_Star(Map* _map, Unit* _player) {
 A_Star::~A_Star() {
 
 }
+#pragma endregion
 
+#pragma region MoveForwardPlayer
 void MoveForwardPlayer::makeMove(Unit* unitToMove) {
 	aStar.findPath(unitToMove);
 	SDL_Point* velocityPath = &aStar.velocity;
@@ -174,8 +177,21 @@ MoveForwardPlayer::MoveForwardPlayer(Map* _map, Unit* _player) : aStar(_map, _pl
 MoveForwardPlayer::~MoveForwardPlayer() {
 
 }
+#pragma endregion
 
+#pragma region MoveForwardPlayer
+void NoMoveFaceEnemy::makeMove(Unit* unitToMove) {
+	unitToMove->getActiongManager().setCurrentDirection(player->getPositionX() - unitToMove->getPositionX(), player->getPositionY() - unitToMove->getPositionY());
+	unitToMove->velocity.x = 0;
+	unitToMove->velocity.y = 0;
+}
 
+NoMoveFaceEnemy::NoMoveFaceEnemy(Unit* _player) : player(_player) {
 
+}
 
+NoMoveFaceEnemy::~NoMoveFaceEnemy() {
+
+}
+#pragma endregion
 

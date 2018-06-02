@@ -1,8 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="Game.cpp" />
-    <ClCompile Include="main.cpp" />
     <ClCompile Include="Field.cpp">
       <Filter>Map</Filter>
     </ClCompile>
@@ -27,9 +25,6 @@
     <ClCompile Include="Animation.cpp">
       <Filter>Textures</Filter>
     </ClCompile>
-    <ClCompile Include="TextureManager.cpp">
-      <Filter>Textures</Filter>
-    </ClCompile>
     <ClCompile Include="UnitAction.cpp">
       <Filter>Combat</Filter>
     </ClCompile>
@@ -37,9 +32,6 @@
       <Filter>Combat</Filter>
     </ClCompile>
     <ClCompile Include="Movements.cpp">
-      <Filter>Combat</Filter>
-    </ClCompile>
-    <ClCompile Include="Projectile.cpp">
       <Filter>Combat</Filter>
     </ClCompile>
     <ClCompile Include="GameObject.cpp">
@@ -60,22 +52,39 @@
     <ClCompile Include="Money.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Input.cpp" />
     <ClCompile Include="Inventory.cpp">
       <Filter>Items</Filter>
     </ClCompile>
     <ClCompile Include="Item.cpp">
       <Filter>Items</Filter>
     </ClCompile>
-    <ClCompile Include="DataBase.cpp">
-      <Filter>Items</Filter>
-    </ClCompile>
     <ClCompile Include="LevelGenerator.cpp">
       <Filter>Map</Filter>
     </ClCompile>
+    <ClCompile Include="ActionsManager.cpp">
+      <Filter>Combat</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="DataBase.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureManager.cpp">
+      <Filter>Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="AttackType.cpp">
+      <Filter>Combat</Filter>
+    </ClCompile>
+    <ClCompile Include="Projectile.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Game.h" />
     <ClInclude Include="Field.h">
       <Filter>Map</Filter>
     </ClInclude>
@@ -100,13 +109,7 @@
     <ClInclude Include="SpriteAnimation.h">
       <Filter>Textures</Filter>
     </ClInclude>
-    <ClInclude Include="TextureManager.h">
-      <Filter>Textures</Filter>
-    </ClInclude>
     <ClInclude Include="UnitAction.h">
-      <Filter>Combat</Filter>
-    </ClInclude>
-    <ClInclude Include="Projectile.h">
       <Filter>Combat</Filter>
     </ClInclude>
     <ClInclude Include="Attacks.h">
@@ -136,19 +139,34 @@
     <ClInclude Include="Money.h">
       <Filter>Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Input.h" />
     <ClInclude Include="Inventory.h">
       <Filter>Items</Filter>
     </ClInclude>
     <ClInclude Include="Item.h">
       <Filter>Items</Filter>
     </ClInclude>
-    <ClInclude Include="DataBase.h">
-      <Filter>Items</Filter>
-    </ClInclude>
     <ClInclude Include="LevelGenerator.h">
       <Filter>Map</Filter>
     </ClInclude>
+    <ClInclude Include="ActionsManager.h">
+      <Filter>Combat</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="DataBase.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureManager.h">
+      <Filter>Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="AttackType.h">
+      <Filter>Combat</Filter>
+    </ClInclude>
+    <ClInclude Include="Projectile.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Map">
@@ -168,6 +186,9 @@
     </Filter>
     <Filter Include="Items">
       <UniqueIdentifier>{d4d20c2a-7d69-4ed5-98a8-a03b2939703e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game">
+      <UniqueIdentifier>{d65d5a93-d5e0-4f9d-8344-edceff030301}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

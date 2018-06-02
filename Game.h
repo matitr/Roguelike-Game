@@ -23,8 +23,8 @@ class Game{
 
 	Player* player;
 	std::list <Unit*>* monsters;
-	std::list <Projectile*> playerProjectiles;
-	std::list <Projectile*> monsterAttacks;
+	std::list <AttackType*> playerProjectiles;
+	std::list <AttackType*> monsterAttacks;
 
 	std::vector <GameObject*> gameObjects;
 	std::vector <InteractiveObject*>* interactiveObjects;

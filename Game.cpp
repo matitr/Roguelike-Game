@@ -113,7 +113,7 @@ void Game::handleEvents() {
 		player->setAnimation(Walk);
 	}
 	if (Input::keystates[SDL_SCANCODE_SPACE]) {
-		player->setAnimation(Roll);
+		player->setAnimation(Dash);
 	}
 	if (Input::keystates[SDL_SCANCODE_TAB]) {
 		if (map->getMinimapSize() != MinimapClosed)
@@ -122,8 +122,8 @@ void Game::handleEvents() {
 	else if (map->getMinimapSize() == MinimapLarge)
 		map->changeMinimapSize(MinimapSmall);
 
-	if (!player->velocity.y && !player->velocity.x)
-		player->setAnimation(Stand);
+//	if (!player->velocity.y && !player->velocity.x)
+//		player->setAnimation(Stand);
 
 	int mouseX, mouseY;
 	
@@ -164,7 +164,7 @@ void Game::updateGame() {
 	while (it_monsters != (*monsters).end()) {
 		if (!(*it_monsters)->update(monsterAttacks, map)) {
 			(*interactiveObjects).push_back(new Money((*it_monsters)->getPositionX(), (*it_monsters)->getPositionY())); // drop money	
-			std::list<Projectile*>::iterator it_projPlayer = playerProjectiles.begin(); // Delete Unit pointers in projectiles
+			std::list<AttackType*>::iterator it_projPlayer = playerProjectiles.begin(); // Delete Unit pointers in projectiles
 			while (it_projPlayer != playerProjectiles.end()) {
 				if (*it_projPlayer)
 					(*it_projPlayer)->delHittedUnitPointer(*it_monsters);
@@ -228,8 +228,8 @@ void Game::updateGame() {
 }
 
 void Game::updateGameProjectiles() {
-	std::list<Projectile*>::iterator it = playerProjectiles.begin();
-	std::list<Projectile*>::iterator tempItProjectile;
+	std::list<AttackType*>::iterator it = playerProjectiles.begin();
+	std::list<AttackType*>::iterator tempItProjectile;
 	std::list<Unit*>::iterator itMonster;
 
 	it = monsterAttacks.begin();
@@ -256,7 +256,7 @@ void Game::updateGameProjectiles() {
 			float closest = 9999999;
 			float tempDist;
 			Unit* closestMonster = nullptr;
-			if ((*it)->isHoming()) {
+			if ((*it)->getPassives()[StaticPassiveName::homing]) {
 				for (itMonster = monsters->begin(); itMonster != monsters->end(); itMonster++)
 					if ((tempDist = (*it)->distanceEdges(*itMonster)) < closest)
 						closestMonster = *itMonster;

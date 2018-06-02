@@ -1,6 +1,6 @@
 #pragma once
 #include <list>
-#include "Projectile.h"
+#include "AttackType.h"
 #include "TextureManager.h"
 
 class Unit;
@@ -8,7 +8,7 @@ class Unit;
 class AttackPattern {
 
 public:
-	virtual void makeAttack(Unit* unit, std::list <Projectile*>& attacksContainer, SDL_Point* attackPoint) = 0;
+	virtual void makeAttack(Unit* unit, std::list <AttackType*>& attacksContainer, SDL_Point* attackPoint) = 0;
 
 	AttackPattern();
 	~AttackPattern();
@@ -18,11 +18,12 @@ class ProjectileDirection : public AttackPattern {
 	float startAngle;
 	float angle;
 	int numbOfProj;
+	AnimationDetails& animationD;
 
 public:
-	void makeAttack(Unit* unit, std::list <Projectile*>& attacksContainer, SDL_Point* attackPoint);
+	void makeAttack(Unit* unit, std::list <AttackType*>& attacksContainer, SDL_Point* attackPoint);
 
-	ProjectileDirection(float _angle, int _numbOfProj) {
+	ProjectileDirection(AnimationDetails& animationDetails, float _angle, int _numbOfProj) : animationD(animationDetails) {
 		startAngle = _angle;
 		numbOfProj = _numbOfProj;
 	}
@@ -34,12 +35,12 @@ public:
 
 class MultipleProjectiles : public AttackPattern {
 	int numbOfProjectiles;
-
+	AnimationDetails& animationD;
 public:
 	void setNumberOfProj(int i) { numbOfProjectiles = i; }
-	void makeAttack(Unit* unit, std::list <Projectile*>& attacksContainer, SDL_Point* attackPoint);
+	void makeAttack(Unit* unit, std::list <AttackType*>& attacksContainer, SDL_Point* attackPoint);
 
-	MultipleProjectiles(int _numbOfProjectiles) : numbOfProjectiles(_numbOfProjectiles) {
+	MultipleProjectiles(AnimationDetails& animationDetails, int _numbOfProjectiles) : animationD(animationDetails), numbOfProjectiles(_numbOfProjectiles) {
 
 	}
 

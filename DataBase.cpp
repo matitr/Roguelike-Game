@@ -1,7 +1,7 @@
 #include "DataBase.h"
-#include "TextureManager.h"
 #include "Item.h"
 #include "Game.h"
+#include "ActionsManager.h"
 #include <string>
 #include <iomanip>
 #include <sstream>
@@ -10,6 +10,7 @@ InventoryDetails DataBase::inventoryDelails;
 std::unordered_map<AnimationName, AnimationDetails> DataBase::animations;
 std::unordered_map<TextColor, SDL_Color> DataBase::colors;
 std::unordered_map<FontPurpose, TTF_Font*> DataBase::fonts;
+std::unordered_map<UnitName, std::unordered_map<ActionType, std::array<AnimationDetails, Direction::Name::enum_size>>> DataBase::unitAnimations;
 
 void DataBase::loadAllDataBases() {
 	DataBase::loadInventoryDetails();
@@ -54,7 +55,9 @@ void DataBase::loadInventoryDetails() {
 }
 
 void DataBase::loadAnimationsDetails() {
-	animations[AnimationName::Projectile] = { {0,0}, 3, 10, 3 };
+	animations[AnimationName::Projectile] = { {0,0}, 4, 7, 4 };
+	animations[AnimationName::Projectile2] = { { 0,64 }, 4, 7, 4 };
+
 	animations[AnimationName::ChestOpening] = { { 0,0 }, 3, 30, 3 };
 	animations[AnimationName::CoinSpin] = { { 0,0 }, 8, 5, 8 };
 
@@ -68,6 +71,31 @@ void DataBase::loadAnimationsDetails() {
 	animations[AnimationName::SlashW] = { { 0,832 }, 5, 5, 5 };
 	animations[AnimationName::SlashS] = { { 0,896 }, 5, 5, 5 };
 	animations[AnimationName::SlashE] = { { 0,960 }, 5, 5, 5 };
+
+	animations[AnimationName::DashN] = { { 0,512 }, 8, 2, 8 };
+	animations[AnimationName::DashW] = { { 0,576 }, 8, 2, 8 };
+	animations[AnimationName::DashS] = { { 0,640 }, 8, 2, 8 };
+	animations[AnimationName::DashE] = { { 0,704 }, 8, 2, 8 };
+
+	unitAnimations[UnitName::Unit][Walk][Direction::N] = { { 0,512 }, 8, 5, 8 };
+	unitAnimations[UnitName::Unit][Walk][Direction::W] = { { 0,576 }, 8, 5, 8 };
+	unitAnimations[UnitName::Unit][Walk][Direction::S] = { { 0,640 }, 8, 5, 8 };
+	unitAnimations[UnitName::Unit][Walk][Direction::E] = { { 0,704 }, 8, 5, 8 };
+
+	unitAnimations[UnitName::Unit][Attack][Direction::N] = { { 0,768 }, 5, 5, 5 };
+	unitAnimations[UnitName::Unit][Attack][Direction::W] = { { 0,832 }, 5, 5, 5 };
+	unitAnimations[UnitName::Unit][Attack][Direction::S] = { { 0,896 }, 5, 5, 5 };
+	unitAnimations[UnitName::Unit][Attack][Direction::E] = { { 0,960 }, 5, 5, 5 };
+
+	unitAnimations[UnitName::Unit][Dash][Direction::N] = { { 0,512 }, 8, 2, 8 };
+	unitAnimations[UnitName::Unit][Dash][Direction::W] = { { 0,576 }, 8, 2, 8 };
+	unitAnimations[UnitName::Unit][Dash][Direction::S] = { { 0,640 }, 8, 2, 8 };
+	unitAnimations[UnitName::Unit][Dash][Direction::E] = { { 0,704 }, 8, 2, 8 };
+
+	unitAnimations[UnitName::Unit][AttackProj][Direction::N] = { { 0,1024 }, 13, 4, 13 };
+	unitAnimations[UnitName::Unit][AttackProj][Direction::W] = { { 0,1088 }, 13, 4, 13 };
+	unitAnimations[UnitName::Unit][AttackProj][Direction::S] = { { 0,1152 }, 13, 4, 13 };
+	unitAnimations[UnitName::Unit][AttackProj][Direction::E] = { { 0,1216 }, 13, 4, 13 };
 }
 
 void DataBase::loadFontData() {
@@ -98,6 +126,11 @@ void DataBase::getPassiveText(int passive, float value, SDL_Texture*& firstTextu
 	}
 	else if (passive == StaticPassiveName::chargeProjectiles) {
 		passiveText = "Charge shots";
+	}
+	else if (passive == StaticPassiveName::projectileSpeed) {
+		std::stringstream stream;
+		stream << std::fixed << std::setprecision(1) << value;
+		passiveText = "Increase projectile speed by " + stream.str() + "%";
 	}
 
 

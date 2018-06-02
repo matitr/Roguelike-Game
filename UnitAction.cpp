@@ -6,8 +6,8 @@
 #include <iostream>
 
 
-bool UnitAction::canForceActivation(double dist) {
-	if (distanceActivation != -1 && dist <= distanceActivation)
+bool UnitAction::canDynamicActivation(double dist) {
+	if (dynamicActivationOnly() && dist <= distActivationMax && dist >= distActivationMin)
 		return true;
 
 	return false;
@@ -47,16 +47,6 @@ void UnitAction::setDirection(double x, double y) {
 	else
 		dir = Direction::S;
 
-
-//	if (x > 0)
-//		dir = Direction::E;
-//	else if (x < 0)
-//		dir = Direction::W;
-//	else if (y > 0)
-//		dir = Direction::S;
-//	else if (y < 0)
-//		dir = Direction::N;
-
 	setDirection(dir);
 }
 
@@ -76,9 +66,9 @@ void UnitAction::updateFrame() {
 	animations[currentDirection]->updateTexture();
 }
 
-void UnitAction::makeAttack(Unit* unit, std::list <Projectile*>& monsterAttacks, SDL_Point* attackPoint) {
-	if (animations[currentDirection]->getFrameCounter() == attackFrame && attack)
-	attack->makeAttack(unit, monsterAttacks, attackPoint);
+void UnitAction::makeAttack(Unit* unit, std::list <AttackType*>& monsterAttacks, SDL_Point* attackPoint) {
+	if (attack && animations[currentDirection]->firstTimuUnitOfFrame(attackFrame))
+		attack->makeAttack(unit, monsterAttacks, attackPoint);
 }
 
 void UnitAction::makeMove(Unit* unitToMove) {

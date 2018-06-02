@@ -1,26 +1,6 @@
 #include "SpriteAnimation.h"
 #include "DataBase.h"
 
-void SpriteAnimation::setFirstFrame() {
-	srcRectAnimation.x = firstFrame.x;
-	srcRectAnimation.y = firstFrame.y;
-
-	frameCounter = 0;
-	currFrame = 0;
-}
-
-void SpriteAnimation::setLastFrame() {
-	while (currFrame != frames - 1)
-		updateTexture();
-}
-
-void SpriteAnimation::setFrameCounter(SpriteAnimation& animationOther) {
-	setFirstFrame();
-
-	while (frameCounter != animationOther.frameCounter)
-		updateTexture();
-
-}
 
 void SpriteAnimation::updateTexture() {
 	if (!(frameCounter % frameTime) && frameCounter) { // Next texture frame
@@ -45,9 +25,36 @@ void SpriteAnimation::updateTexture() {
 	frameCounter++;
 }
 
+void SpriteAnimation::setFirstFrame() {
+	srcRectAnimation.x = firstFrame.x;
+	srcRectAnimation.y = firstFrame.y;
+
+	frameCounter = 0;
+	currFrame = 0;
+}
+
+void SpriteAnimation::setLastFrame() {
+	while (currFrame != frames - 1)
+		updateTexture();
+}
+
+void SpriteAnimation::setFrameCounter(SpriteAnimation& animationOther) {
+	setFirstFrame();
+
+	while (frameCounter != animationOther.frameCounter)
+		updateTexture();
+
+}
+
+bool SpriteAnimation::firstTimuUnitOfFrame(int frame) {
+	return (currFrame == frame && frameCounter % frameTime == 1); 
+}
+
 SpriteAnimation::SpriteAnimation(AnimationDetails& animationD, SDL_Rect &_srcRect)
 	: firstFrame(animationD.firstFrame), frames(animationD.frames), frameTime(animationD.frameTime), framesInRow(animationD.framesInRow), srcRectAnimation(_srcRect) {
 
+	srcRectAnimation.x = animationD.firstFrame.x;
+	srcRectAnimation.y = animationD.firstFrame.y;
 	frameCounter = 0;
 	currFrame = 0;
 }

@@ -53,3 +53,12 @@ public:
 	MoveForwardPlayer(Map* _map, Unit* _player);
 	~MoveForwardPlayer();
 };
+
+class NoMoveFaceEnemy : public Movement {
+	Unit* player;
+public:
+	void makeMove(Unit* unitToMove);
+
+	NoMoveFaceEnemy(Unit* _player);
+	~NoMoveFaceEnemy();
+};

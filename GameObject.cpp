@@ -2,7 +2,7 @@
 #include <math.h>
 #include "Player.h"
 #include "Field.h"
-#include "Projectile.h"
+#include "AttackType.h"
 #include "InteractiveObject.h"
 #include "Game.h"
 
@@ -46,7 +46,7 @@ void GameObject::collisionUnit(T *gameObj) {
 
 template void GameObject::collisionUnit<Unit>(Unit *gameObj);
 template void GameObject::collisionUnit<Field>(Field *gameObj);
-template void GameObject::collisionUnit<Projectile>(Projectile *gameObj);
+template void GameObject::collisionUnit<AttackType>(AttackType *gameObj);
 
 
 template <class T>
@@ -90,7 +90,7 @@ bool GameObject::detectCollision(T *gameObj) {
 template bool GameObject::detectCollision<Unit>(Unit *gameObj);
 template bool GameObject::detectCollision<Player>(Player *gameObj);
 template bool GameObject::detectCollision<Field>(Field *gameObj);
-template bool GameObject::detectCollision<Projectile>(Projectile *gameObj);
+template bool GameObject::detectCollision<AttackType>(AttackType *gameObj);
 template bool GameObject::detectCollision<InteractiveObject>(InteractiveObject *gameObj);
 template bool GameObject::detectCollision<GameObject>(GameObject *gameObj);
 

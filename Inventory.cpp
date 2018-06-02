@@ -78,6 +78,7 @@ void Inventory::updateFocusOnSlot() {
 					clickedItem->setPositionY(slotUnderMouse->rect.y + slotUnderMouse->rect.h / 2);
 					clickedSlot = nullptr;
 					clickedItem = nullptr;
+					calculatePassives();
 				}
 			}
 		}
@@ -132,9 +133,9 @@ void Inventory::draw() {
 
 void Inventory::pickUpItem(Item* item) {
 	InventorySlot* emptySlot = nullptr;
-
-	for (int i = 0; i < inventorySlots.size() && !emptySlot; i++)
-		for (int j = 0; j < inventorySlots[i].size() && !emptySlot; j++) {
+	int i = 0;
+	for (int j = 0; j < inventorySlots[i].size() && !emptySlot; j++)
+		for (i = 0; i < inventorySlots.size() && !emptySlot; i++) {
 			if (!inventorySlots[i][j]->item)
 				emptySlot = inventorySlots[i][j];
 		}
@@ -156,8 +157,10 @@ void Inventory::equipItem(InventorySlot* itemSlotToEquip) {
 	InventorySlot* toEquip = nullptr;
 
 	for (int i = 0; i < equippedSlots.size(); i++)
-		if (!equippedSlots[i]->item && equippedSlots[i]->itemType == itemSlotToEquip->item->itemType())
+		if (!equippedSlots[i]->item && equippedSlots[i]->itemType == itemSlotToEquip->item->itemType()) {
 			toEquip = equippedSlots[i];
+			break;
+		}
 
 	if (toEquip) {
 		toEquip->item = itemSlotToEquip->item;
@@ -172,10 +175,12 @@ void Inventory::equipItem(InventorySlot* itemSlotToEquip) {
 void Inventory::unequipItem(InventorySlot* itemSlotToUnequip) {
 	InventorySlot* toUnequip = nullptr;
 
-	for (int i = 0; i < inventorySlots.size(); i++)
-		for (int j = 0; j < inventorySlots[i].size(); j++)
-			if (!toUnequip && !inventorySlots[i][j]->item)
+	int i = 0;
+	for (int j = 0; j < inventorySlots[i].size() && !toUnequip; j++)
+		for (i = 0; i < inventorySlots.size() && !toUnequip; i++) {
+			if (!inventorySlots[i][j]->item)
 				toUnequip = inventorySlots[i][j];
+		}
 
 	if (toUnequip) {
 		toUnequip->item = itemSlotToUnequip->item;
