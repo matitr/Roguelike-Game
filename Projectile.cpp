@@ -96,7 +96,11 @@ void Projectile::homingShot(Unit* closestUnit) {
 	velocity.y = sin(angle * 3.14159265 / 180.0) * speed;
 }
 
-Projectile::Projectile(AnimationDetails& animation, ItemPassives& passives) : AttackType(animation, passives) {
+void Projectile::onWallHit() {
+	destroyObj = true;
+}
+
+Projectile::Projectile(AnimationDetails& animationD, ItemPassives& passives) : AttackType(passives), animation(animationD, srcRect) {
 	speed = 5;
 
 	if (passives[StaticPassiveName::projectileSpeed])

@@ -150,6 +150,7 @@
     <ClCompile Include="LevelGenerator.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map.cpp" />
+    <ClCompile Include="MeleeSwing.cpp" />
     <ClCompile Include="Money.cpp" />
     <ClCompile Include="Movements.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -179,6 +180,7 @@
     <ClInclude Include="Item.h" />
     <ClInclude Include="LevelGenerator.h" />
     <ClInclude Include="Map.h" />
+    <ClInclude Include="MeleeSwing.h" />
     <ClInclude Include="Money.h" />
     <ClInclude Include="Monsters.h" />
     <ClInclude Include="Movements.h" />

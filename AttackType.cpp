@@ -34,9 +34,12 @@ void AttackType::delHittedUnitPointer(Unit* u) {
 		unitsHitted.erase(findPos);
 }
 
-AttackType::AttackType(AnimationDetails& animation, ItemPassives& passives)
-	: GameObject(TextureManager::textureParameters[ProjectileT], Dynamic, Circle), staticPassives(passives),
-	animation(animation, srcRect) {
+void AttackType::onWallHit() {
+
+}
+
+AttackType::AttackType(ItemPassives& passives)
+	: GameObject(TextureManager::textureParameters[ProjectileT], Dynamic, Circle), staticPassives(passives) {
 
 	damage = 1;
 	enemyHitted = false;

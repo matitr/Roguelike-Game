@@ -15,7 +15,6 @@ protected:
 	ItemPassives staticPassives;
 	std::vector<Unit*> unitsHitted;
 
-	SpriteAnimation animation;
 public:
 	void setPosition(int x, int y);
 
@@ -25,12 +24,13 @@ public:
 	void setEnemyHitted(Unit* u);
 	bool canBeHitted(Unit* u);
 	void delHittedUnitPointer(Unit* u);
-	void destroy() { destroyObj = true; }
+	virtual void onWallHit();
+	virtual bool collision(Unit* u) { return detectCollision(u); }
 
 	float getDamage() { return damage; }
 	const ItemPassives& getPassives() { return staticPassives; }
 
-	AttackType(AnimationDetails& animation, ItemPassives& passives);
+	AttackType(ItemPassives& passives);
 	~AttackType();
 };
 

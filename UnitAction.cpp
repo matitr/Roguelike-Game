@@ -37,7 +37,6 @@ void UnitAction::setDirection(double x, double y) {
 	Direction::Name dir = Direction::S;
 
 	int angle = atan2(y, x) * 180.0 / 3.14159265;
-	std::cout << angle << std::endl;
 	if (angle <= -135 || angle >= 135)
 		dir = Direction::W;
 	else if (angle < -45)
@@ -71,8 +70,8 @@ void UnitAction::makeAttack(Unit* unit, std::list <AttackType*>& monsterAttacks,
 		attack->makeAttack(unit, monsterAttacks, attackPoint);
 }
 
-void UnitAction::makeMove(Unit* unitToMove) {
-	movement->makeMove(unitToMove);
+void UnitAction::makeMove() {
+	movement->makeMove();
 }
 
 UnitAction::UnitAction( Movement* _move, AttackPattern* _attack, int _attackFrame) : currentDirection(Direction::E){

@@ -63,6 +63,7 @@ public:
 
 	void collisionUnitFields(std::vector<std::vector<Field*>>& map, SDL_Rect& fieldRect);
 
+	void setRadius(int r) { radius = r; }
 	void setRadiusY(int y) { radiusY = y; }
 	void setFlatTextureOnFloor(bool f) { flatObjOnFloor = f; }
 

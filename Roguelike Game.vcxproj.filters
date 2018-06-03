@@ -28,9 +28,6 @@
     <ClCompile Include="UnitAction.cpp">
       <Filter>Combat</Filter>
     </ClCompile>
-    <ClCompile Include="Attacks.cpp">
-      <Filter>Combat</Filter>
-    </ClCompile>
     <ClCompile Include="Movements.cpp">
       <Filter>Combat</Filter>
     </ClCompile>
@@ -79,10 +76,18 @@
     <ClCompile Include="TextureManager.cpp">
       <Filter>Textures</Filter>
     </ClCompile>
-    <ClCompile Include="AttackType.cpp">
-      <Filter>Combat</Filter>
+    <ClCompile Include="Projectile.cpp">
+      <Filter>Combat\Attacks</Filter>
     </ClCompile>
-    <ClCompile Include="Projectile.cpp" />
+    <ClCompile Include="AttackType.cpp">
+      <Filter>Combat\Attacks</Filter>
+    </ClCompile>
+    <ClCompile Include="MeleeSwing.cpp">
+      <Filter>Combat\Attacks</Filter>
+    </ClCompile>
+    <ClCompile Include="Attacks.cpp">
+      <Filter>Combat\Attacks</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Field.h">
@@ -110,9 +115,6 @@
       <Filter>Textures</Filter>
     </ClInclude>
     <ClInclude Include="UnitAction.h">
-      <Filter>Combat</Filter>
-    </ClInclude>
-    <ClInclude Include="Attacks.h">
       <Filter>Combat</Filter>
     </ClInclude>
     <ClInclude Include="Monsters.h">
@@ -151,9 +153,6 @@
     <ClInclude Include="ActionsManager.h">
       <Filter>Combat</Filter>
     </ClInclude>
-    <ClInclude Include="Game.h">
-      <Filter>Game</Filter>
-    </ClInclude>
     <ClInclude Include="Input.h">
       <Filter>Game</Filter>
     </ClInclude>
@@ -163,10 +162,21 @@
     <ClInclude Include="TextureManager.h">
       <Filter>Textures</Filter>
     </ClInclude>
-    <ClInclude Include="AttackType.h">
-      <Filter>Combat</Filter>
+    <ClInclude Include="Projectile.h">
+      <Filter>Combat\Attacks</Filter>
     </ClInclude>
-    <ClInclude Include="Projectile.h" />
+    <ClInclude Include="AttackType.h">
+      <Filter>Combat\Attacks</Filter>
+    </ClInclude>
+    <ClInclude Include="MeleeSwing.h">
+      <Filter>Combat\Attacks</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Attacks.h">
+      <Filter>Combat\Attacks</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Map">
@@ -189,6 +199,9 @@
     </Filter>
     <Filter Include="Game">
       <UniqueIdentifier>{d65d5a93-d5e0-4f9d-8344-edceff030301}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Combat\Attacks">
+      <UniqueIdentifier>{129975d5-b532-4508-8a17-2b7e9a8b4d39}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -36,7 +36,7 @@ void UpdateCollision::projectilesWithUnits(std::list <AttackType*>& playerProjec
 	std::list <Unit*>::iterator it_monster;
 	
 	for (it_projectile = monsterAttacks.begin(); it_projectile != monsterAttacks.end(); it_projectile++) {
-		if ((*it_projectile)->detectCollision(player) && (*it_projectile)->canBeHitted(player)) {
+		if ((*it_projectile)->collision(player) && (*it_projectile)->canBeHitted(player)) {
 			(*it_projectile)->setEnemyHitted(player);
 			player->takeDamage((*it_projectile)->getDamage());
 		}
@@ -44,7 +44,7 @@ void UpdateCollision::projectilesWithUnits(std::list <AttackType*>& playerProjec
 
 	for (it_projectile = playerProjectiles.begin(); it_projectile != playerProjectiles.end(); it_projectile++) {
 		for (it_monster = monsters.begin(); it_monster != monsters.end(); it_monster++) {
-			if ((*it_projectile)->detectCollision(*it_monster) && (*it_projectile)->canBeHitted(*it_monster)) {
+			if ((*it_projectile)->collision(*it_monster) && (*it_projectile)->canBeHitted(*it_monster)) {
 				(*it_projectile)->setEnemyHitted(*it_monster);
 				(*it_monster)->takeDamage((*it_projectile)->getDamage());
 			}
@@ -63,12 +63,12 @@ void UpdateCollision::projectilesWithWalls(std::list <AttackType*>& playerProjec
 			for (y; y <= ((*it_proj)->getPositionY() + (*it_proj)->getRadiusY()) / map->fieldRect.h; y++) {
 
 				if (!map->map[x][y]->ground())
-					(*it_proj)->destroy();
+					(*it_proj)->onWallHit();
 				else {
 					std::vector<GameObject*>::iterator it_collisionObj = map->map[x][y]->getCollisionObj().begin();
 					for (it_collisionObj; it_collisionObj < map->map[x][y]->getCollisionObj().end(); it_collisionObj++) {
 						if ((*it_proj)->detectCollision(*it_collisionObj))
-							(*it_proj)->destroy();
+							(*it_proj)->onWallHit();
 					}
 				}
 			}

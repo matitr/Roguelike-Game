@@ -4,7 +4,7 @@
 #include "Field.h"
 #include <math.h>
 
-Movement::Movement() {
+Movement::Movement(Unit* _unitToMove) : unitToMove(_unitToMove) {
 
 }
 
@@ -157,7 +157,7 @@ A_Star::~A_Star() {
 #pragma endregion
 
 #pragma region MoveForwardPlayer
-void MoveForwardPlayer::makeMove(Unit* unitToMove) {
+void MoveForwardPlayer::makeMove() {
 	aStar.findPath(unitToMove);
 	SDL_Point* velocityPath = &aStar.velocity;
 	if (velocityPath) {
@@ -170,7 +170,7 @@ void MoveForwardPlayer::makeMove(Unit* unitToMove) {
 	}
 }
 
-MoveForwardPlayer::MoveForwardPlayer(Map* _map, Unit* _player) : aStar(_map, _player) {
+MoveForwardPlayer::MoveForwardPlayer(Unit* _unitToMove, Map* _map, Unit* _player) : Movement(_unitToMove), aStar(_map, _player) {
 	
 }
 
@@ -180,13 +180,13 @@ MoveForwardPlayer::~MoveForwardPlayer() {
 #pragma endregion
 
 #pragma region MoveForwardPlayer
-void NoMoveFaceEnemy::makeMove(Unit* unitToMove) {
+void NoMoveFaceEnemy::makeMove() {
 	unitToMove->getActiongManager().setCurrentDirection(player->getPositionX() - unitToMove->getPositionX(), player->getPositionY() - unitToMove->getPositionY());
 	unitToMove->velocity.x = 0;
 	unitToMove->velocity.y = 0;
 }
 
-NoMoveFaceEnemy::NoMoveFaceEnemy(Unit* _player) : player(_player) {
+NoMoveFaceEnemy::NoMoveFaceEnemy(Unit* _unitToMove, Unit* _player) : Movement(_unitToMove), player(_player) {
 
 }
 

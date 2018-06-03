@@ -132,7 +132,7 @@ void ActionsManager::setCurrentDirection(double x, double y) {
 
 void ActionsManager::makeMove(Unit* unitToMove) {
 	if (actions[*currAction]->movementExists())
-		actions[*currAction]->makeMove(unitToMove);
+		actions[*currAction]->makeMove();
 	else {
 		unitToMove->velocity.x = 0;
 		unitToMove->velocity.y = 0;

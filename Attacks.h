@@ -40,9 +40,22 @@ public:
 	void setNumberOfProj(int i) { numbOfProjectiles = i; }
 	void makeAttack(Unit* unit, std::list <AttackType*>& attacksContainer, SDL_Point* attackPoint);
 
-	MultipleProjectiles(AnimationDetails& animationDetails, int _numbOfProjectiles) : animationD(animationDetails), numbOfProjectiles(_numbOfProjectiles) {
-
-	}
+	MultipleProjectiles(AnimationDetails& animationDetails, int _numbOfProjectiles) : animationD(animationDetails), numbOfProjectiles(_numbOfProjectiles) {}
 
 	~MultipleProjectiles() { }
 };
+
+class MeleeSwingAttack : public AttackPattern {
+	int attackWidthAngle;
+	AnimationDetails& animationD;
+	int radius;
+
+public:
+	void makeAttack(Unit* unit, std::list <AttackType*>& attacksContainer, SDL_Point* attackPoint);
+
+	MeleeSwingAttack(AnimationDetails& animationDetails, int angleWidth, int _radius) 
+		: animationD(animationDetails), attackWidthAngle(angleWidth), radius(_radius) {}
+
+	~MeleeSwingAttack() { }
+};
+

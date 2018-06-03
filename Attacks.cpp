@@ -2,6 +2,7 @@
 #include "Unit.h"
 #include "DataBase.h"
 #include "Projectile.h"
+#include "MeleeSwing.h"
 
 
 
@@ -60,21 +61,26 @@ void MultipleProjectiles::makeAttack(Unit* unit, std::list <AttackType*>& attack
 		if (angle > 180)
 			angle = -180 + (angle - 180);
 	}
-
-
-
-
-
-
-
-
-
-
-
-
 }
 
+void MeleeSwingAttack::makeAttack(Unit* unit, std::list <AttackType*>& attacksContainer, SDL_Point* attackPoint) {
+	MeleeSwing* attack = new MeleeSwing(animationD, unit->getPassives());
 
+	SDL_Point attackPos = { attackPoint->x - unit->getPositionX(), attackPoint->y - unit->getPositionY() };
+	if (abs(attackPos.x) < abs(attackPos.y))
+		attackPos.x = 0;
+	else
+		attackPos.y = 0;
+
+	double dir = atan2(attackPos.y, attackPos.x);
+	int angle = int(dir * 180.0 / 3.14159265 + 360) % 360;
+
+	attack->setAngles(angle, attackWidthAngle);
+	attack->setPosition(unit->getPositionX(), unit->getPositionY());
+	attack->setRadius(radius);
+
+	attacksContainer.push_back(attack);
+}
 
 
 

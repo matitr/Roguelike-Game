@@ -40,7 +40,7 @@ public:
 	void updateFrame();
 
 	void makeAttack(Unit* unit, std::list <AttackType*>& monsterAttacks, SDL_Point* attackPoint);
-	void makeMove(Unit* unitToMove);
+	void makeMove();
 
 	UnitAction(Movement* move, AttackPattern* attack, int attackFrame);
 	~UnitAction();

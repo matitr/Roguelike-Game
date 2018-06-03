@@ -9,11 +9,12 @@ class Unit;
 class Field;
 
 class Movement {
-
+protected:
+	Unit * unitToMove;
 public:
-	virtual void makeMove(Unit* unitToMove) = 0;
+	virtual void makeMove() = 0;
 
-	Movement();
+	Movement(Unit* unitToMove);
 	~Movement();
 };
 
@@ -48,17 +49,17 @@ public:
 class MoveForwardPlayer : public Movement {
 	A_Star aStar;
 public:
-	void makeMove(Unit* unitToMove);
+	void makeMove();
 
-	MoveForwardPlayer(Map* _map, Unit* _player);
+	MoveForwardPlayer(Unit* unitToMove, Map* _map, Unit* _player);
 	~MoveForwardPlayer();
 };
 
 class NoMoveFaceEnemy : public Movement {
 	Unit* player;
 public:
-	void makeMove(Unit* unitToMove);
+	void makeMove();
 
-	NoMoveFaceEnemy(Unit* _player);
+	NoMoveFaceEnemy(Unit* unitToMove, Unit* _player);
 	~NoMoveFaceEnemy();
 };
