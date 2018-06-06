@@ -66,7 +66,7 @@ void RenderMap::render(std::vector <GameObject*>& gameObjects) {
 
 	std::sort(gameObjects.begin(), gameObjects.end(),
 		[](const GameObject* a, const GameObject* b)->bool 
-	{return (a->flatTextureOnFloor() && !b->flatTextureOnFloor()) ||(a->flatTextureOnFloor() && b->flatTextureOnFloor() && a->getPositionY() < b->getPositionY()); });
+	{return (a->flatTextureOnFloor() && !b->flatTextureOnFloor()) ||(!a->flatTextureOnFloor() && !b->flatTextureOnFloor() && a->getPositionY() < b->getPositionY()); });
 
 	int numbOfGameObj = gameObjects.size(), iGameObject = 0;
 

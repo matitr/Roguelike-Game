@@ -38,6 +38,11 @@ InteractiveObject::InteractiveObject(TextureInfo& txtInfo, GameObjectType objTyp
 
 }
 
+InteractiveObject::InteractiveObject(ItemTextureInfo& txtInfo, SDL_Point& dstR, SDL_Scancode _interactKey)
+	: GameObject(txtInfo, dstR), interactObjKey(_interactKey), interactObjOnKey(true) {
+
+}
+
 InteractiveObject::~InteractiveObject() {
 
 }

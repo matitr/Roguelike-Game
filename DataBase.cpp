@@ -11,11 +11,13 @@ std::unordered_map<AnimationName, AnimationDetails> DataBase::animations;
 std::unordered_map<TextColor, SDL_Color> DataBase::colors;
 std::unordered_map<FontPurpose, TTF_Font*> DataBase::fonts;
 std::unordered_map<UnitName, std::unordered_map<ActionType, std::array<AnimationDetails, Direction::Name::enum_size>>> DataBase::unitAnimations;
+std::unordered_map<ItemName::Name, ItemDetails> DataBase::items;
 
 void DataBase::loadAllDataBases() {
 	DataBase::loadInventoryDetails();
 	DataBase::loadAnimationsDetails();
 	DataBase::loadFontData();
+	DataBase::loadItems();
 }
 
 void DataBase::loadInventoryDetails() {
@@ -107,6 +109,23 @@ void DataBase::loadFontData() {
 
 }
 
+void DataBase::loadItems() {
+	items[ItemName::Item1].type = ItemType::Passive;
+	items[ItemName::Item1].passives[StaticPassiveName::attackSpeed] = 200;
+
+	items[ItemName::Item6].type = ItemType::MainWeapon;
+	items[ItemName::Item6].passives[StaticPassiveName::damage] = 10;
+	items[ItemName::Item6].passives[StaticPassiveName::chargeProjectiles] = 1;
+
+	items[ItemName::Item7].type = ItemType::MainWeapon;
+	items[ItemName::Item7].passives[StaticPassiveName::attackSpeed] = 100;
+
+	items[ItemName::Item8].type = ItemType::MainWeapon;
+	items[ItemName::Item8].passives[StaticPassiveName::attackSpeed] = 100;
+	items[ItemName::Item8].passives[StaticPassiveName::numbOfProjectiles] = 72;
+
+}
+
 void DataBase::getPassiveText(int passive, float value, SDL_Texture*& firstTexture) {
 	std::string passiveText = "";
 
@@ -131,6 +150,21 @@ void DataBase::getPassiveText(int passive, float value, SDL_Texture*& firstTextu
 		std::stringstream stream;
 		stream << std::fixed << std::setprecision(1) << value;
 		passiveText = "Increase projectile speed by " + stream.str() + "%";
+	}
+	else if (passive == StaticPassiveName::damage) {
+		std::stringstream stream;
+		stream << std::fixed << std::setprecision(1) << value;
+		passiveText = "Increase damage by " + stream.str();
+	}
+	else if (passive == StaticPassiveName::projectileSize) {
+		std::stringstream stream;
+		stream << std::fixed << std::setprecision(1) << value;
+		passiveText = "Increase projectile size by " + stream.str() + "%";
+	}
+	else if (passive == StaticPassiveName::attackSpeed) {
+		std::stringstream stream;
+		stream << std::fixed << std::setprecision(1) << value;
+		passiveText = "Increase attack speed by " + stream.str() + "%";
 	}
 
 

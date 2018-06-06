@@ -113,7 +113,7 @@ void LevelGenerator::createRoom(Room* room) {
 		room->spawnMonsters(&mapClass, player);
 	}
 
-	if (room->type == Treasure) {
+	if (room->type == Treasure || room->type == Monsters) {
 		ChestObj* chestO = new ChestObj(room->roomCenterX(fieldRect.w), room->roomCenterY(fieldRect.h));
 		room->interactiveObjects.push_back(chestO);
 

@@ -81,21 +81,34 @@ void Item::drawDescription(SDL_Rect& slotRect, SDL_Point& WindowResolution) {
 	SDL_RenderCopy(Game::renderer, itemDescription, NULL, &descriptionDstRect);
 }
 
+Item::Item(ItemName::Name itemName, float posX, float posY) 
+	: InteractiveObject(TextureManager::itemTextureDetails[itemName], DataBase::inventoryDelails.slotSize, SDL_SCANCODE_E), type(DataBase::items[itemName].type)
+	, staticPassives(DataBase::items[itemName].passives) {
+
+	position.x = posX;
+	position.y = posY;
+	staticPassives[StaticPassiveName::unitSpeed] = 25.0;
+
+	createDescriptionTxt();
+}
+
 Item::Item(float posX, float posY) : InteractiveObject(TextureManager::textureParameters[Coin], Static, Circle, SDL_SCANCODE_E) {
 	position.x = posX;
 	position.y = posY;
 
 	type = Passive;
-	
+
 	staticPassives[StaticPassiveName::pierceShots] = 2;
 	staticPassives[StaticPassiveName::homing] = 99;
 	staticPassives[StaticPassiveName::unitSpeed] = 25.0;
 	staticPassives[StaticPassiveName::numbOfProjectiles] = 15;
-//	staticPassives[StaticPassiveName::chargeProjectiles] = 1;
+	staticPassives[StaticPassiveName::chargeProjectiles] = 1;
+	staticPassives[StaticPassiveName::projectileSize] = 100;
+	//	staticPassives[StaticPassiveName::chargeProjectiles] = 1;
 
 	createDescriptionTxt();
-}
 
+}
 
 Item::~Item() {
 

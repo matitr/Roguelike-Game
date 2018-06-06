@@ -8,6 +8,8 @@
 void ChestObj::onPlayerInteract(Map* map, std::vector <InteractiveObject*>& objects, Player* player) {
 	open = true;
 	objCanInteract = false;
+
+	objects.push_back(new Item(ItemName::Name(rand() % ItemName::enum_size), getPositionX(), getPositionY() + 40));
 }
 
 bool ChestObj::update(Player *player) {
@@ -24,7 +26,8 @@ ChestObj::ChestObj(float posX, float posY)
 
 	position.x = posX;
 	position.y = posY;
-	radiusY = 45;
+	radiusY = 20;
+	setPositionShiftY(50);
 	setOnEndOfFrame();
 }
 

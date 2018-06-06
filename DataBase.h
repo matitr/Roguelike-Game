@@ -1,9 +1,12 @@
 #pragma once
+#ifndef DATA_BASE_H
+
 #include "SDL.h"
 #include "SDL_ttf.h"
 #include <vector>
 #include <unordered_map>
 #include "TextureManager.h"
+#include "Item.h"
 
 
 enum ItemType { Universal, MainWeapon, Active, Passive };
@@ -51,6 +54,11 @@ struct AnimationDetails {
 	int framesInRow;
 };
 
+struct ItemDetails {
+	ItemType type;
+	ItemPassives passives;
+};
+
 class DataBase {
 	
 
@@ -61,11 +69,13 @@ public:
 	static std::unordered_map<FontPurpose, TTF_Font*> fonts;
 
 	static std::unordered_map<UnitName, std::unordered_map<ActionType, std::array<AnimationDetails, Direction::Name::enum_size>>> unitAnimations;
+	static std::unordered_map<ItemName::Name, ItemDetails> items;
 
 	static void loadAllDataBases();
 	static void loadInventoryDetails();
 	static void loadAnimationsDetails();
 	static void loadFontData();
+	static void loadItems();
 
 	static void getPassiveText(int passive, float value, SDL_Texture*& first);
 	static SDL_Texture* getItemTypeText(enum ItemType);
@@ -74,3 +84,6 @@ public:
 	~DataBase();
 };
 
+
+
+#endif // !DATA_BASE_H

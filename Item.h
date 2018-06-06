@@ -4,18 +4,18 @@
 
 
 #include "InteractiveObject.h"
+#include "TextureManager.h"
 #include <array>
 
 
 namespace StaticPassiveName {
-	enum StaticPassiveName { numbOfProjectiles, pierceShots, chargeProjectiles, homing, projectileSpeed, unitSpeed, enum_size };
+	enum StaticPassiveName { damage, numbOfProjectiles, pierceShots, chargeProjectiles, homing, projectileSpeed, projectileSize, attackSpeed, unitSpeed, enum_size };
 }
 
 typedef std::array<float, StaticPassiveName::enum_size> ItemPassives;
 
 enum ItemType;
 enum class PassiveActivateOn { RoomClear, size_of_enum };
-
 
 class Item : public InteractiveObject {
 	ItemType type;
@@ -33,6 +33,7 @@ public:
 	void createDescriptionTxt();
 	void drawDescription(SDL_Rect& slotRect, SDL_Point& WindowResolution);
 
+	Item(ItemName::Name itemName, float posX, float posY);
 	Item(float posX, float posY);
 	~Item();
 };

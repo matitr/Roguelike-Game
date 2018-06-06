@@ -22,7 +22,8 @@ bool Player::update(std::list <AttackType*>& playerProjectiles, Map* map, SDL_Re
 		makeAttack(playerProjectiles, DataBase::animations[AnimationName::Projectile]);
 	attackCancel = false;
 	if (attackFrame > -1) {
-		if (attackFrame + 1 == attackFrames)
+//		if (attackFrame + 1 == attackFrames)
+		if (attackFrame + 1 == int(60 / (attackSpeed + attackSpeed * staticPassives[StaticPassiveName::attackSpeed] / 100)))
 			attackFrame = ATTACK_POSSIBLE;
 		else
 			attackFrame++;
@@ -234,7 +235,7 @@ Player::Player(SDL_Texture* txt, SDL_Point& windowResolution) : Unit(TextureMana
 	maxHp = 8;
 	money = 0;
 	playerStatsTxt = TextureManager::textures[TextureFile::PLAYER_STATS];
-	attackSpeed = 9.5;
+	attackSpeed = 3;
 	attackFrames = 60 / attackSpeed;
 	attackFrame = -1;
 
@@ -242,7 +243,7 @@ Player::Player(SDL_Texture* txt, SDL_Point& windowResolution) : Unit(TextureMana
 	statusSrcRect.h = 20;
 	statusDstRest.w = 40;
 	statusDstRest.h = 40;
-	speed = 5;
+	speed = 4;
 	rollSpeed = 10;
 
 	attack = false;

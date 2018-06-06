@@ -5,6 +5,7 @@
 #include "AttackType.h"
 #include "InteractiveObject.h"
 #include "Game.h"
+#include "TextureManager.h"
 
 template <class T>
 void GameObject::collisionUnit(T *gameObj) {
@@ -40,7 +41,25 @@ void GameObject::collisionUnit(T *gameObj) {
 		}
 	}
 	else { // Rectangle
+		double minX = position.x < (gameObj->getPositionX() + gameObj->getRadius()) ? position.x : (gameObj->getPositionX() + gameObj->getRadius());
+		double deltaX = position.x - ((gameObj->getPositionX() - gameObj->getRadius()) > minX ? (gameObj->getPositionX() - gameObj->getRadius()) : minX);
 
+		double minY = position.y < (gameObj->getPositionY() + gameObj->getRadiusY()) ? position.y : (gameObj->getPositionY() + gameObj->getRadiusY());
+		double deltaY = position.y - ((gameObj->getPositionY() - gameObj->getRadiusY()) > minY ? (gameObj->getPositionY() - gameObj->getRadiusY()) : minY);
+
+		if ((deltaX * deltaX + deltaY * deltaY) < (radius * radius)) {
+			if (abs(deltaX) > abs(deltaY) && deltaX) {
+				if (deltaX > 0)
+					position.x += radius - deltaX;
+				else
+					position.x -= radius + deltaX;
+			}
+			if (abs(deltaY) > abs(deltaX) && deltaY)
+				if (deltaY > 0)
+					position.y += radius - deltaY;
+				else
+					position.y -= radius + deltaY;
+		}
 	}
 }
 
@@ -173,6 +192,7 @@ float GameObject::distanceEdges(T *gameObj) {
 
 template float GameObject::distanceEdges<Unit>(Unit *gameObj);
 template float GameObject::distanceEdges<Player>(Player *gameObj);
+template float GameObject::distanceEdges<InteractiveObject>(InteractiveObject *gameObj);
 
 
 void GameObject::collisionUnitFields(std::vector<std::vector<Field*>>& map, SDL_Rect& fieldRect) {
@@ -183,6 +203,10 @@ void GameObject::collisionUnitFields(std::vector<std::vector<Field*>>& map, SDL_
 	for (fieldX = (position.x - radius) / fieldRect.w; fieldX <= (position.x + radius) / fieldRect.w; fieldX++) {
 		for (fieldY = (position.y - radius) / fieldRect.h; fieldY <= (position.y + radius) / fieldRect.h; fieldY++) {
 			field = map[fieldX][fieldY];
+
+			for (auto it_collisionObj = field->getCollisionObj().begin(); it_collisionObj != field->getCollisionObj().end(); it_collisionObj++)
+				collisionUnit(*it_collisionObj);
+
 			if (field->type() != Floor) {
 				minX = position.x < (field->getPositionX() + field->getRadius()) ? position.x : (field->getPositionX() + field->getRadius());
 				deltaX = position.x - ((field->getPositionX() - field->getRadius()) > minX ? (field->getPositionX() - field->getRadius()) : minX);
@@ -220,17 +244,26 @@ void GameObject::setPositionShift(float _positionShiftX, float _positionShiftY, 
 	radius = (_hitboxRange * dstRect.w) / 2;
 }
 
+void GameObject::setPositionShiftY(float pShiftY) {
+	positionShiftY = pShiftY;
+}
+
+void GameObject::setDstRectSize(int x, int y) {
+	dstRect.w = x;
+	dstRect.h = y;
+}
+
 void  GameObject::draw(SDL_Point* startRender) {
-	dstRect.x = position.x - startRender->x - dstRect.w / 2;
-	dstRect.y = (position.y - startRender->y) - dstRect.h / 2;
+	dstRect.x = position.x - startRender->x - positionShiftX;
+	dstRect.y = (position.y - startRender->y) - positionShiftY;
 
 
 	SDL_RenderCopy(Game::renderer, texture, &srcRect, &dstRect);
 }
 
 void GameObject::draw() {
-	dstRect.x = position.x - dstRect.w / 2;
-	dstRect.y = position.y - dstRect.h / 2;
+	dstRect.x = position.x - positionShiftX;
+	dstRect.y = position.y - positionShiftY;
 
 
 	SDL_RenderCopy(Game::renderer, texture, &srcRect, &dstRect);
@@ -260,6 +293,19 @@ GameObject::GameObject(TextureInfo& txtInfo, GameObjectType objType, ObjectHitbo
 
 	positionShiftX = dstRect.w / 2;
 	positionShiftY = dstRect.h / 2;
+}
+
+GameObject::GameObject(ItemTextureInfo& txtInfo, SDL_Point& dstR)
+	: objectType(Static), hitboxType(Circle), radius(dstR.x / 2), radiusY(radius) {
+
+	texture = txtInfo.texture;
+	srcRect = txtInfo.srcRect;
+	dstRect.w = dstR.x;
+	dstRect.h = dstR.y;
+
+	positionShiftX = dstRect.w / 2;
+	positionShiftY = dstRect.h / 2;
+
 }
 
 GameObject::~GameObject() {

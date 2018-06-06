@@ -107,12 +107,6 @@ void Inventory::updateFocusOnSlot() {
 void Inventory::draw() {
 	SDL_RenderCopy(Game::renderer, details.texture, NULL, &dstRectInv);
 
-	if (!clickedSlot && slotUnderMouse) {
-		// Show item details
-		if (slotUnderMouse->item)
-			slotUnderMouse->item->drawDescription(slotUnderMouse->rect, windowResolution);
-	}
-
 	// Draw inventory items
 	for (int i = 0; i < inventorySlots.size(); i++)
 		for (int j = 0; j < inventorySlots[i].size(); j++) {
@@ -128,17 +122,25 @@ void Inventory::draw() {
 	if (clickedItem)
 		clickedItem->draw();
 
+	if (!clickedSlot && slotUnderMouse) {
+		// Show item details
+		if (slotUnderMouse->item)
+			slotUnderMouse->item->drawDescription(slotUnderMouse->rect, windowResolution);
+	}
+
 	highlightAllSlots();
 }
 
 void Inventory::pickUpItem(Item* item) {
 	InventorySlot* emptySlot = nullptr;
 	int i = 0;
-	for (int j = 0; j < inventorySlots[i].size() && !emptySlot; j++)
+	for (int j = 0; j < inventorySlots[i].size() && !emptySlot; j++) {
 		for (i = 0; i < inventorySlots.size() && !emptySlot; i++) {
 			if (!inventorySlots[i][j]->item)
 				emptySlot = inventorySlots[i][j];
 		}
+		i = 0;
+	}
 
 	if (emptySlot) {
 		emptySlot->item = item;
@@ -176,11 +178,13 @@ void Inventory::unequipItem(InventorySlot* itemSlotToUnequip) {
 	InventorySlot* toUnequip = nullptr;
 
 	int i = 0;
-	for (int j = 0; j < inventorySlots[i].size() && !toUnequip; j++)
+	for (int j = 0; j < inventorySlots[i].size() && !toUnequip; j++) {
 		for (i = 0; i < inventorySlots.size() && !toUnequip; i++) {
 			if (!inventorySlots[i][j]->item)
 				toUnequip = inventorySlots[i][j];
 		}
+		i = 0;
+	}
 
 	if (toUnequip) {
 		toUnequip->item = itemSlotToUnequip->item;

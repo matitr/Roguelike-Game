@@ -46,6 +46,8 @@ AttackType::AttackType(ItemPassives& passives)
 	destroyObj = false;
 
 	unitsHitted.reserve(50);
+
+	damage += staticPassives[StaticPassiveName::damage];
 }
 
 

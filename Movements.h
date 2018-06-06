@@ -31,18 +31,20 @@ class A_Star {
 
 	std::list<Field*> openSet;
 	std::list<Field*> closedSet;
+	Field* start;
+	Field* end;
 	Map* map;
 	Unit* player;
-
+	Unit* unitToMove;
 
 	void createNeighbors(Field*, std::stack<Field*>&);
 	double distance(int x1, int y1, int x2, int y2);
 	void getVelocityOfPath(Field*, Field* start);
 public:
 	SDL_Point velocity;
-	void findPath(Unit* unitToMove);
+	void findPath();
 
-	A_Star(Map* _map, Unit* _player);
+	A_Star(Unit* unitToMove, Map* _map, Unit* _player);
 	~A_Star();
 };
 

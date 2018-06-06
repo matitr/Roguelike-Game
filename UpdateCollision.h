@@ -18,6 +18,8 @@ class UpdateCollision {
 
 public:
 	void updateAllUnits(Player* player, std::list <Unit*>& monsters, std::vector<std::vector<Field*>>& map, SDL_Rect& fieldRect);
+	static bool detectCollisionWithField(Unit* unit, Map* map);
+
 	void projectilesWithUnits(std::list <AttackType*>& playerProjectiles, std::list <AttackType*>& monsterAttacks, Player* player, std::list <Unit*>& monsters);
 	void projectilesWithWalls(std::list <AttackType*>& playerProjectiles, Map* map);
 

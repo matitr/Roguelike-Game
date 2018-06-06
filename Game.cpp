@@ -36,8 +36,10 @@ void Game::run() {
 	map->setFieldsPositions();
 	player->setPosition(map->getCameraX(), map->getCameraY());
 
-	interactiveObjects->push_back(new Item(player->getPositionX(), player->getPositionY()));
-	interactiveObjects->push_back(new Item(player->getPositionX() + 5, player->getPositionY() + 5));
+	interactiveObjects->push_back(new Item(ItemName::Item1, player->getPositionX(), player->getPositionY()));
+	interactiveObjects->push_back(new Item(ItemName::Item6, player->getPositionX(), player->getPositionY()));
+	interactiveObjects->push_back(new Item(ItemName::Item7, player->getPositionX() + 5, player->getPositionY() + 5));
+	interactiveObjects->push_back(new Item(ItemName::Item8, player->getPositionX() + 5, player->getPositionY() + 5));
 	interactiveObjects->push_back(new Item(player->getPositionX() + 10, player->getPositionY() + 10));
 	interactiveObjects->push_back(new Item(player->getPositionX() + 15, player->getPositionY() + 15));
 	interactiveObjects->push_back(new Item(player->getPositionX() + 20, player->getPositionY() + 20));
@@ -49,7 +51,7 @@ void Game::run() {
 	}
 	while (running()) {
 		if (clock() - timeCounter > CLOCKS_PER_SEC) {
-//			std::cout << frameCounter << std::endl;
+			std::cout << frameCounter << std::endl;
 			frameCounter = 0;
 			timeCounter = clock() - timeCounter - CLOCKS_PER_SEC + clock();
 		}
@@ -64,7 +66,7 @@ void Game::run() {
 
 		frameTime = std::chrono::duration_cast<std::chrono::nanoseconds>(Clock::now() - frameStart).count();
 		if (frameDelay > frameTime)
-			std::this_thread::sleep_for(std::chrono::nanoseconds(int(frameDelay - frameTime) - 10000));
+			std::this_thread::sleep_for(std::chrono::nanoseconds(int(frameDelay - frameTime) + 100000));
 	}
 	TTF_Quit();
 }

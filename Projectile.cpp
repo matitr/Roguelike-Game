@@ -41,7 +41,7 @@ void Projectile::setDirection(float dir) {
 }
 
 void Projectile::setAngle(float ang) {
-	direction = ang * 3.14 / 180.0;
+	direction = ang * 3.14159265 / 180.0;
 	angle = ang;
 
 	velocity.x = cos(direction) * speed;
@@ -103,10 +103,16 @@ void Projectile::onWallHit() {
 Projectile::Projectile(AnimationDetails& animationD, ItemPassives& passives) : AttackType(passives), animation(animationD, srcRect) {
 	speed = 5;
 
+	heightFromGround = 20;
+
 	if (passives[StaticPassiveName::projectileSpeed])
 		speed = speed + speed * passives[StaticPassiveName::projectileSpeed];
 
-	heightFromGround = 20;
+	if (passives[StaticPassiveName::projectileSize]) {
+		dstRect.w = dstRect.w + dstRect.w * passives[StaticPassiveName::projectileSize] / 100;
+		dstRect.h = dstRect.h + dstRect.h * passives[StaticPassiveName::projectileSize] / 100;
+		setRadius(dstRect.w / 2);
+	}
 }
 
 

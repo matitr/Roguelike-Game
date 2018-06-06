@@ -31,6 +31,23 @@ void UpdateCollision::updateAllUnits(Player* player, std::list <Unit*>& monsters
 	}
 }
 
+bool UpdateCollision::detectCollisionWithField(Unit* unit, Map* map) {
+	for (int x = (unit->getPositionX() - unit->getRadius()) / map->fieldRect.w; x <= (unit->getPositionX() - unit->getRadius()) / map->fieldRect.w; x++) {
+		for (int y = (unit->getPositionY() - unit->getRadius()) / map->fieldRect.h; y <= (unit->getPositionY() - unit->getRadius()) / map->fieldRect.h; y++) {
+			if (map->map[x][y]->type() != Floor && unit->detectCollision(map->map[x][y]))
+				return true;
+
+			//for (auto it_collisionObj = map->map[x][y]->getCollisionObj().begin(); it_collisionObj != map->map[x][y]->getCollisionObj().end(); it_collisionObj++)
+			//	if (unit->detectCollision(*it_collisionObj))
+			//		return true;
+			if (!map->map[x][y]->getCollisionObj().empty())
+				return true;
+		}
+	}
+
+	return false;
+}
+
 void UpdateCollision::projectilesWithUnits(std::list <AttackType*>& playerProjectiles, std::list <AttackType*>& monsterAttacks, Player* player, std::list <Unit*>& monsters) {
 	std::list <AttackType*>::iterator it_projectile;
 	std::list <Unit*>::iterator it_monster;
@@ -87,8 +104,8 @@ void UpdateCollision::updateInteractiveObjects(std::vector <InteractiveObject*>&
 	}
 
 	for (int i = 0; i < objects.size(); i++) {
-		dist = player->collisionDistance(objects[i]);
-		if (dist != NO_COLLISION) {
+		dist = player->distanceEdges(objects[i]);
+		if (dist < 20) {
 			objects[i]->onPlayerTouch();
 
 			if (objects[i]->canInteract() && objects[i]->interactOnKey() && interactiveObjDist[objects[i]->interactKey()] > dist) {

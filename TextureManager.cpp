@@ -4,6 +4,7 @@
 std::unordered_map <TextureFile, SDL_Texture*> TextureManager::textures;
 std::unordered_map <SingleFieldTexture, SDL_Rect> TextureManager::fieldTextureSrcRect;
 std::unordered_map <SingleTexture, TextureInfo> TextureManager::textureParameters;
+std::unordered_map <ItemName::Name, ItemTextureInfo> TextureManager::itemTextureDetails;
 
 void TextureManager::loadAllTextures() {
 	textures[TextureFile::PLAYER] = TextureManager::LoadTexture("Textures/player.png");
@@ -17,6 +18,7 @@ void TextureManager::loadAllTextures() {
 	textures[TextureFile::CHEST] = TextureManager::LoadTexture("Textures/chest.png");
 	textures[TextureFile::INVENTORY] = TextureManager::LoadTexture("Textures/inventory.png");
 	textures[TextureFile::UNIT] = TextureManager::LoadTexture("Textures/unit.png");
+	textures[TextureFile::Items] = TextureManager::LoadTexture("Textures/items.png");
 
 	TextureManager::loadAllTextureSrcRect();
 }
@@ -51,6 +53,15 @@ void TextureManager::loadAllTextureSrcRect() { // srcRect = { x, y, w, h }
 
 	textureParameters[SingleTexture::PlayerT] = { { 0,0,64,64 },{ 64,64 }, textures[TextureFile::PLAYER] };
 	textureParameters[SingleTexture::UnitT] = { { 0,0,64,64 },{ 64,64 }, textures[TextureFile::UNIT] };
+
+	itemTextureDetails[ItemName::Item1] = { { 0,0,50,50 }, textures[TextureFile::Items] };
+	itemTextureDetails[ItemName::Item2] = { { 50,0,50,50 }, textures[TextureFile::Items] };
+	itemTextureDetails[ItemName::Item3] = { { 100,0,50,50 }, textures[TextureFile::Items] };
+	itemTextureDetails[ItemName::Item4] = { { 0,50,50,50 }, textures[TextureFile::Items] };
+	itemTextureDetails[ItemName::Item5] = { { 50,50,50,50 }, textures[TextureFile::Items] };
+	itemTextureDetails[ItemName::Item6] = { { 0,100,50,50 }, textures[TextureFile::Items] };
+	itemTextureDetails[ItemName::Item7] = { { 50,100,50,50 }, textures[TextureFile::Items] };
+	itemTextureDetails[ItemName::Item8] = { { 100,100,50,50 }, textures[TextureFile::Items] };
 }
 
 SDL_Texture* TextureManager::LoadTexture(const char* dir) {

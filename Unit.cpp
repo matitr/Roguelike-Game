@@ -16,7 +16,7 @@ bool Unit::update(std::list <AttackType*>& monsterAttacks, Map* map) {
 	actionsManager.makeMove(this);
 
 	if (!(!velocity.y && !velocity.x)) {
-		float dir = atan2(velocity.y, velocity.x);
+		double dir = atan2(velocity.y, velocity.x);
 		position.x += cos(dir) * speed;
 		position.y += sin(dir) * speed;
 	}
@@ -46,7 +46,7 @@ void Unit::setClosestEnemy(Unit* u, double dist) {
 
 Unit::Unit(TextureInfo& txtInfo) : GameObject(txtInfo, Dynamic, Circle), actionsManager(srcRect, velocity, position) {
 	speed = 3;
-	hp = 10;
+	hp = 100;
 
 	velocity.x = 0;
 	velocity.y = 0;

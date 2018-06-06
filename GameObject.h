@@ -26,11 +26,16 @@ public:
 		x = 0;
 		y = 0;
 	}
+	PointDouble(double _x, double _y) {
+		x = _x;
+		y = _y;
+	}
 };
 
 enum GameObjectType {Static, Dynamic};
 enum ObjectHitboxType { Rectangle, Circle };
 struct TextureInfo;
+struct ItemTextureInfo;
 
 class GameObject {
 
@@ -70,10 +75,12 @@ public:
 	void setPositionX(float x) { position.x = x; }
 	void setPositionY(float y) { position.y = y; }
 	void setPosition(int x, int y);
-	void setPositionShift(float positionShiftX, float positionShiftY, float hitboxRange);
+	void setPositionShift(float positionShiftX, float positionShiftY, float hitboxRange); // Percents
+	void setPositionShiftY(float positionShiftY); // Pixels from top
+	void setDstRectSize(int x, int y);
 
-	inline int getPositionX() const { return position.x; }
-	inline int getPositionY() const { return position.y; }
+	inline double getPositionX() const { return position.x; }
+	inline double getPositionY() const { return position.y; }
 	int getRadius() { return radius; }
 	int getRadiusY() { return radiusY; }
 	bool flatTextureOnFloor() const { return flatObjOnFloor; }
@@ -84,6 +91,7 @@ public:
 	GameObject(SDL_Texture* txt, GameObjectType objType, ObjectHitboxType hitbType, int radius);
 	GameObject(TextureInfo& txtInfo, GameObjectType objType, ObjectHitboxType hitbType, int radius);
 	GameObject(TextureInfo& txtInfo, GameObjectType objType, ObjectHitboxType hitbType);
+	GameObject(ItemTextureInfo& txtInfo, SDL_Point& dstR);
 	~GameObject();
 };
 
