@@ -12,12 +12,14 @@ std::unordered_map<TextColor, SDL_Color> DataBase::colors;
 std::unordered_map<FontPurpose, TTF_Font*> DataBase::fonts;
 std::unordered_map<UnitName, std::unordered_map<ActionType, std::array<AnimationDetails, Direction::Name::enum_size>>> DataBase::unitAnimations;
 std::unordered_map<ItemName::Name, ItemDetails> DataBase::items;
+ItemPassivesLimits DataBase::passivesLimits;
 
 void DataBase::loadAllDataBases() {
 	DataBase::loadInventoryDetails();
 	DataBase::loadAnimationsDetails();
 	DataBase::loadFontData();
 	DataBase::loadItems();
+	DataBase::loadPassivesLimits();
 }
 
 void DataBase::loadInventoryDetails() {
@@ -110,20 +112,32 @@ void DataBase::loadFontData() {
 }
 
 void DataBase::loadItems() {
-	items[ItemName::Item1].type = ItemType::Passive;
-	items[ItemName::Item1].passives[StaticPassiveName::attackSpeed] = 200;
+	items[ItemName::Item1].type = ItemType::MainWeapon;
+	items[ItemName::Item1].passives[StaticPassiveName::damage] = 10;
+	items[ItemName::Item1].passives[StaticPassiveName::chargeProjectiles] = 1;
 
-	items[ItemName::Item6].type = ItemType::MainWeapon;
-	items[ItemName::Item6].passives[StaticPassiveName::damage] = 10;
-	items[ItemName::Item6].passives[StaticPassiveName::chargeProjectiles] = 1;
+	items[ItemName::Item2].type = ItemType::MainWeapon;
+	items[ItemName::Item2].passives[StaticPassiveName::attackSpeed] = 100;
 
-	items[ItemName::Item7].type = ItemType::MainWeapon;
-	items[ItemName::Item7].passives[StaticPassiveName::attackSpeed] = 100;
+	items[ItemName::Item3].type = ItemType::MainWeapon;
+	items[ItemName::Item3].passives[StaticPassiveName::attackSpeed] = 100;
+	items[ItemName::Item3].passives[StaticPassiveName::numbOfProjectiles] = 72;
 
-	items[ItemName::Item8].type = ItemType::MainWeapon;
-	items[ItemName::Item8].passives[StaticPassiveName::attackSpeed] = 100;
-	items[ItemName::Item8].passives[StaticPassiveName::numbOfProjectiles] = 72;
+	items[ItemName::Item4].type = ItemType::Passive;
+	items[ItemName::Item4].passives[StaticPassiveName::attackSpeed] = 200;
 
+}
+
+void DataBase::loadPassivesLimits() {
+	passivesLimits[StaticPassiveName::damage] = { -10,30 };
+	passivesLimits[StaticPassiveName::numbOfProjectiles] = { 1,5 };
+	passivesLimits[StaticPassiveName::pierceShots] = { 0,5 };
+	passivesLimits[StaticPassiveName::chargeProjectiles] = { 0,1 };
+	passivesLimits[StaticPassiveName::homing] = { -10,25 };
+	passivesLimits[StaticPassiveName::projectileSpeed] = { -50,300 };
+	passivesLimits[StaticPassiveName::projectileSize] = { -50,300 };
+	passivesLimits[StaticPassiveName::attackSpeed] = { -80,300 };
+	passivesLimits[StaticPassiveName::unitSpeed] = { -30,30 };
 }
 
 void DataBase::getPassiveText(int passive, float value, SDL_Texture*& firstTexture) {
@@ -197,6 +211,14 @@ SDL_Texture* DataBase::getItemTypeText(enum ItemType itemType) {
 	 SDL_FreeSurface(surfaceMessage);
 	 return messageTexture;
  }
+
+void DataBase::clearData() {
+	animations.clear();
+	colors.clear();
+	fonts.clear();
+	unitAnimations.clear();
+	items.clear();
+}
 
 DataBase::DataBase() {
 

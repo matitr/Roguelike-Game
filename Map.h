@@ -1,7 +1,7 @@
 #pragma once
 #include "Field.h"
 #include "Room.h"
-#include "RenderMap.h"
+#include "MapCore.h"
 #include "LevelGenerator.h"
 #include <vector>
 #include <unordered_map>
@@ -14,7 +14,7 @@ class Player;
 #define MIN_ROOM_SEPARATION 6
 #define MAX_ROOM_SEPARATION 30
 
-class Map: public RenderMap {
+class Map: public MapCore {
 	int hCenter, wCenter;
 	bool battle = false;
 	bool _roomChanged = false;
@@ -43,6 +43,8 @@ public:
 	void addToMinimap(Room* room);
 
 	void createTeleportMap();
+
+	void render(std::vector <GameObject*>& gameObjects);
 
 	void setFieldsPositions();
 	void changeRoom(Room* room, Field* fieldToMove);

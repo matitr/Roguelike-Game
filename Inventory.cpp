@@ -4,6 +4,7 @@
 #include "Item.h"
 #include "Map.h"
 #include "Player.h"
+#include "DataBase.h"
 
 
 void Inventory::close() {
@@ -72,6 +73,10 @@ void Inventory::updateFocusOnSlot() {
 			}
 			else if (clickedSlot) { // Move item
 				if (!slotUnderMouseEq || (slotUnderMouse->itemType == clickedItem->itemType())) { // Check item type
+					if (slotUnderMouse->item) {
+						slotUnderMouse->item->setPositionX(clickedSlot->rect.x + clickedSlot->rect.w / 2);
+						slotUnderMouse->item->setPositionY(clickedSlot->rect.y + clickedSlot->rect.h / 2);
+					}
 					clickedSlot->item = slotUnderMouse->item;
 					slotUnderMouse->item = clickedItem;
 					clickedItem->setPositionX(slotUnderMouse->rect.x + slotUnderMouse->rect.w / 2);
@@ -136,7 +141,7 @@ void Inventory::pickUpItem(Item* item) {
 	int i = 0;
 	for (int j = 0; j < inventorySlots[i].size() && !emptySlot; j++) {
 		for (i = 0; i < inventorySlots.size() && !emptySlot; i++) {
-			if (!inventorySlots[i][j]->item)
+			if (!inventorySlots[i][j]->item && inventorySlots[i][j] != clickedSlot)
 				emptySlot = inventorySlots[i][j];
 		}
 		i = 0;
@@ -211,6 +216,12 @@ void Inventory::calculatePassives() {
 		}
 
 	// Limit passives values
+	for (int i = 0; i < StaticPassiveName::enum_size; i++) {
+		if (staticPassives[i] < DataBase::passivesLimits[i].min)
+			staticPassives[i] = DataBase::passivesLimits[i].min;
+		else if (staticPassives[i] > DataBase::passivesLimits[i].max)
+			staticPassives[i] = DataBase::passivesLimits[i].max;
+	}
 }
 
 void Inventory::highlightAllSlots() {
@@ -258,12 +269,12 @@ Inventory::Inventory(ItemPassives& passives, SDL_Point& _windowResolution) : det
 		inventorySlots[i].resize(details.numerOfSlots.y);
 
 		for (int j = 0; j < inventorySlots[i].size(); j++)
-			inventorySlots[i][j] = new InventorySlot(dstRectInv.x + details.startInventoryTab.x + i * (float(details.slotSize.x) + details.spaceBetweenSlots),
-				dstRectInv.y + details.startInventoryTab.y + j * (float(details.slotSize.y) + details.spaceBetweenSlots), details.slotSize);
+			inventorySlots[i][j] = new InventorySlot(dstRectInv.x + details.startInventoryTab.x + i * ((details.slotSize.x) + details.spaceBetweenSlots),
+				dstRectInv.y + details.startInventoryTab.y + j * ((details.slotSize.y) + details.spaceBetweenSlots), details.slotSize);
 	}
 
 	// Set equipped slots
-	int numbSlits = details.eqDetails.size();
+	size_t numbSlits = details.eqDetails.size();
 	for (int i = 0; i < numbSlits; i++) {
 		equippedSlots.push_back(new InventorySlot(details.eqDetails[i].itemType, details.eqDetails[i].slotRect, dstRectInv));
 	}
@@ -271,5 +282,16 @@ Inventory::Inventory(ItemPassives& passives, SDL_Point& _windowResolution) : det
 
 
 Inventory::~Inventory() {
+	for (int i = 0; i < inventorySlots.size(); i++)
+		for (int j = 0; j < inventorySlots[i].size(); j++) {
+			if (inventorySlots[i][j]->item)
+				delete inventorySlots[i][j]->item;
+			delete inventorySlots[i][j];
+		}
 
+	for (int i = 0; i < equippedSlots.size(); i++)
+		delete equippedSlots[i];
+
+	if (clickedItem)
+		delete clickedItem;
 }

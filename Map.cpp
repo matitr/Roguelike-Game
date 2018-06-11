@@ -4,14 +4,15 @@
 #include "Game.h"
 #include "Teleporter.h"
 #include "Chest.h"
-
+#include "Player.h"
+#include <algorithm>
 
 
 void Map::generateNewLevel() {
 
 
 	generator.generateNewMap();
-	setSpawn(rooms[0], (rooms[0]->x2 - rooms[0]->x1) / 2 + rooms[0]->x1, (rooms[0]->y2 - rooms[0]->y1) / 2 + rooms[0]->y1);
+	setSpawn(rooms[0], (rooms[0]->x2 - rooms[0]->x1) / 2.0f + rooms[0]->x1, (rooms[0]->y2 - rooms[0]->y1) / 2.0f + rooms[0]->y1);
 	rooms[0]->setVisited(true);
 	createMinimap();
 }
@@ -36,20 +37,9 @@ void Map::createMinimap() {
 
 	r.w = 1;
 	r.h = 1;
-	int x, y;
+
 	for (int i = 0; i < rooms.size(); i++) { // for every room
 		if (rooms[i]->visited && std::find(roomsOnMiniman.begin(), roomsOnMiniman.end(), rooms[i]) == roomsOnMiniman.end()) {
-			/*
-			for (x = rooms[i]->x1; x < rooms[i]->x2; x++) {
-				for (y = rooms[i]->y1; y < rooms[i]->y2; y++) {
-					if (map[x][y] && (map[x][y]->type() == Floor)) {
-						r.x = x;
-						r.y = y;
-						SDL_RenderFillRect(Game::renderer, &r);
-					}
-				}
-			}
-			*/
 			addToMinimap(rooms[i]);
 		}
 	}
@@ -84,8 +74,8 @@ void Map::addToMinimap(Room* room) {
 			SDL_SetRenderDrawColor(Game::renderer, 0, 102, 255, 200);
 			r.w = 3;
 			r.h = 3;
-			r.x = room->telporter->getPositionX() / fieldRect.w - 1;
-			r.y = room->telporter->getPositionY() / fieldRect.h - 1;
+			r.x = int(room->telporter->getPositionX() / fieldRect.w - 1);
+			r.y = int(room->telporter->getPositionY() / fieldRect.h - 1);
 			SDL_RenderFillRect(Game::renderer, &r);
 			// Undo color and r.w and r.h
 			SDL_SetRenderDrawColor(Game::renderer, 255, 184, 77, 200);
@@ -106,23 +96,6 @@ void Map::addToMinimap(Room* room) {
 					}
 				}
 			}
-			// Draw connected rooms
-			/*
-			for (std::list<Room*>::iterator it_room = (*it)->connectedRooms.begin(); it_room != (*it)->connectedRooms.end(); it_room++) { // for other room in hallway
-				if ((*it_room) != room) {
-					for (x = (*it_room)->x1; x < (*it_room)->x2; x++) {
-						for (y = (*it_room)->y1; y < (*it_room)->y2; y++) {
-							if (map[x][y] && (map[x][y]->type() == Floor)) {
-								r.x = x;
-								r.y = y;
-								SDL_RenderFillRect(Game::renderer, &r);
-							}
-						}
-					}
-					roomsOnMiniman.push_back(*it_room);
-				}
-			}
-			*/
 			roomsOnMiniman.push_back(*it);
 		}
 	}
@@ -142,6 +115,80 @@ void Map::createTeleportMap() {
 	SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 100);
 	SDL_RenderFillRect(Game::renderer, &r);
 	SDL_SetRenderTarget(Game::renderer, NULL);
+}
+
+void Map::render(std::vector <GameObject*>& gameObjects) {
+	if (!Game::renderer)
+		return;
+
+	int fieldRectH = fieldRect.h;
+	fieldRect.h *= HEIGHT_SCALE;
+
+	int fieldX, fieldY;
+	int fieldCounterX, fieldCounterY;
+
+	// Draw floor
+	fieldY = startRenderPos.yField;
+	for (fieldCounterY = 0; fieldCounterY <= fieldsToRender.y; fieldCounterY++, fieldY++) { // Y
+		fieldX = startRenderPos.xField;
+		fieldRect.y = fieldCounterY * fieldRect.h - startRenderPos.yAdditionalPixels;
+		for (fieldCounterX = 0; fieldCounterX <= fieldsToRender.x; fieldCounterX++, fieldX++) { // X
+			fieldRect.x = fieldCounterX * fieldRect.w - startRenderPos.xAdditionalPixels;
+			if (map[fieldX][fieldY] && map[fieldX][fieldY]->ground())
+				map[fieldX][fieldY]->drawField(fieldRect.x, fieldRect.y);
+		}
+	}
+
+	std::sort(gameObjects.begin(), gameObjects.end(),
+		[](const GameObject* a, const GameObject* b)->bool
+	{return (a->flatTextureOnFloor() && !b->flatTextureOnFloor()) || (!a->flatTextureOnFloor() && !b->flatTextureOnFloor() && a->getPositionY() < b->getPositionY()); });
+
+	size_t numbOfGameObj = gameObjects.size(), iGameObject = 0;
+
+	// Draw objects that are flat on floor
+	while (iGameObject < numbOfGameObj && gameObjects[iGameObject]->flatTextureOnFloor()) {
+		gameObjects[iGameObject]->draw(&startRender);
+		iGameObject++;
+	}
+
+	// Draw rest
+	fieldY = startRenderPos.yField;
+	for (fieldCounterY = 0; fieldCounterY <= fieldsToRender.y; fieldCounterY++, fieldY++) { // Y
+		fieldX = startRenderPos.xField;
+		fieldRect.y = fieldCounterY * fieldRect.h - startRenderPos.yAdditionalPixels;
+
+		// Draw gameObjects
+		while (iGameObject < numbOfGameObj && gameObjects[iGameObject]->getPositionY() < fieldY * fieldRect.h) {
+			gameObjects[iGameObject]->draw(&startRender);
+			iGameObject++;
+		}
+
+		for (fieldCounterX = 0; fieldCounterX <= fieldsToRender.x; fieldCounterX++, fieldX++) { // X
+			fieldRect.x = fieldCounterX * fieldRect.w - startRenderPos.xAdditionalPixels;
+			if (map[fieldX][fieldY] && !map[fieldX][fieldY]->ground())
+				map[fieldX][fieldY]->drawField(fieldRect.x, fieldRect.y);
+		}
+	}
+
+	// Draw the remaining gameObjects
+	while (iGameObject < numbOfGameObj) {
+		gameObjects[iGameObject]->draw(&startRender);
+		iGameObject++;
+	}
+
+	// Render minimap
+	if (minimapSize != MinimapClosed) {
+		SDL_RenderCopy(Game::renderer, minimapBackground, &minimapSrcRect, &minimapDstRect);
+		SDL_RenderCopy(Game::renderer, minimap, &minimapSrcRect, &minimapDstRect);
+		SDL_RenderDrawRect(Game::renderer, &minimapDstRect);
+	}
+
+	if (minimapSize == MinimapLarge)
+		SDL_RenderDrawPoint(Game::renderer, minimapDstRect.x + cameraPos.x / fieldRect.w, minimapDstRect.y + cameraPos.y / fieldRect.h);
+	else if (minimapSize == MinimapSmall)
+		SDL_RenderDrawPoint(Game::renderer, minimapDstRect.x + MINIMAP_WIDTH / 2, minimapDstRect.y + MINIMAP_HEIGHT / 2);
+
+	fieldRect.h = fieldRectH;
 }
 
 void Map::setFieldsPositions() {
@@ -198,7 +245,7 @@ void Map::changeRoom(Room* room, Teleporter* tele) {
 	_roomChanged = true;
 }
 
-Map::Map(Player* p, int _hCenter, int _wCenter) : RenderMap(_hCenter, _wCenter), player(p), generator(this) {
+Map::Map(Player* p, int _hCenter, int _wCenter) : MapCore(_hCenter, _wCenter), player(p), generator(this) {
 	hCenter = _hCenter;
 	wCenter = _wCenter;
 
@@ -206,8 +253,16 @@ Map::Map(Player* p, int _hCenter, int _wCenter) : RenderMap(_hCenter, _wCenter),
 }
 
 Map::~Map() {
+	for (size_t i = 0; i < map.size(); i++)
+		for (size_t j = 0; j < map[i].size(); j++)
+			if (map[i][j])
+				delete map[i][j];
+
 	for (int i = 0; i < map.size(); i++)
 		map[i].clear();
 
 	map.clear();
+
+	for (std::vector<Room*>::iterator it = rooms.begin(); it != rooms.end(); it++)
+		delete (*it);
 }   

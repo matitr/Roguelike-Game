@@ -8,7 +8,7 @@ namespace Direction {
 }
 
 namespace ItemName {
-	enum Name { Item1, Item2, Item3, Item4, Item5, Item6, Item7, Item8, enum_size };
+	enum Name { Item1, Item2, Item3, Item4, Item5, Item6, enum_size };
 }
 
 struct Rect {
@@ -30,12 +30,12 @@ struct ItemTextureInfo {
 
 enum class TextureFile { PLAYER, PROJECTILES, PLAYER_STATS, LEVEL_1, OBJECTS, COIN, CHEST, INVENTORY, UNIT, Items };
 
-enum SingleFieldTexture { WOOD_FLOOR ,
+enum class SingleFieldTexture { WOOD_FLOOR ,
 	WALL_SIDE0, WALL_SIDE1, WALL_TOP_T, WALL_TOP_R, WALL_TOP_B, WALL_TOP_L, WALL_CORSEN_LT, WALL_CORSEN_RT, WALL_CORSEN_LB, WALL_CORSEN_RB, 
 	DOORS};
 
-enum SingleTexture { Chest, Coin, Teleport, TeleportOff, TeleportOn, PlayerT, UnitT, ProjectileT };
-enum TextureAnimation { ChestOpening, CoinSpin };
+enum class SingleTexture { Chest, Coin, Teleport, TeleportOff, TeleportOn, PlayerT, UnitT, ProjectileT };
+enum class TextureAnimation { ChestOpening, CoinSpin };
 
 
 
@@ -52,6 +52,8 @@ public:
 	static void loadAllTextures();
 	static void loadAllTextureSrcRect();
 	static SDL_Texture* LoadTexture(const char*);
+
+	static void clearData();
 
 	TextureManager();
 	~TextureManager();

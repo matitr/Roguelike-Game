@@ -1,4 +1,4 @@
-#include "RenderMap.h"
+#include "MapCore.h"
 #include "Game.h"
 #include "Field.h"
 #include "SDL.h"
@@ -9,13 +9,13 @@
 #include "Teleporter.h"
 
 
-void RenderMap::initValues() {
-	startRenderPos.xField = cameraPos.x / fieldRect.w - floor(fieldsToRender.x / 2);
+void MapCore::initValues() {
+	startRenderPos.xField = int(cameraPos.x / fieldRect.w - floor(fieldsToRender.x / 2));
 	startRenderPos.xAdditionalPixels = cameraPos.x % fieldRect.w;
 
-	startRenderPos.yField = cameraPos.y / fieldRect.h - floor(fieldsToRender.y / 2);
+	startRenderPos.yField = cameraPos.y / fieldRect.h - (int)floor(fieldsToRender.y / 2);
 //	startRenderPos.yAdditionalPixels = cameraPos.y % fieldRect.h;
-	startRenderPos.yAdditionalPixels = fieldRect.h * HEIGHT_SCALE * float(cameraPos.y % fieldRect.h) / fieldRect.h;
+	startRenderPos.yAdditionalPixels = int(fieldRect.h * HEIGHT_SCALE * float(cameraPos.y % fieldRect.h) / fieldRect.h);
 
 	// Render only room, not empty fields after room
 	if (startRenderPos.xField < currRoom->x1) { // X
@@ -45,87 +45,16 @@ void RenderMap::initValues() {
 //	startRenderPos.yAdditionalPixels = 0;
 }
 
-void RenderMap::render(std::vector <GameObject*>& gameObjects) {
-	if (!Game::renderer)
-		return;
-
-	int fieldRectH = fieldRect.h;
-	fieldRect.h *= HEIGHT_SCALE;
-
-	// Draw floor
-	fieldY = startRenderPos.yField;
-	for (fieldCounterY = 0; fieldCounterY <= fieldsToRender.y; fieldCounterY++, fieldY++) { // Y
- 		fieldX = startRenderPos.xField;
-		fieldRect.y = fieldCounterY * fieldRect.h - startRenderPos.yAdditionalPixels;
-		for (fieldCounterX = 0; fieldCounterX <= fieldsToRender.x; fieldCounterX++, fieldX++) { // X
-			fieldRect.x = fieldCounterX * fieldRect.w - startRenderPos.xAdditionalPixels;
-			if (map[fieldX][fieldY] && map[fieldX][fieldY]->ground())
-				map[fieldX][fieldY]->drawField(fieldRect.x, fieldRect.y);
-		}
-	}
-
-	std::sort(gameObjects.begin(), gameObjects.end(),
-		[](const GameObject* a, const GameObject* b)->bool 
-	{return (a->flatTextureOnFloor() && !b->flatTextureOnFloor()) ||(!a->flatTextureOnFloor() && !b->flatTextureOnFloor() && a->getPositionY() < b->getPositionY()); });
-
-	int numbOfGameObj = gameObjects.size(), iGameObject = 0;
-
-	// Draw objects that are flat on floor
-	while (iGameObject < numbOfGameObj && gameObjects[iGameObject]->flatTextureOnFloor()) {
-		gameObjects[iGameObject]->draw(&startRender);
-		iGameObject++;
-	}
-
-	// Draw rest
-	fieldY = startRenderPos.yField;
-	for (fieldCounterY = 0; fieldCounterY <= fieldsToRender.y; fieldCounterY++, fieldY++) { // Y
-		fieldX = startRenderPos.xField;
-		fieldRect.y = fieldCounterY * fieldRect.h - startRenderPos.yAdditionalPixels;
-
-		// Draw gameObjects
-		while (iGameObject < numbOfGameObj && gameObjects[iGameObject]->getPositionY() < fieldY * fieldRect.h) {
-			gameObjects[iGameObject]->draw(&startRender);
-			iGameObject++;
-		}
-
-		for (fieldCounterX = 0; fieldCounterX <= fieldsToRender.x; fieldCounterX++, fieldX++) { // X
-			fieldRect.x = fieldCounterX * fieldRect.w - startRenderPos.xAdditionalPixels;
-			if (map[fieldX][fieldY] && !map[fieldX][fieldY]->ground())
-				map[fieldX][fieldY]->drawField(fieldRect.x, fieldRect.y);
-		}
-	}
-
-	// Draw the remaining gameObjects
-	while (iGameObject < numbOfGameObj) {
-		gameObjects[iGameObject]->draw(&startRender);
-		iGameObject++;
-	}
-
-	// Render minimap
-	if (minimapSize != MinimapClosed) {
-		SDL_RenderCopy(Game::renderer, minimapBackground, &minimapSrcRect, &minimapDstRect);
-		SDL_RenderCopy(Game::renderer, minimap, &minimapSrcRect, &minimapDstRect);
-		SDL_RenderDrawRect(Game::renderer, &minimapDstRect);
-	}
-
-	if (minimapSize == MinimapLarge)
-		SDL_RenderDrawPoint(Game::renderer, minimapDstRect.x + cameraPos.x / fieldRect.w, minimapDstRect.y + cameraPos.y / fieldRect.h);
-	else if (minimapSize == MinimapSmall)
-		SDL_RenderDrawPoint(Game::renderer, minimapDstRect.x + MINIMAP_WIDTH / 2, minimapDstRect.y + MINIMAP_HEIGHT / 2);
-
-	fieldRect.h = fieldRectH;
-}
-
-void RenderMap::setSpawn(Room* room, float x, float y) {
+void MapCore::setSpawn(Room* room, float x, float y) {
 	if (x == int(x))
-		cameraPos.x = x * fieldRect.w + fieldRect.w / 4;
+		cameraPos.x = int(x * fieldRect.w + fieldRect.w / 4);
 	else
-		cameraPos.x = x * fieldRect.w;
+		cameraPos.x = int(x * fieldRect.w);
 
 	if (y == int(y))
-		cameraPos.y = y * fieldRect.h + fieldRect.h / 4;
+		cameraPos.y = int(y * fieldRect.h + fieldRect.h / 4);
 	else
-		cameraPos.y = y * fieldRect.h;
+		cameraPos.y = int(y * fieldRect.h);
 
 
 
@@ -135,21 +64,21 @@ void RenderMap::setSpawn(Room* room, float x, float y) {
 	initValues();
 }
 
-void RenderMap::setCamera(int x, int y) {
+void MapCore::setCamera(int x, int y) {
 	cameraPos.x = x;
 	cameraPos.y = y;
 
 	initValues();
 }
 
-void RenderMap::moveCamera(int x, int y) {
+void MapCore::moveCamera(int x, int y) {
 	cameraPos.x += x;
 	cameraPos.y += y;
 
 	initValues();
 }
 
-void RenderMap::changeMinimapSize(MinimapSize showM){
+void MapCore::changeMinimapSize(MinimapSize showM){
 	minimapSize = showM;
 
 	if (minimapSize == MinimapLarge || minimapSize == MinimapClosed) {
@@ -176,7 +105,7 @@ void RenderMap::changeMinimapSize(MinimapSize showM){
 	}
 }
 
-void RenderMap::upDateMinimapPos() {
+void MapCore::upDateMinimapPos() {
 
 	if (minimapSize == MinimapLarge) {
 		minimapDstRect.x = resolution.x / 2 - MAP_WIDTH / 2;
@@ -194,7 +123,7 @@ void RenderMap::upDateMinimapPos() {
 	}
 }
 
-RenderMap::RenderMap(int _hCenter, int _wCenter){
+MapCore::MapCore(int _hCenter, int _wCenter){
 	map.resize(MAP_WIDTH);
 	for (int i = 0; i < map.size(); i++)
 		map[i].resize(MAP_HEIGHT);
@@ -222,6 +151,7 @@ RenderMap::RenderMap(int _hCenter, int _wCenter){
 }
 
 
-RenderMap::~RenderMap(){
-
+MapCore::~MapCore() {
+	SDL_DestroyTexture(minimap);
+	SDL_DestroyTexture(minimapBackground);
 }

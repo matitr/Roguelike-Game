@@ -5,7 +5,7 @@
 #include <list>
 
 
-class SDL_Texture;
+struct SDL_Texture;
 class Field;
 class Unit;
 class Map;
@@ -39,8 +39,8 @@ public:
 	void setBattle(bool x) { battle = x; }
 	void changeValues(int _x1, int _y1, int _x2, int _y2);
 	void changePosition(int _x1, int _y1);
-	int roomCenterX(int fieldW) { return (x1 + (x2 - x1) / 2.0) * fieldW + fieldW / 2.0; }
-	int roomCenterY(int fieldY) { return (y1 + (y2 - y1) / 2.0) * fieldY + fieldY / 2.0; }
+	double roomCenterX(int fieldW) { return (x1 + (x2 - x1) / 2.0) * fieldW + fieldW / 2.0; }
+	double roomCenterY(int fieldY) { return (y1 + (y2 - y1) / 2.0) * fieldY + fieldY / 2.0; }
 
 	void addConnection(Field* fieldThisRoom, Field* fieldOtherRoom, Room* otherRoom);
 	bool addConnectedRoom(Room* r);

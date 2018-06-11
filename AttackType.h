@@ -4,7 +4,7 @@
 #include "Item.h"
 
 class Map;
-class AnimationDetails;
+struct AnimationDetails;
 
 class AttackType : public GameObject {
 protected:
@@ -16,8 +16,6 @@ protected:
 	std::vector<Unit*> unitsHitted;
 
 public:
-	void setPosition(int x, int y);
-
 	virtual bool update(Map* map, SDL_Rect& fieldRect, Unit* closestUnit) = 0;
 	virtual void draw(SDL_Point* startRender);
 
@@ -31,6 +29,6 @@ public:
 	const ItemPassives& getPassives() { return staticPassives; }
 
 	AttackType(ItemPassives& passives);
-	~AttackType();
+	virtual ~AttackType();
 };
 

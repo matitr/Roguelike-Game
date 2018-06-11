@@ -20,7 +20,7 @@ bool ChestObj::update(Player *player) {
 	return true;
 }
 
-ChestObj::ChestObj(float posX, float posY) 
+ChestObj::ChestObj(double posX, double posY)
 	: InteractiveObject(TextureManager::textureParameters[SingleTexture::Chest], Static, Rectangle, SDL_SCANCODE_E)
 	, SpriteAnimation(DataBase::animations[AnimationName::ChestOpening], srcRect) {
 

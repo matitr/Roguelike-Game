@@ -32,8 +32,8 @@ void UpdateCollision::updateAllUnits(Player* player, std::list <Unit*>& monsters
 }
 
 bool UpdateCollision::detectCollisionWithField(Unit* unit, Map* map) {
-	for (int x = (unit->getPositionX() - unit->getRadius()) / map->fieldRect.w; x <= (unit->getPositionX() - unit->getRadius()) / map->fieldRect.w; x++) {
-		for (int y = (unit->getPositionY() - unit->getRadius()) / map->fieldRect.h; y <= (unit->getPositionY() - unit->getRadius()) / map->fieldRect.h; y++) {
+	for (int x = ((int)unit->getPositionX() - unit->getRadius()) / map->fieldRect.w; x <= ((int)unit->getPositionX() - unit->getRadius()) / map->fieldRect.w; x++) {
+		for (int y = (int)(unit->getPositionY() - unit->getRadius()) / map->fieldRect.h; y <= ((int)unit->getPositionY() - unit->getRadius()) / map->fieldRect.h; y++) {
 			if (map->map[x][y]->type() != Floor && unit->detectCollision(map->map[x][y]))
 				return true;
 
@@ -74,9 +74,9 @@ void UpdateCollision::projectilesWithWalls(std::list <AttackType*>& playerProjec
 	std::list <AttackType*>::iterator it_proj = playerProjectiles.begin();
 
 	while (it_proj != playerProjectiles.end()) {
-		int x = ((*it_proj)->getPositionX() - (*it_proj)->getRadius()) / map->fieldRect.w;
+		int x = ((int)(*it_proj)->getPositionX() - (*it_proj)->getRadius()) / map->fieldRect.w;
 		for (x; x <= ((*it_proj)->getPositionX() + (*it_proj)->getRadius()) / map->fieldRect.w; x++) {
-			int y = ((*it_proj)->getPositionY() - (*it_proj)->getRadiusY()) / map->fieldRect.h;
+			int y = ((int)(*it_proj)->getPositionY() - (*it_proj)->getRadiusY()) / map->fieldRect.h;
 			for (y; y <= ((*it_proj)->getPositionY() + (*it_proj)->getRadiusY()) / map->fieldRect.h; y++) {
 
 				if (!map->map[x][y]->ground())

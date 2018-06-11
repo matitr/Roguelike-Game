@@ -6,10 +6,9 @@
 
 class Unit;
 class Field;
-struct Field;
+class Field;
 
-class PointFloat {
-public:
+struct PointFloat {
 	float x, y;
 
 	PointFloat() {
@@ -18,8 +17,7 @@ public:
 	}
 };
 
-class PointDouble {
-public:
+struct PointDouble {
 	double x, y;
 
 	PointDouble() {
@@ -72,9 +70,9 @@ public:
 	void setRadiusY(int y) { radiusY = y; }
 	void setFlatTextureOnFloor(bool f) { flatObjOnFloor = f; }
 
-	void setPositionX(float x) { position.x = x; }
-	void setPositionY(float y) { position.y = y; }
-	void setPosition(int x, int y);
+	void setPositionX(double x) { position.x = x; }
+	void setPositionY(double y) { position.y = y; }
+	void setPosition(double x, double y);
 	void setPositionShift(float positionShiftX, float positionShiftY, float hitboxRange); // Percents
 	void setPositionShiftY(float positionShiftY); // Pixels from top
 	void setDstRectSize(int x, int y);
@@ -92,6 +90,6 @@ public:
 	GameObject(TextureInfo& txtInfo, GameObjectType objType, ObjectHitboxType hitbType, int radius);
 	GameObject(TextureInfo& txtInfo, GameObjectType objType, ObjectHitboxType hitbType);
 	GameObject(ItemTextureInfo& txtInfo, SDL_Point& dstR);
-	~GameObject();
+	virtual ~GameObject();
 };
 

@@ -19,7 +19,7 @@ void ProjectileDirection::makeAttack(Unit* unit, std::list <AttackType*>& attack
 	angle = startAngle;
 	for (int i = 0; i < numbOfProj; i++) {
 		Projectile* p = new Projectile(animationD, unit->getPassives());
-		angle = startAngle + (360.0 / (numbOfProj )) * i;
+		angle = startAngle + ((float)360.0 / (numbOfProj )) * i;
 		if (angle >= 360)
 			angle -= 360;
 
@@ -37,8 +37,8 @@ void ProjectileDirection::makeAttack(Unit* unit, std::list <AttackType*>& attack
 
 void MultipleProjectiles::makeAttack(Unit* unit, std::list <AttackType*>& attacksContainer, SDL_Point* posToShot) {
 	
-	float dir = atan2((posToShot->y - unit->getPositionY()), (posToShot->x - unit->getPositionX()));
-	int startingAngle = dir * 180.0 / 3.14159265;
+	double dir = atan2((posToShot->y - (int)unit->getPositionY()), (posToShot->x - (int)unit->getPositionX()));
+	int startingAngle = int(dir * 180.0 / 3.14159265);
 	double cross = unit->getPositionX() * posToShot->y - unit->getPositionY() * posToShot->x;
 
 	double angleBetween = 5;
@@ -66,7 +66,7 @@ void MultipleProjectiles::makeAttack(Unit* unit, std::list <AttackType*>& attack
 void MeleeSwingAttack::makeAttack(Unit* unit, std::list <AttackType*>& attacksContainer, SDL_Point* attackPoint) {
 	MeleeSwing* attack = new MeleeSwing(animationD, unit->getPassives());
 
-	SDL_Point attackPos = { attackPoint->x - unit->getPositionX(), attackPoint->y - unit->getPositionY() };
+	SDL_Point attackPos = { attackPoint->x - (int)unit->getPositionX(), attackPoint->y - (int)unit->getPositionY() };
 	if (abs(attackPos.x) < abs(attackPos.y))
 		attackPos.x = 0;
 	else

@@ -8,7 +8,7 @@ class Player;
 class Unit;
 class Field;
 class AttackType;
-class SDL_Rect;
+struct SDL_Rect;
 class InteractiveObject;
 class Map;
 

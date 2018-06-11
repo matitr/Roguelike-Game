@@ -11,7 +11,7 @@ public:
 	void onPlayerTouch() override;
 	bool update(Player *player) override;
 
-	Money(float posX, float posY);
+	Money(double posX, double posY);
 	~Money();
 };
 

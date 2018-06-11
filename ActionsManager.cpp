@@ -49,15 +49,13 @@ void ActionsManager::onClosestObj(GameObject* closestObj, double closestObjDist)
 		if (!actionsToForceChange.empty()) {
 			if (std::find(actionsToForceChange.begin(), actionsToForceChange.end(), currAction) == actionsToForceChange.end()) {
 
-				int sizeVector = actionsToForceChange.size();
-				if (sizeVector == 1)
+				if (actionsToForceChange.size() == 1)
 					changeAction(actionsToForceChange[0]);
 				else
 					changeAction(actionsToForceChange[rand() % actionsToForceChange.size()]);
 			}
 			else if (actions[*currAction]->actionEnded()) { // Current action was forced changed. Change to it once more
-				int sizeVector = actionsToForceChange.size();
-				if (sizeVector == 1)
+				if (actionsToForceChange.size() == 1)
 					changeAction(actionsToForceChange[0]);
 				else
 					changeAction(actionsToForceChange[rand() % actionsToForceChange.size()]);
@@ -150,5 +148,8 @@ ActionsManager::ActionsManager(SDL_Rect& srcRect, PointDouble& velocityObj, Poin
 
 
 ActionsManager::~ActionsManager() {
+	std::unordered_map <ActionType, UnitAction*>::iterator it = actions.begin();
 
+	for (it; it != actions.end(); it++)
+		delete it->second;
 }

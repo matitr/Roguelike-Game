@@ -78,7 +78,7 @@ void Teleporter::updateInteraction(Map* map, std::vector <InteractiveObject*>& o
 	}
 }
 
-Teleporter::Teleporter(float posX, float posY) : InteractiveObject(TextureManager::textureParameters[Teleport], Static, Circle, SDL_SCANCODE_T) {
+Teleporter::Teleporter(double posX, double posY) : InteractiveObject(TextureManager::textureParameters[SingleTexture::Teleport], Static, Circle, SDL_SCANCODE_T) {
 	position.x = posX;
 	position.y = posY;
 	setFlatTextureOnFloor(true);

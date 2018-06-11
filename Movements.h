@@ -19,16 +19,6 @@ public:
 };
 
 class A_Star {
-	struct FieldA {
-		int f = 0, g = 0, h = 0;
-		int x, y;
-
-		std::list<FieldA*> neighbors;
-
-		FieldA(int _x, int _y);
-		inline bool operator==(const FieldA& f);
-	};
-
 	std::list<Field*> openSet;
 	std::list<Field*> closedSet;
 	Field* start;

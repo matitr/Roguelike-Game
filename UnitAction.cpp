@@ -36,7 +36,7 @@ void UnitAction::setDirection(UnitAction& actionOther) {
 void UnitAction::setDirection(double x, double y) {
 	Direction::Name dir = Direction::S;
 
-	int angle = atan2(y, x) * 180.0 / 3.14159265;
+	int angle = int(atan2(y, x) * 180.0 / 3.14159265);
 	if (angle <= -135 || angle >= 135)
 		dir = Direction::W;
 	else if (angle < -45)
@@ -84,5 +84,14 @@ UnitAction::UnitAction( Movement* _move, AttackPattern* _attack, int _attackFram
 
 
 UnitAction::~UnitAction() {
+	std::vector<SpriteAnimation*>::iterator it = animations.begin();
 
+	for (it; it != animations.end(); it++)
+		delete *it;
+
+	if (attack)
+		delete attack;
+
+	if (movement)
+		delete movement;
 }

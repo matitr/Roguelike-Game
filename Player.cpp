@@ -15,7 +15,7 @@ bool Player::update(std::list <AttackType*>& playerProjectiles, Map* map, SDL_Re
 		velocity.y = 0;
 	}
 	if (staticPassives[StaticPassiveName::numbOfProjectiles])
-		attackP->setNumberOfProj(staticPassives[StaticPassiveName::numbOfProjectiles]);
+		attackP->setNumberOfProj((int)staticPassives[StaticPassiveName::numbOfProjectiles] + 1);
 	else
 		attackP->setNumberOfProj(1);
 	if (attackFrame == ATTACK_POSSIBLE)
@@ -40,9 +40,9 @@ bool Player::update(std::list <AttackType*>& playerProjectiles, Map* map, SDL_Re
 	Field *field = nullptr;
 
 	if (velocity.x < 0)
-		field = map->map[(position.x - radius - speed) / fieldRect.w][(position.y) / fieldRect.h];
+		field = map->map[int(position.x - radius - speed) / fieldRect.w][int(position.y) / fieldRect.h];
 	else if (velocity.x > 0)
-		field = map->map[(position.x + radius + speed) / fieldRect.w][(position.y) / fieldRect.h];
+		field = map->map[int(position.x + radius + speed) / fieldRect.w][int(position.y) / fieldRect.h];
 
 	if (velocity.x != 0)
 		if (field->type() == Door && !map->currentRoom()->battle) {
@@ -57,9 +57,9 @@ bool Player::update(std::list <AttackType*>& playerProjectiles, Map* map, SDL_Re
 		}
 
 	if (velocity.y < 0)
-		field = map->map[(position.x) / fieldRect.w][(position.y - radius - speed) / fieldRect.h];
+		field = map->map[int(position.x) / fieldRect.w][int(position.y - radius - speed) / fieldRect.h];
 	else if (velocity.y > 0)
-		field = map->map[(position.x) / fieldRect.w][(position.y + radius + speed) / fieldRect.h];
+		field = map->map[int(position.x) / fieldRect.w][int(position.y + radius + speed) / fieldRect.h];
 
 	if (velocity.y != 0)
 		if (field->type() == Door && !map->currentRoom()->battle) {
@@ -78,13 +78,13 @@ bool Player::update(std::list <AttackType*>& playerProjectiles, Map* map, SDL_Re
 	else {
 		double speedMultiplier = staticPassives[StaticPassiveName::unitSpeed] ? 1 + staticPassives[StaticPassiveName::unitSpeed] / 100 : 1;
 		if (actionsManager.currActionType() == Dash) {
-			float dir = atan2(velocity.y, velocity.x);
+			float dir = (float)atan2(velocity.y, velocity.x);
 			position.x += cos(dir) * rollSpeed * speedMultiplier;
 			position.y += sin(dir) * rollSpeed * speedMultiplier;
 			map->setCamera(int(position.x), int(position.y));
 		}
 		else {
-			float dir = atan2(velocity.y, velocity.x);
+			float dir = (float)atan2(velocity.y, velocity.x);
 			position.x += cos(dir) * speed * speedMultiplier;
 			position.y += sin(dir) * speed * speedMultiplier;
 			map->setCamera(int(position.x), int(position.y));
@@ -97,23 +97,47 @@ bool Player::update(std::list <AttackType*>& playerProjectiles, Map* map, SDL_Re
 }
 
 void Player::drawStatus() {
+	statusDstRest.x = 5;
 	statusDstRest.y = 5;
 	statusSrcRect.y = 0;
 	statusSrcRect.x = 0;
-	int i;
-	for (i = 1; i < hp; i += 2) {
-		statusDstRest.x = (i / 2) * statusDstRest.w + 40;
-		SDL_RenderCopy(Game::renderer, playerStatsTxt, &statusSrcRect, &statusDstRest);
-	}
-	if (int(hp) % 2) {
-		statusSrcRect.x = statusSrcRect.w;
-		statusDstRest.x = (int(hp) / 2) * statusDstRest.w + 40;
-		SDL_RenderCopy(Game::renderer, playerStatsTxt, &statusSrcRect, &statusDstRest);
-	}
-	statusSrcRect.x = statusSrcRect.w * 2;
-	for (i = hp + 1; i < maxHp; i += 2) {
-		statusDstRest.x = i / 2 * statusDstRest.w + 40;
-		SDL_RenderCopy(Game::renderer, playerStatsTxt, &statusSrcRect, &statusDstRest);
+
+	SDL_RenderCopy(Game::renderer, playerStatsTxt, &statusSrcRect, &statusDstRest);
+	int width = statusSrcRect.w;
+	statusDstRest.w = int((statusDstRest.w - 4) * (hp / 8.0));
+	statusSrcRect.w = statusDstRest.w;
+	statusSrcRect.y = 30;
+	SDL_RenderCopy(Game::renderer, playerStatsTxt, &statusSrcRect, &statusDstRest);
+
+	statusDstRest.w = width;
+	statusSrcRect.w = width;
+
+	// Draw charge
+	if (attack) {
+		int chargeBarWidth = 60;
+		int chargeBarHeight = 10;
+
+		SDL_Rect chargeBar = {
+			dstRect.x + dstRect.w / 2 - chargeBarWidth / 2,
+			dstRect.y - chargeBarHeight - 4,
+			chargeBarWidth, chargeBarHeight
+		};
+
+		SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 255);
+		SDL_RenderDrawRect(Game::renderer, &chargeBar);
+		SDL_SetRenderDrawColor(Game::renderer, 0, 102, 255, 255);
+		chargeBar.x++;
+		chargeBar.y++;
+
+		chargeBar.w -= 2;
+		chargeBar.h -= 2;
+		double chargeTime = attack / (2 * 60 / attackSpeed);
+		if (chargeTime > 1.0) {
+			chargeTime = 1.0;
+			SDL_SetRenderDrawColor(Game::renderer, 0, 51, 204, 255);
+		}
+		chargeBar.w = int(chargeBar.w * chargeTime);
+		SDL_RenderFillRect(Game::renderer, &chargeBar);
 	}
 }
 
@@ -132,16 +156,17 @@ bool Player::attackPossible() {
 void Player::attackPressed(int x, int y) {
 	attackPos.x = x;
 	attackPos.y = y;
-	attack = true;
+	attack++;
 }
 
 void Player::makeAttack(std::list <AttackType*>& playerProjectiles, AnimationDetails& animationD) {
-	if (actionsManager.currActionType() == Dash || attackCancel)
+	if (actionsManager.currActionType() == Dash || attackCancel) {
+		attack = false;
 		return;
+	}
 
 	if (Input::mouseStates[SDL_BUTTON_LEFT]) {
 		if (staticPassives[StaticPassiveName::chargeProjectiles]) {
-			attack++;
 			return;
 		}
 	}
@@ -151,7 +176,6 @@ void Player::makeAttack(std::list <AttackType*>& playerProjectiles, AnimationDet
 		else if (!attack)
 			return;
 	}
-
 
 	attackFrame = 0;
 	attack = 0;
@@ -236,25 +260,26 @@ Player::Player(SDL_Texture* txt, SDL_Point& windowResolution) : Unit(TextureMana
 	money = 0;
 	playerStatsTxt = TextureManager::textures[TextureFile::PLAYER_STATS];
 	attackSpeed = 3;
-	attackFrames = 60 / attackSpeed;
+	attackFrames = int(60 / attackSpeed);
 	attackFrame = -1;
 
-	statusSrcRect.w = 20;
-	statusSrcRect.h = 20;
-	statusDstRest.w = 40;
-	statusDstRest.h = 40;
+	statusSrcRect.w = 200;
+	statusSrcRect.h = 30;
+	statusDstRest.w = 200;
+	statusDstRest.h = 30;
 	speed = 4;
 	rollSpeed = 10;
 
 	attack = false;
 	attackP = new MultipleProjectiles(DataBase::animations[AnimationName::Projectile], 5);
 
-	setPositionShift(0.5, 0.8, 0.55);
+	setPositionShift(0.5f, 0.8f, 0.55f);
 	setAnimation(Walk);
 	setAnimation(Stand);
 };
 
 
 Player::~Player(){
-
+	if (attackP)
+		delete attackP;
 }

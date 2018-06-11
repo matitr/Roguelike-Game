@@ -22,7 +22,7 @@ class Item : public InteractiveObject {
 
 	ItemPassives staticPassives;
 
-	SDL_Texture* itemDescription;
+	SDL_Texture* itemDescription = nullptr;
 	SDL_Rect descriptionDstRect;
 public:
 	ItemType itemType() { return type; }
@@ -33,8 +33,8 @@ public:
 	void createDescriptionTxt();
 	void drawDescription(SDL_Rect& slotRect, SDL_Point& WindowResolution);
 
-	Item(ItemName::Name itemName, float posX, float posY);
-	Item(float posX, float posY);
+	Item(ItemName::Name itemName, double posX, double posY);
+	Item(double posX, double posY);
 	~Item();
 };
 

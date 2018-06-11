@@ -4,14 +4,10 @@
 #include <math.h>
 #include <iostream>
 
-void AttackType::setPosition(int x, int y) {
-	position.x = x;
-	position.y = y;
-}
 
 void AttackType::draw(SDL_Point* startRender) {
-	dstRect.x = position.x - startRender->x - dstRect.w / 2;
-	dstRect.y = (position.y - startRender->y) * HEIGHT_SCALE - dstRect.h / 2;
+	dstRect.x = int(position.x - startRender->x - dstRect.w / 2.0);
+	dstRect.y = int((position.y - startRender->y) * HEIGHT_SCALE - dstRect.h / 2.0);
 
 	SDL_RenderCopy(Game::renderer, texture, &srcRect, &dstRect);
 }
@@ -39,7 +35,7 @@ void AttackType::onWallHit() {
 }
 
 AttackType::AttackType(ItemPassives& passives)
-	: GameObject(TextureManager::textureParameters[ProjectileT], Dynamic, Circle), staticPassives(passives) {
+	: GameObject(TextureManager::textureParameters[SingleTexture::ProjectileT], Dynamic, Circle), staticPassives(passives) {
 
 	damage = 1;
 	enemyHitted = false;

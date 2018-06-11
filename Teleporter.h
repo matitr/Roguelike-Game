@@ -12,7 +12,7 @@ public:
 	void onPlayerInteract(Map* map, std::vector <InteractiveObject*>& objects, Player* player) override;
 	void updateInteraction(Map* map, std::vector <InteractiveObject*>& objects, Player* player) override;
 
-	Teleporter(float posX, float posY);
+	Teleporter(double posX, double posY);
 	~Teleporter();
 };
 

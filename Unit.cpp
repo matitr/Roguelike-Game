@@ -2,6 +2,7 @@
 #include "Game.h"
 #include "UnitAction.h"
 #include "Attacks.h"
+#include "Player.h"
 #include <math.h>
 
 bool Unit::update(std::list <AttackType*>& monsterAttacks, Map* map) {
@@ -11,7 +12,7 @@ bool Unit::update(std::list <AttackType*>& monsterAttacks, Map* map) {
 	actionsManager.onClosestObj(closestEnemy, closestEnemyDist);
 	actionsManager.updateAction();
 
-	SDL_Point p = { map->getPlayer()->getPositionX(), map->getPlayer()->getPositionY() };
+	SDL_Point p = { (int)map->getPlayer()->getPositionX(), (int)map->getPlayer()->getPositionY() };
 	actionsManager.makeAttack(this, monsterAttacks, &p);
 	actionsManager.makeMove(this);
 
@@ -24,18 +25,18 @@ bool Unit::update(std::list <AttackType*>& monsterAttacks, Map* map) {
 }
 
 void Unit::draw(SDL_Point* startRender) {
-	dstRect.x = position.x - startRender->x - positionShiftX;
-	dstRect.y = (position.y - startRender->y) * HEIGHT_SCALE - positionShiftY;
+	dstRect.x = int(position.x - startRender->x) - positionShiftX;
+	dstRect.y = int((position.y - startRender->y) * HEIGHT_SCALE) - positionShiftY;
 
 	SDL_RenderCopy(Game::renderer, texture, &srcRect, &dstRect);	
 
 	SDL_Rect r;
 	r.h = 4;
 	r.w = radius * 2;
-	r.x = position.x - positionShiftX - startRender->x;
-	r.y = position.y - startRender->y;
+	r.x = (int)position.x - positionShiftX - startRender->x;
+	r.y = (int)position.y - startRender->y;
 	SDL_SetRenderDrawColor(Game::renderer, rand() % 225, 0, 102, 255);
-	renderCircle(position.x - startRender->x, (position.y - startRender->y) * HEIGHT_SCALE, radius);
+	renderCircle((int)position.x - startRender->x, ((int)position.y - startRender->y) * HEIGHT_SCALE, radius);
 	//	SDL_RenderFillRect(Game::renderer, &r);
 }
 

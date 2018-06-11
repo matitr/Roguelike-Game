@@ -13,7 +13,7 @@ public:
 	void onPlayerInteract(Map* map, std::vector <InteractiveObject*>& objects, Player* player) override;
 	bool update(Player *player) override;
 
-	ChestObj(float posX, float posY);
+	ChestObj(double posX, double posY);
 	~ChestObj();
 };
 

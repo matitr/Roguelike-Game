@@ -28,7 +28,6 @@ void Item::createDescriptionTxt() { // todo
 	TTF_Font* font = DataBase::fonts[FontPurpose::ItemDescription];
 	SDL_Texture* message = DataBase::getItemTypeText(type);
 
-	int w, h;
 	SDL_QueryTexture(message, NULL, NULL, &r.w, &r.h);
 	r.x = descriptionDstRect.w - r.w - 5;
 
@@ -81,7 +80,7 @@ void Item::drawDescription(SDL_Rect& slotRect, SDL_Point& WindowResolution) {
 	SDL_RenderCopy(Game::renderer, itemDescription, NULL, &descriptionDstRect);
 }
 
-Item::Item(ItemName::Name itemName, float posX, float posY) 
+Item::Item(ItemName::Name itemName, double posX, double posY)
 	: InteractiveObject(TextureManager::itemTextureDetails[itemName], DataBase::inventoryDelails.slotSize, SDL_SCANCODE_E), type(DataBase::items[itemName].type)
 	, staticPassives(DataBase::items[itemName].passives) {
 
@@ -92,17 +91,16 @@ Item::Item(ItemName::Name itemName, float posX, float posY)
 	createDescriptionTxt();
 }
 
-Item::Item(float posX, float posY) : InteractiveObject(TextureManager::textureParameters[Coin], Static, Circle, SDL_SCANCODE_E) {
+Item::Item(double posX, double posY) : InteractiveObject(TextureManager::textureParameters[SingleTexture::Coin], Static, Circle, SDL_SCANCODE_E) {
 	position.x = posX;
 	position.y = posY;
 
 	type = Passive;
 
 	staticPassives[StaticPassiveName::pierceShots] = 2;
-	staticPassives[StaticPassiveName::homing] = 99;
+	staticPassives[StaticPassiveName::homing] = 5;
 	staticPassives[StaticPassiveName::unitSpeed] = 25.0;
-	staticPassives[StaticPassiveName::numbOfProjectiles] = 15;
-	staticPassives[StaticPassiveName::chargeProjectiles] = 1;
+	staticPassives[StaticPassiveName::numbOfProjectiles] = 1;
 	staticPassives[StaticPassiveName::projectileSize] = 100;
 	//	staticPassives[StaticPassiveName::chargeProjectiles] = 1;
 
@@ -111,5 +109,6 @@ Item::Item(float posX, float posY) : InteractiveObject(TextureManager::texturePa
 }
 
 Item::~Item() {
-
+	if (itemDescription)
+		SDL_DestroyTexture(itemDescription);
 }

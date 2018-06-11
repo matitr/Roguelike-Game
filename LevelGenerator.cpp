@@ -14,7 +14,7 @@ void LevelGenerator::generateNewMap() {
 	generateSpecialRooms(roomsNumber);
 	levelTexture = TextureManager::textures[TextureFile::LEVEL_1];
 	int x, y;
-	int i, j;
+	int i;
 
 	for (i = 1; i < roomsNumber; i++) {
 		if (!rooms[i]) {
@@ -26,13 +26,13 @@ void LevelGenerator::generateNewMap() {
 
 	findPositionForRooms(roomsNumber);
 
-	for (i = 0; i < roomsNumber; i++)
-		createRoom(rooms[i]);
-
 	generateHallways(roomsNumber);
 
 	for (i = 0; i < roomsNumber; i++)
 		createRoomWalls(rooms[i]);
+
+	for (i = 0; i < roomsNumber; i++)
+		createRoom(rooms[i]);
 }
 
 void LevelGenerator::generateSpecialRooms(int &roomsNumber) {
@@ -45,11 +45,11 @@ void LevelGenerator::generateSpecialRooms(int &roomsNumber) {
 
 	x = rand() % (MAP_WIDTH - BORDER_SIZE - BORDER_SIZE - 50) + BORDER_SIZE;
 	y = rand() % (MAP_HEIGHT - BORDER_SIZE - BORDER_SIZE - 50) + BORDER_SIZE;
-	rooms[roomsNumber - 1] = new Room(x, y, x + 13, y + 13, Secret); // secret room
+	rooms[roomsNumber - 1] = new Room(x, y, x + 30, y + 15, Secret); // secret room
 
 	x = rand() % (MAP_WIDTH - BORDER_SIZE - BORDER_SIZE - 50) + BORDER_SIZE;
 	y = rand() % (MAP_HEIGHT - BORDER_SIZE - BORDER_SIZE - 50) + BORDER_SIZE;
-	rooms[roomsNumber - 2] = new Room(x, y, x + 13, y + 13, Secret); // secret room
+	rooms[roomsNumber - 2] = new Room(x, y, x + 30, y + 15, Secret); // secret room
 
 	x = rand() % (MAP_WIDTH - BORDER_SIZE - BORDER_SIZE - 50) + BORDER_SIZE;
 	y = rand() % (MAP_HEIGHT - BORDER_SIZE - BORDER_SIZE - 50) + BORDER_SIZE;
@@ -101,7 +101,8 @@ void LevelGenerator::createRoom(Room* room) {
 	int xIter, yIter;
 	for (xIter = room->x1 + 1; xIter < room->x2; xIter++)
 		for (yIter = room->y1 + 1; yIter < room->y2; yIter++) {
-			map[xIter][yIter] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[WOOD_FLOOR], Floor);
+			if (!map[xIter][yIter])
+				map[xIter][yIter] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WOOD_FLOOR], Floor);
 		}
 
 	if (room->type == Monsters || room->type == Spawn) {
@@ -113,13 +114,13 @@ void LevelGenerator::createRoom(Room* room) {
 		room->spawnMonsters(&mapClass, player);
 	}
 
-	if (room->type == Treasure || room->type == Monsters) {
+	if (room->type == Treasure) {
 		ChestObj* chestO = new ChestObj(room->roomCenterX(fieldRect.w), room->roomCenterY(fieldRect.h));
 		room->interactiveObjects.push_back(chestO);
 
-		int x = (chestO->getPositionX() - chestO->getRadius()) / fieldRect.w;
+		int x = ((int)chestO->getPositionX() - chestO->getRadius()) / fieldRect.w;
 		for (x; x <= (chestO->getPositionX() + chestO->getRadius()) / fieldRect.w; x++) {
-			int y = (chestO->getPositionY() - chestO->getRadiusY()) / fieldRect.h;
+			int y = ((int)chestO->getPositionY() - chestO->getRadiusY()) / fieldRect.h;
 			for (y; y <= (chestO->getPositionY() + chestO->getRadiusY()) / fieldRect.h; y++) {
 				map[x][y]->addCollisionObj(chestO);
 			}
@@ -129,7 +130,7 @@ void LevelGenerator::createRoom(Room* room) {
 
 void LevelGenerator::generateHallways(int &roomsNumber) {
 	int i, j, xji, xij, yji, yij;
-	SDL_Point p1, p2, pointBetween;
+	SDL_Point p1, p2;
 
 	for (i = 0; i < roomsNumber; i++) {
 		for (j = 0; j < roomsNumber; j++) { // 
@@ -205,34 +206,32 @@ void LevelGenerator::generateHallways(int &roomsNumber) {
 
 void LevelGenerator::createHallwayH(SDL_Point& p1, SDL_Point& p2) { // Horizontal
 	int x;
-	Field *field;
 
 	for (x = p1.x + 1; x < p2.x; x++) {
-		map[x][p1.y] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[WOOD_FLOOR], Floor);
-		map[x][p1.y + 1] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[WOOD_FLOOR], Floor);
+		map[x][p1.y] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WOOD_FLOOR], Floor);
+		map[x][p1.y + 1] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WOOD_FLOOR], Floor);
 	}
 
 	x = p1.x;
 	for (int i = 0; i < 2; i++) {
-		map[x][p1.y] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[DOORS], Door);
-		map[x][p1.y + 1] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[DOORS], Door);
+		map[x][p1.y] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::DOORS], Door);
+		map[x][p1.y + 1] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::DOORS], Door);
 		x = p2.x;
 	}
 }
 
 void LevelGenerator::createHallwayV(SDL_Point& p1, SDL_Point& p2) { // Vertical
 	int y;
-	Field *field;
 
-	for (y = p1.y + 1; y <= p2.y; y++) {
-		map[p1.x][y] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[WOOD_FLOOR], Floor);
-		map[p2.x][y] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[WOOD_FLOOR], Floor);
+	for (y = p1.y + 1; y <= p2.y - 1; y++) {
+		map[p1.x][y] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WOOD_FLOOR], Floor);
+		map[p2.x][y] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WOOD_FLOOR], Floor);
 	}
 
 	y = p1.y;
 	for (int i = 0; i < 2; i++) {
-		map[p1.x][y] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[DOORS], Door);
-		map[p2.x][y] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[DOORS], Door);
+		map[p1.x][y] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::DOORS], Door);
+		map[p2.x][y] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::DOORS], Door);
 		y = p2.y;
 	}
 }
@@ -240,30 +239,30 @@ void LevelGenerator::createHallwayV(SDL_Point& p1, SDL_Point& p2) { // Vertical
 void LevelGenerator::createRoomWalls(Room* room) {
 	for (int i = room->x1 + 1; i <= room->x2 - 1; i++) { // x walls
 		if (!map[i][room->y1]) { // TOP
-			map[i][room->y1] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[WALL_SIDE0], Wall);
-			map[i][room->y1 - 1] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[WALL_SIDE1], Wall);
-			map[i][room->y1 - 2] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[WALL_TOP_T], Wall);
+			map[i][room->y1] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_SIDE0], Wall);
+			map[i][room->y1 - 1] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_SIDE1], Wall);
+			map[i][room->y1 - 2] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_TOP_T], Wall);
 		}
 
 		if (!map[i][room->y2]) { // BOTTOM
-			map[i][room->y2] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[WALL_TOP_B], Wall);
+			map[i][room->y2] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_TOP_B], Wall);
 		}
 	}
 
 	for (int i = room->y1 - 1; i <= room->y2 - 1; i++) { // y walls
 		if (!map[room->x1][i]) { // LEFT
-			map[room->x1][i] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[WALL_TOP_L], Wall);
+			map[room->x1][i] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_TOP_L], Wall);
 		}
 
 		if (!map[room->x2][i]) { // RIGHT
-			map[room->x2][i] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[WALL_TOP_R], Wall);
+			map[room->x2][i] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_TOP_R], Wall);
 		}
 	}
 
-	map[room->x1][room->y1 - 2] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[WALL_CORSEN_LT], Wall);
-	map[room->x2][room->y1 - 2] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[WALL_CORSEN_RT], Wall);
-	map[room->x1][room->y2] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[WALL_CORSEN_LB], Wall);
-	map[room->x2][room->y2] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[WALL_CORSEN_RB], Wall);
+	map[room->x1][room->y1 - 2] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_CORSEN_LT], Wall);
+	map[room->x2][room->y1 - 2] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_CORSEN_RT], Wall);
+	map[room->x1][room->y2] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_CORSEN_LB], Wall);
+	map[room->x2][room->y2] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_CORSEN_RB], Wall);
 
 }
 

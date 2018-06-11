@@ -13,8 +13,8 @@ public:
 	bool update(Map* map, SDL_Rect& fieldRect, Unit* closestUnit) override;
 	void draw(SDL_Point* startRender) override;
 
-	void setDirection(float dir);
-	void setAngle(float ang);
+	void setDirection(double dir);
+	void setAngle(double ang);
 
 	void homingShot(Unit* closestUnit);
 	void onWallHit();

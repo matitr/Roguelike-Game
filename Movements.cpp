@@ -15,58 +15,7 @@ Movement::~Movement() {
 }	
 
 #pragma region A_Star
-A_Star::FieldA::FieldA(int _x, int _y) {
-	x = _x;
-	x = _x;
-}
-bool A_Star::FieldA::operator==(const FieldA& f) {
-	if (x == f.x && y == f.y)
-		return true;
-	return false;
-}
-
 void A_Star::createNeighbors(Field* field, std::stack<Field*>& neighbors) {
-
-//	Field* toAdd = map->map[field->x() + 1][field->y()];
-//
-//	if (toAdd->ground() && std::find(closedSet.begin(), closedSet.end(), toAdd) == closedSet.end())
-//		neighbors.push(toAdd);
-//
-//	toAdd = map->map[field->x() + 1][field->y() + 1];
-//
-//	if (toAdd->ground() && std::find(closedSet.begin(), closedSet.end(), toAdd) == closedSet.end())
-//		neighbors.push(toAdd);
-//
-//	toAdd = map->map[field->x() + 1][field->y() - 1];
-//
-//	if (toAdd->ground() && std::find(closedSet.begin(), closedSet.end(), toAdd) == closedSet.end())
-//		neighbors.push(toAdd);
-//
-//	toAdd = map->map[field->x() - 1][field->y()];
-//
-//	if (toAdd->ground() && std::find(closedSet.begin(), closedSet.end(), toAdd) == closedSet.end())
-//		neighbors.push(toAdd);
-//
-//	toAdd = map->map[field->x() - 1][field->y() + 1];
-//
-//	if (toAdd->ground() && std::find(closedSet.begin(), closedSet.end(), toAdd) == closedSet.end())
-//		neighbors.push(toAdd);
-//
-//	toAdd = map->map[field->x() - 1][field->y() - 1];
-//
-//	if (toAdd->ground() && std::find(closedSet.begin(), closedSet.end(), toAdd) == closedSet.end())
-//		neighbors.push(toAdd);
-//
-//	toAdd = map->map[field->x()][field->y() + 1];
-//
-//	if (toAdd->ground() && std::find(closedSet.begin(), closedSet.end(), toAdd) == closedSet.end())
-//		neighbors.push(toAdd);
-//
-//	toAdd = map->map[field->x()][field->y() - 1];
-//
-//	if (toAdd->ground() && std::find(closedSet.begin(), closedSet.end(), toAdd) == closedSet.end())
-//		neighbors.push(toAdd);
-
 
 	for (int x = -1; x < 2; x++) {
 		for (int y = -1; y < 2; y++) {
@@ -82,7 +31,6 @@ void A_Star::createNeighbors(Field* field, std::stack<Field*>& neighbors) {
 			}
 		}
 	}
-
 }
 
 double A_Star::distance(int x1, int y1, int x2, int y2) {
@@ -112,11 +60,11 @@ void A_Star::findPath() {
 	PointDouble unitStartPos(unitToMove->getPositionX(), unitToMove->getPositionY());
 
 	std::list<Field*>::iterator it = openSet.begin();
-	Field* start = map->map[unitToMove->getPositionX() / map->fieldWidth()][unitToMove->getPositionY() / map->fieldHeight()];
+	Field* start = map->map[(int)unitToMove->getPositionX() / map->fieldWidth()][(int)unitToMove->getPositionY() / map->fieldHeight()];
 	start->prevField = nullptr;
 	openSet.push_back(start);
 	Field *lowestF, *neighbor;
-	end = map->map[player->getPositionX() / map->fieldWidth()][player->getPositionY() / map->fieldHeight()];
+	end = map->map[(int)player->getPositionX() / map->fieldWidth()][(int)player->getPositionY() / map->fieldHeight()];
 
 	while (!openSet.empty()) {
 		lowestF = (*openSet.begin());

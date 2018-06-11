@@ -31,6 +31,6 @@ public:
 	InteractiveObject(TextureInfo& txtInfo, GameObjectType objType, ObjectHitboxType hitbType, int r);
 	InteractiveObject(TextureInfo& txtInfo, GameObjectType objType, ObjectHitboxType hitbType, SDL_Scancode _interactKey);
 	InteractiveObject(ItemTextureInfo& txtInfo, SDL_Point& dstR, SDL_Scancode _interactKey);
-	~InteractiveObject();
+	virtual ~InteractiveObject();
 };
 

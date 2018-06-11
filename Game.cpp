@@ -10,6 +10,8 @@
 #include <chrono>
 #include <typeinfo>
 #include <thread>
+#include "Player.h"
+#include "Map.h"
 
 #include "Money.h"
 #include "Chest.h"
@@ -37,15 +39,15 @@ void Game::run() {
 	player->setPosition(map->getCameraX(), map->getCameraY());
 
 	interactiveObjects->push_back(new Item(ItemName::Item1, player->getPositionX(), player->getPositionY()));
-	interactiveObjects->push_back(new Item(ItemName::Item6, player->getPositionX(), player->getPositionY()));
-	interactiveObjects->push_back(new Item(ItemName::Item7, player->getPositionX() + 5, player->getPositionY() + 5));
-	interactiveObjects->push_back(new Item(ItemName::Item8, player->getPositionX() + 5, player->getPositionY() + 5));
+	interactiveObjects->push_back(new Item(ItemName::Item2, player->getPositionX(), player->getPositionY()));
+	interactiveObjects->push_back(new Item(ItemName::Item3, player->getPositionX() + 5, player->getPositionY() + 5));
+	interactiveObjects->push_back(new Item(ItemName::Item4, player->getPositionX() + 5, player->getPositionY() + 5));
 	interactiveObjects->push_back(new Item(player->getPositionX() + 10, player->getPositionY() + 10));
 	interactiveObjects->push_back(new Item(player->getPositionX() + 15, player->getPositionY() + 15));
 	interactiveObjects->push_back(new Item(player->getPositionX() + 20, player->getPositionY() + 20));
 
 	for (int i = 0; i < 0; i++) {
-			Unit *m = new MonRandMoveProjAround(map, player);
+			Unit *m = new UnitEnemy1(map, player);
 			(*monsters).push_back(m);
 			m->setPosition(map->getCameraX() + 300, map->getCameraY() + 300);
 	}
@@ -69,6 +71,8 @@ void Game::run() {
 			std::this_thread::sleep_for(std::chrono::nanoseconds(int(frameDelay - frameTime) + 100000));
 	}
 	TTF_Quit();
+	TextureManager::clearData();
+	DataBase::clearData();
 }
 
 void Game::handleEvents() {
@@ -304,5 +308,19 @@ Game::Game(const char* title, int w, int h, bool fullscreen) {
 
 
 Game::~Game() {
+	delete map;
+	delete player;
 
+	std::list <AttackType*>::iterator it;
+
+	for (it = playerProjectiles.begin(); it != playerProjectiles.end(); it++)
+		delete *it;
+	playerProjectiles.clear();
+
+	for (it = monsterAttacks.begin(); it != monsterAttacks.end(); it++)
+		delete *it;
+	monsterAttacks.clear();
+
+	SDL_DestroyRenderer(renderer);
+	SDL_DestroyWindow(window);
 }

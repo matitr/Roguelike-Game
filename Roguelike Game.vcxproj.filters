@@ -7,9 +7,6 @@
     <ClCompile Include="Map.cpp">
       <Filter>Map</Filter>
     </ClCompile>
-    <ClCompile Include="RenderMap.cpp">
-      <Filter>Map</Filter>
-    </ClCompile>
     <ClCompile Include="Room.cpp">
       <Filter>Map</Filter>
     </ClCompile>
@@ -88,15 +85,15 @@
     <ClCompile Include="Attacks.cpp">
       <Filter>Combat\Attacks</Filter>
     </ClCompile>
+    <ClCompile Include="MapCore.cpp">
+      <Filter>Map</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Field.h">
       <Filter>Map</Filter>
     </ClInclude>
     <ClInclude Include="Map.h">
-      <Filter>Map</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderMap.h">
       <Filter>Map</Filter>
     </ClInclude>
     <ClInclude Include="Room.h">
@@ -176,6 +173,9 @@
     </ClInclude>
     <ClInclude Include="Attacks.h">
       <Filter>Combat\Attacks</Filter>
+    </ClInclude>
+    <ClInclude Include="MapCore.h">
+      <Filter>Map</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

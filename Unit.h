@@ -36,7 +36,7 @@ public:
 	ActionsManager& getActiongManager() { return actionsManager; }
 
 	Unit(TextureInfo& txtInfo);
-	~Unit();
+	virtual ~Unit();
 	void renderCircle(int _x, int _y, int radius);
 };
 

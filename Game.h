@@ -1,13 +1,14 @@
 #pragma once
 #include "SDL.h"
-#include "Map.h"
 #include <unordered_map>
 #include <vector>
 #include <list>
-#include "Player.h"
 #include "UpdateCollision.h"
 
 class InteractiveObject;
+class Map;
+class Player;
+class GameObject;
 
 class Game{
 

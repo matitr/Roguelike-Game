@@ -1,6 +1,7 @@
 #include "Field.h"
 #include "Room.h"
 #include "Game.h"
+#include "Map.h"
 
 
 void Field::setPosition(int _x, int _y) {
@@ -38,5 +39,5 @@ Field::Field(SDL_Texture* txt, SDL_Rect& _srcRect, FieldType _type) : GameObject
 }
 
 Field::~Field() {
-
+	collisionObjects.clear();
 }

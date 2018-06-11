@@ -1,5 +1,6 @@
 #include "Projectile.h"
 #include "Game.h"
+#include "Player.h"
 
 
 
@@ -26,13 +27,13 @@ bool Projectile::update(Map* map, SDL_Rect& fieldRect, Unit* closestUnit) {
 }
 
 void Projectile::draw(SDL_Point* startRender) {
-	dstRect.x = position.x - startRender->x - dstRect.w / 2;
-	dstRect.y = (position.y - startRender->y) * HEIGHT_SCALE - dstRect.h / 2 - heightFromGround;
+	dstRect.x = int(position.x - startRender->x - dstRect.w / 2.0);
+	dstRect.y = int((position.y - startRender->y) * HEIGHT_SCALE - dstRect.h / 2 - heightFromGround);
 
 	SDL_RenderCopy(Game::renderer, texture, &srcRect, &dstRect);
 }
 
-void Projectile::setDirection(float dir) {
+void Projectile::setDirection(double dir) {
 	direction = dir;
 	angle = dir * 180.0 / 3.14159265;
 
@@ -40,7 +41,7 @@ void Projectile::setDirection(float dir) {
 	velocity.y = sin(direction) * speed;
 }
 
-void Projectile::setAngle(float ang) {
+void Projectile::setAngle(double ang) {
 	direction = ang * 3.14159265 / 180.0;
 	angle = ang;
 
@@ -50,7 +51,7 @@ void Projectile::setAngle(float ang) {
 
 void Projectile::homingShot(Unit* closestUnit) {
 	double dist;
-	if ((dist = distanceEdges(closestUnit)) > 33150)
+	if ((dist = distanceEdges(closestUnit)) > 70 * staticPassives[StaticPassiveName::homing])
 		return;
 
 	if (std::find(unitsHitted.begin(), unitsHitted.end(), closestUnit) != unitsHitted.end()) // Already hitted
@@ -109,8 +110,8 @@ Projectile::Projectile(AnimationDetails& animationD, ItemPassives& passives) : A
 		speed = speed + speed * passives[StaticPassiveName::projectileSpeed];
 
 	if (passives[StaticPassiveName::projectileSize]) {
-		dstRect.w = dstRect.w + dstRect.w * passives[StaticPassiveName::projectileSize] / 100;
-		dstRect.h = dstRect.h + dstRect.h * passives[StaticPassiveName::projectileSize] / 100;
+		dstRect.w = int(dstRect.w + dstRect.w * passives[StaticPassiveName::projectileSize] / 100);
+		dstRect.h = int(dstRect.h + dstRect.h * passives[StaticPassiveName::projectileSize] / 100);
 		setRadius(dstRect.w / 2);
 	}
 }
