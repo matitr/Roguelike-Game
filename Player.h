@@ -52,6 +52,7 @@ public:
 
 	bool alive() { return hp > 0 ? true : false; }
 	void addMoney(int m) { money += m; }
+	int getMoney() { return money; }
 	void takeMoney(int& m);
 
 	Player(SDL_Texture* txt, SDL_Point& windowResolution);

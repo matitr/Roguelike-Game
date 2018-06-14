@@ -14,7 +14,7 @@ void Item::onPlayerInteract(Map* map, std::vector <InteractiveObject*>& objects,
 	objects.erase(std::find(objects.begin(), objects.end(), this));
 }
 
-void Item::createDescriptionTxt() { // todo
+void Item::createDescriptionTxt() { 
 	descriptionDstRect.w = 350;
 	float descriptionHeight = 0;
 
@@ -25,9 +25,7 @@ void Item::createDescriptionTxt() { // todo
 
 	SDL_SetRenderDrawColor(Game::renderer, 255, 255, 255, 255);
 
-	TTF_Font* font = DataBase::fonts[FontPurpose::ItemDescription];
 	SDL_Texture* message = DataBase::getItemTypeText(type);
-
 	SDL_QueryTexture(message, NULL, NULL, &r.w, &r.h);
 	r.x = descriptionDstRect.w - r.w - 5;
 

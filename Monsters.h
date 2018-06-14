@@ -42,7 +42,7 @@ class UnitEnemy2 : public Unit {
 
 public:
 	UnitEnemy2(Map* _map, Unit* _player) : Unit(TextureManager::textureParameters[SingleTexture::UnitT]) {
-		staticPassives[StaticPassiveName::projectileSpeed] = -0.3;
+		staticPassives[StaticPassiveName::projectileSpeed] = -0.3f;
 
 		actionsManager.addAction(Walk, new MoveForwardPlayer(this, _map, _player), NULL, 1);
 		actionsManager.addAnimations(Walk, DataBase::unitAnimations[UnitName::Unit][Walk]);
@@ -67,17 +67,13 @@ class Boss1 : public Unit {
 public:
 	Boss1(Map* _map, Unit* _player) : Unit(TextureManager::textureParameters[SingleTexture::UnitT]) {
 		actionsManager.addAction(Walk, new MoveForwardPlayer(this, _map, _player), new ProjectileDirection(DataBase::animations[AnimationName::Projectile2], 90, 40), 1);
-		actionsManager.addAnimation(Walk, Direction::N, DataBase::animations[AnimationName::PlayerWalkN]);
-		actionsManager.addAnimation(Walk, Direction::E, DataBase::animations[AnimationName::PlayerWalkE]);
-		actionsManager.addAnimation(Walk, Direction::S, DataBase::animations[AnimationName::PlayerWalkS]);
-		actionsManager.addAnimation(Walk, Direction::W, DataBase::animations[AnimationName::PlayerWalkW]);
+		actionsManager.addAnimations(Walk, DataBase::unitAnimations[UnitName::Unit][Walk]);
 
-		actionsManager.addAction(Attack, NULL, new MultipleProjectiles(DataBase::animations[AnimationName::Projectile2], 5), 1);
-		actionsManager.addAnimation(Attack, Direction::N, DataBase::animations[AnimationName::SlashN]);
-		actionsManager.addAnimation(Attack, Direction::W, DataBase::animations[AnimationName::SlashE]);
-		actionsManager.addAnimation(Attack, Direction::S, DataBase::animations[AnimationName::SlashS]);
-		actionsManager.addAnimation(Attack, Direction::E, DataBase::animations[AnimationName::SlashW]);
+		actionsManager.addAction(Attack, new NoMoveFaceEnemy(this, _player), new MultipleProjectiles(DataBase::animations[AnimationName::Projectile2], 5), 1);
+		actionsManager.addAnimations(Attack, DataBase::unitAnimations[UnitName::Unit][AttackProj]);
+		actionsManager.setActionActivationDistMax(Attack, 1000);
 
+		actionsManager.setStartingAction(Walk, Direction::S);
 		actionsManager.addPattern(Walk);
 		actionsManager.addPattern(Attack);
 

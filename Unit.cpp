@@ -30,14 +30,14 @@ void Unit::draw(SDL_Point* startRender) {
 
 	SDL_RenderCopy(Game::renderer, texture, &srcRect, &dstRect);	
 
-	SDL_Rect r;
-	r.h = 4;
-	r.w = radius * 2;
-	r.x = (int)position.x - positionShiftX - startRender->x;
-	r.y = (int)position.y - startRender->y;
-	SDL_SetRenderDrawColor(Game::renderer, rand() % 225, 0, 102, 255);
-	renderCircle((int)position.x - startRender->x, ((int)position.y - startRender->y) * HEIGHT_SCALE, radius);
-	//	SDL_RenderFillRect(Game::renderer, &r);
+	// Draw hitbox
+//	SDL_Rect r;
+//	r.h = 4;
+//	r.w = radius * 2;
+//	r.x = (int)position.x - positionShiftX - startRender->x;
+//	r.y = (int)position.y - startRender->y;
+//	SDL_SetRenderDrawColor(Game::renderer, rand() % 225, 0, 102, 255);
+//	renderCircle((int)position.x - startRender->x, ((int)position.y - startRender->y) * HEIGHT_SCALE, radius);
 }
 
 void Unit::setClosestEnemy(Unit* u, double dist) {

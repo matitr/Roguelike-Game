@@ -17,8 +17,8 @@ enum class AnimationName { Projectile, Projectile2, ChestOpening, CoinSpin,
 	DashN, DashE, DashS, DashW };
 
 
-enum class TextColor { ItemPassivesText, ItemType };
-enum class FontPurpose { ItemDescription };
+enum class TextColor { ItemPassivesText, ItemType, MenuButtonText };
+enum class FontPurpose { ItemDescription, GameEndResult, MenuButtonsText };
 
 enum class UnitName { Unit, Player };
 
@@ -73,6 +73,7 @@ public:
 	static InventoryDetails inventoryDelails;
 	static std::unordered_map<AnimationName, AnimationDetails> animations;
 	static std::unordered_map<TextColor, SDL_Color> colors;
+	static std::unordered_map<FontPurpose, SDL_RWops*> RWops;
 	static std::unordered_map<FontPurpose, TTF_Font*> fonts;
 
 	static std::unordered_map<UnitName, std::unordered_map<ActionType, std::array<AnimationDetails, Direction::Name::enum_size>>> unitAnimations;

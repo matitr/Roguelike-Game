@@ -5,10 +5,12 @@
 #include <string>
 #include <iomanip>
 #include <sstream>
+#include <iostream>
 
 InventoryDetails DataBase::inventoryDelails;
 std::unordered_map<AnimationName, AnimationDetails> DataBase::animations;
 std::unordered_map<TextColor, SDL_Color> DataBase::colors;
+std::unordered_map<FontPurpose, SDL_RWops*> DataBase::RWops;
 std::unordered_map<FontPurpose, TTF_Font*> DataBase::fonts;
 std::unordered_map<UnitName, std::unordered_map<ActionType, std::array<AnimationDetails, Direction::Name::enum_size>>> DataBase::unitAnimations;
 std::unordered_map<ItemName::Name, ItemDetails> DataBase::items;
@@ -104,11 +106,21 @@ void DataBase::loadAnimationsDetails() {
 
 void DataBase::loadFontData() {
 	TTF_Init();
-	fonts[FontPurpose::ItemDescription] = TTF_OpenFont("Font/font.ttf", 18);
+	RWops[FontPurpose::ItemDescription] = SDL_RWFromFile("Font/font.ttf", "r");
+	RWops[FontPurpose::GameEndResult] = SDL_RWFromFile("Font/font.ttf", "r");
+	RWops[FontPurpose::MenuButtonsText] = SDL_RWFromFile("Font/font.ttf", "r");
 
+	fonts[FontPurpose::ItemDescription] = TTF_OpenFontRW(RWops[FontPurpose::ItemDescription], 0, 18);
+	fonts[FontPurpose::GameEndResult] = TTF_OpenFontRW(RWops[FontPurpose::GameEndResult], 0, 64);
+	fonts[FontPurpose::MenuButtonsText] = TTF_OpenFontRW(RWops[FontPurpose::MenuButtonsText], 0, 32);
+
+	for (auto it = fonts.begin(); it != fonts.end(); it++)
+		if (!it->second)
+			std::cout << "Error while opening font" << std::endl;
+	
 	colors[TextColor::ItemPassivesText] = { 0, 153, 255,255 };
 	colors[TextColor::ItemType] = { 255, 204, 0,255 };
-
+	colors[TextColor::MenuButtonText] = { 255, 255, 255,255 };
 }
 
 void DataBase::loadItems() {
@@ -215,9 +227,14 @@ SDL_Texture* DataBase::getItemTypeText(enum ItemType itemType) {
 void DataBase::clearData() {
 	animations.clear();
 	colors.clear();
+
 	fonts.clear();
+
 	unitAnimations.clear();
 	items.clear();
+
+	for (auto it = RWops.begin(); it != RWops.end(); it++)
+		SDL_RWclose(it->second);
 }
 
 DataBase::DataBase() {

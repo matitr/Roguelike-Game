@@ -12,6 +12,7 @@
 #include <thread>
 #include "Player.h"
 #include "Map.h"
+#include "EndScreen.h"
 
 #include "Money.h"
 #include "Chest.h"
@@ -28,6 +29,7 @@ void Game::run() {
 	int frameCounter=0;
 	TextureManager::loadAllTextures();
 	DataBase::loadAllDataBases();
+	screensManager = new ScreensManager(windowResolution.x, windowResolution.y);
 
 	player = new Player(TextureManager::textures[TextureFile::PLAYER], windowResolution);
 	map = new Map(player, windowResolution.y / 2, windowResolution.x / 2);
@@ -60,19 +62,24 @@ void Game::run() {
 
 		frameStart = Clock::now();
 		handleEvents();
-		updateGame();
-		if (!player->alive())
-			return;
+		if (player->alive()) 
+			updateGame();
+
+		screensManager->update(this);
+		screensManager->draw();
+		SDL_RenderPresent(renderer);
 
 		frameCounter++;
 
 		frameTime = std::chrono::duration_cast<std::chrono::nanoseconds>(Clock::now() - frameStart).count();
-		if (frameDelay > frameTime)
+		if (frameDelay > frameTime) {
 			std::this_thread::sleep_for(std::chrono::nanoseconds(int(frameDelay - frameTime) + 100000));
+		}
 	}
-	TTF_Quit();
 	TextureManager::clearData();
 	DataBase::clearData();
+	TTF_Quit();
+	SDL_Quit();
 }
 
 void Game::handleEvents() {
@@ -140,11 +147,9 @@ void Game::handleEvents() {
 }
 
 void Game::updateGame() {
-	std::list<Unit*>::iterator tempItMonster;
 	std::vector <InteractiveObject*>::iterator it_interactiveObj;
 	std::vector <InteractiveObject*>::iterator itTemp_interactiveObj;
 	std::unordered_map <SDL_Scancode, InteractiveObject*>::iterator it_objectSelected;
-
 
 	SDL_RenderClear(renderer);
 	gameObjects.clear();
@@ -164,35 +169,11 @@ void Game::updateGame() {
 	if (!map->currentRoom()->visited && map->currentRoom()->battle) {
 		map->currentRoom()->setVisited(true);
 	}
-	std::list <Unit*>::iterator it_monsters = (*monsters).begin();
 
-	// Update monsters
-	while (it_monsters != (*monsters).end()) {
-		if (!(*it_monsters)->update(monsterAttacks, map)) {
-			(*interactiveObjects).push_back(new Money((*it_monsters)->getPositionX(), (*it_monsters)->getPositionY())); // drop money	
-			std::list<AttackType*>::iterator it_projPlayer = playerProjectiles.begin(); // Delete Unit pointers in projectiles
-			while (it_projPlayer != playerProjectiles.end()) {
-				if (*it_projPlayer)
-					(*it_projPlayer)->delHittedUnitPointer(*it_monsters);
-				it_projPlayer++;
-			}
-
-			tempItMonster = it_monsters;
-			it_monsters++;
-			delete(*tempItMonster);
-			(*monsters).erase(tempItMonster);
-			if ((*monsters).empty())
-				map->currentRoom()->setBattle(false);
-		}
-		else {
-			gameObjects.push_back((*it_monsters));
-			it_monsters++;
-		}
-	}
-
+	updateUnits();
 	it_interactiveObj = (*interactiveObjects).begin();
 
-	// Ipdate interactiveObj
+	// Update interactiveObj
 	while (it_interactiveObj != (*interactiveObjects).end()) {
 		if (!(*it_interactiveObj)->update(player)) {
 			itTemp_interactiveObj = it_interactiveObj;
@@ -204,10 +185,6 @@ void Game::updateGame() {
 			it_interactiveObj++;
 		}
 	}
-
-	if (map->currentRoom()->type == Treasure)
-		int jfy = 0;
-
 
 	collision.updateAllUnits(player, (*monsters), map->map, map->fieldRect);
 	collision.projectilesWithUnits(playerProjectiles, monsterAttacks, player, (*monsters));
@@ -230,7 +207,43 @@ void Game::updateGame() {
 	if (player->inventory().isOpened())
 		player->inventory().draw();
 
-	SDL_RenderPresent(renderer);
+	if (!player->alive()) {
+		screensManager->getEndScreen()->setShowing(true);
+		screensManager->getEndScreen()->setStats(false, player->getMoney());
+	}
+}
+
+void Game::updateUnits() {
+	std::list<Unit*>::iterator tempItMonster;
+	std::list <Unit*>::iterator it_monsters = (*monsters).begin();
+
+	while (it_monsters != (*monsters).end()) {
+		if (!(*it_monsters)->update(monsterAttacks, map)) {
+			(*interactiveObjects).push_back(new Money((*it_monsters)->getPositionX(), (*it_monsters)->getPositionY())); // drop money	
+			std::list<AttackType*>::iterator it_projPlayer = playerProjectiles.begin(); // Delete Unit pointers in projectiles
+			while (it_projPlayer != playerProjectiles.end()) {
+				if (*it_projPlayer)
+					(*it_projPlayer)->delHittedUnitPointer(*it_monsters);
+				it_projPlayer++;
+			}
+
+			tempItMonster = it_monsters;
+			it_monsters++;
+			delete(*tempItMonster);
+			(*monsters).erase(tempItMonster);
+			if ((*monsters).empty())
+				map->currentRoom()->setBattle(false);
+
+			if (map->currentRoom()->type == Boss && monsters->empty()) { // Boss killed
+				screensManager->getEndScreen()->setShowing(true);
+				screensManager->getEndScreen()->setStats(true, player->getMoney());
+			}
+		}
+		else {
+			gameObjects.push_back((*it_monsters));
+			it_monsters++;
+		}
+	}
 }
 
 void Game::updateGameProjectiles() {
@@ -261,11 +274,13 @@ void Game::updateGameProjectiles() {
 			// Find closest monster
 			float closest = 9999999;
 			float tempDist;
-			Unit* closestMonster = nullptr;
+			Unit* closestMonster = nullptr; // Homing projectile
 			if ((*it)->getPassives()[StaticPassiveName::homing]) {
 				for (itMonster = monsters->begin(); itMonster != monsters->end(); itMonster++)
-					if ((tempDist = (*it)->distanceEdges(*itMonster)) < closest)
+					if ((tempDist = (*it)->distanceEdges(*itMonster)) < closest) {
 						closestMonster = *itMonster;
+						closest = tempDist;
+					}
 			}
 
 			if (!(*it)->update(map, map->fieldRect, closestMonster)) {
@@ -282,12 +297,38 @@ void Game::updateGameProjectiles() {
 	}
 }
 
-Game::Game(const char* title, int w, int h, bool fullscreen) {
+void Game::newGame() {
+	delete player;
+	delete map;
+	std::list <AttackType*>::iterator it;
+
+	for (it = playerProjectiles.begin(); it != playerProjectiles.end(); it++)
+		delete *it;
+	playerProjectiles.clear();
+
+	for (it = monsterAttacks.begin(); it != monsterAttacks.end(); it++)
+		delete *it;
+	monsterAttacks.clear();
+
+	player = new Player(TextureManager::textures[TextureFile::PLAYER], windowResolution);
+	map = new Map(player, windowResolution.y / 2, windowResolution.x / 2);
+
+	map->generateNewLevel();
+	map->currentRoom()->getRoomObjects(monsters, interactiveObjects);
+	map->setFieldsPositions();
+	player->setPosition(map->getCameraX(), map->getCameraY());
+}
+
+void Game::quitGame() {
+	_running = false;
+}
+
+Game::Game(int w, int h, bool fullscreen) : windowResolution{ w, h } {
 	int flags = 0;
 	if (fullscreen)
 		flags = SDL_WINDOW_FULLSCREEN;
 
-	window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, w, h, flags);
+	window = SDL_CreateWindow("Roguelike Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, w, h, flags);
 	renderer = SDL_CreateRenderer(window, -1, 0);
 
 	windowResolution.x = w;
@@ -296,7 +337,6 @@ Game::Game(const char* title, int w, int h, bool fullscreen) {
 
 	
 	FPS = 60;
-	cameraMovePix = 5;
 	_running = true;
 	gameObjects.reserve(1000);
 	objectSelected.reserve(20);
@@ -310,6 +350,7 @@ Game::Game(const char* title, int w, int h, bool fullscreen) {
 Game::~Game() {
 	delete map;
 	delete player;
+	delete screensManager;
 
 	std::list <AttackType*>::iterator it;
 

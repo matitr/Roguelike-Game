@@ -1,5 +1,6 @@
 #pragma once
 #include "SDL.h"
+#include "myMath.h"
 #include <vector>
 
 #define NO_COLLISION 999999
@@ -7,28 +8,6 @@
 class Unit;
 class Field;
 class Field;
-
-struct PointFloat {
-	float x, y;
-
-	PointFloat() {
-		x = 0;
-		y = 0;
-	}
-};
-
-struct PointDouble {
-	double x, y;
-
-	PointDouble() {
-		x = 0;
-		y = 0;
-	}
-	PointDouble(double _x, double _y) {
-		x = _x;
-		y = _y;
-	}
-};
 
 enum GameObjectType {Static, Dynamic};
 enum ObjectHitboxType { Rectangle, Circle };

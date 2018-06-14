@@ -4,6 +4,7 @@
 #include <vector>
 #include <list>
 #include "UpdateCollision.h"
+#include "ScreensManager.h"
 
 class InteractiveObject;
 class Map;
@@ -14,12 +15,12 @@ class Game{
 
 	SDL_Window* window;
 	UpdateCollision collision;
+	ScreensManager* screensManager;
 
 	int FPS;
 	Map* map;
 	bool _running;
 	
-	int cameraMovePix;
 	SDL_Point windowResolution;
 
 	Player* player;
@@ -32,17 +33,21 @@ class Game{
 
 	std::unordered_map <SDL_Scancode, InteractiveObject*> objectSelected;
 
+	void handleEvents();
+	void updateGame();
+	void updateUnits();
+	void updateGameProjectiles();
+
+	inline bool running() { return _running; }
 public:
 	static SDL_Renderer* renderer;
 
 	void run();
-	void handleEvents();
-	void updateGame();
-	void updateGameProjectiles();
 
-	inline bool running() { return _running; }
+	void newGame();
+	void quitGame();
 
-	Game(const char* title, int, int, bool);
+	Game(int, int, bool);
 	~Game();
 };
 

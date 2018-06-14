@@ -88,6 +88,18 @@
     <ClCompile Include="MapCore.cpp">
       <Filter>Map</Filter>
     </ClCompile>
+    <ClCompile Include="EndScreen.cpp">
+      <Filter>Screens</Filter>
+    </ClCompile>
+    <ClCompile Include="Button.cpp">
+      <Filter>Screens</Filter>
+    </ClCompile>
+    <ClCompile Include="ScreensManager.cpp">
+      <Filter>Screens</Filter>
+    </ClCompile>
+    <ClCompile Include="Screen.cpp">
+      <Filter>Screens</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Field.h">
@@ -177,6 +189,21 @@
     <ClInclude Include="MapCore.h">
       <Filter>Map</Filter>
     </ClInclude>
+    <ClInclude Include="EndScreen.h">
+      <Filter>Screens</Filter>
+    </ClInclude>
+    <ClInclude Include="Button.h">
+      <Filter>Screens</Filter>
+    </ClInclude>
+    <ClInclude Include="ScreensManager.h">
+      <Filter>Screens</Filter>
+    </ClInclude>
+    <ClInclude Include="Screen.h">
+      <Filter>Screens</Filter>
+    </ClInclude>
+    <ClInclude Include="myMath.h">
+      <Filter>Combat</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Map">
@@ -202,6 +229,9 @@
     </Filter>
     <Filter Include="Combat\Attacks">
       <UniqueIdentifier>{129975d5-b532-4508-8a17-2b7e9a8b4d39}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Screens">
+      <UniqueIdentifier>{df391f99-f516-445f-bba7-03b7b4440541}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

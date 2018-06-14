@@ -1,5 +1,6 @@
 #include "TextureManager.h"
 #include "Game.h"
+#include <iostream>
 
 std::unordered_map <TextureFile, SDL_Texture*> TextureManager::textures;
 std::unordered_map <SingleFieldTexture, SDL_Rect> TextureManager::fieldTextureSrcRect;
@@ -7,18 +8,26 @@ std::unordered_map <SingleTexture, TextureInfo> TextureManager::textureParameter
 std::unordered_map <ItemName::Name, ItemTextureInfo> TextureManager::itemTextureDetails;
 
 void TextureManager::loadAllTextures() {
-	textures[TextureFile::PLAYER] = TextureManager::LoadTexture("Textures/player.png");
-	
-	textures[TextureFile::PROJECTILES] = TextureManager::LoadTexture("Textures/projectiles.png");
-	textures[TextureFile::PLAYER_STATS] = TextureManager::LoadTexture("Textures/playerStats.png"); 
+	try {
+		textures[TextureFile::PLAYER] = TextureManager::LoadTexture("Textures/player.png");
 
-	textures[TextureFile::LEVEL_1] = TextureManager::LoadTexture("Textures/level_1.png");
-	textures[TextureFile::OBJECTS] = TextureManager::LoadTexture("Textures/objects.png");
-	textures[TextureFile::COIN] = TextureManager::LoadTexture("Textures/coin.png");
-	textures[TextureFile::CHEST] = TextureManager::LoadTexture("Textures/chest.png");
-	textures[TextureFile::INVENTORY] = TextureManager::LoadTexture("Textures/inventory.png");
-	textures[TextureFile::UNIT] = TextureManager::LoadTexture("Textures/unit.png");
-	textures[TextureFile::Items] = TextureManager::LoadTexture("Textures/items.png");
+		textures[TextureFile::PROJECTILES] = TextureManager::LoadTexture("Textures/projectiles.png");
+		textures[TextureFile::PLAYER_STATS] = TextureManager::LoadTexture("Textures/playerStats.png");
+
+		textures[TextureFile::LEVEL_1] = TextureManager::LoadTexture("Textures/level_1.png");
+		textures[TextureFile::OBJECTS] = TextureManager::LoadTexture("Textures/objects.png");
+		textures[TextureFile::COIN] = TextureManager::LoadTexture("Textures/coin.png");
+		textures[TextureFile::CHEST] = TextureManager::LoadTexture("Textures/chest.png");
+		textures[TextureFile::INVENTORY] = TextureManager::LoadTexture("Textures/inventory.png");
+		textures[TextureFile::UNIT] = TextureManager::LoadTexture("Textures/unit.png");
+		textures[TextureFile::Items] = TextureManager::LoadTexture("Textures/items.png");
+	}
+	catch (const char* dir) {
+		std::cout << "Error while opening texture from file: " << dir << std::endl;
+	}
+	catch (...) {
+		std::cout << " Unknown error while opening texture file" << std::endl;
+	}
 
 	TextureManager::loadAllTextureSrcRect();
 }
@@ -68,12 +77,16 @@ SDL_Texture* TextureManager::LoadTexture(const char* dir) {
 	SDL_Texture* texture = SDL_CreateTextureFromSurface(Game::renderer, surface);
 	SDL_FreeSurface(surface);
 
+	if (!texture)
+		throw dir;
+
 	return texture;
 }
 
 void TextureManager::clearData() {
 	for (auto it = textures.begin(); it != textures.end(); it++)
-		SDL_DestroyTexture(it->second);
+		if (it->second)
+			SDL_DestroyTexture(it->second);
 
 	textures.clear();
 	fieldTextureSrcRect.clear();

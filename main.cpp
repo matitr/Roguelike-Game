@@ -4,7 +4,7 @@
 int main(int argc, char* args[]) {
 
 	srand(88888888);
-	Game *game = new Game("Game", 1810, 1010, false);
+	Game *game = new Game(1810, 1010, false);
 	game->run();
 	delete game;
 
