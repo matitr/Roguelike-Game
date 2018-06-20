@@ -17,6 +17,7 @@ void ActionsManager::updateAction() {
 		} while (actions[*currAction]->dynamicActivationOnly());
 
 		actions[*currAction]->setFirstFrame();
+		actions[*currAction]->resetMove();
 	}
 
 	if (velocity.x || velocity.y) {
@@ -47,20 +48,16 @@ void ActionsManager::onClosestObj(GameObject* closestObj, double closestObjDist)
 		} while (temp_itAction != currAction);
 
 		if (!actionsToForceChange.empty()) {
-			if (std::find(actionsToForceChange.begin(), actionsToForceChange.end(), currAction) == actionsToForceChange.end()) {
+			if (std::find(actionsToForceChange.begin(), actionsToForceChange.end(), currAction) == actionsToForceChange.end() 
+				|| actions[*currAction]->actionEnded()) { // Current action was forced changed. Change to it once more
 
 				if (actionsToForceChange.size() == 1)
 					changeAction(actionsToForceChange[0]);
 				else
 					changeAction(actionsToForceChange[rand() % actionsToForceChange.size()]);
 			}
-			else if (actions[*currAction]->actionEnded()) { // Current action was forced changed. Change to it once more
-				if (actionsToForceChange.size() == 1)
-					changeAction(actionsToForceChange[0]);
-				else
-					changeAction(actionsToForceChange[rand() % actionsToForceChange.size()]);
 
-			}
+			actions[*currAction]->resetMove();
 			actions[*currAction]->setDirection(closestObj->getPositionX() - position.x, closestObj->getPositionY() - position.y);
 		}
 	}

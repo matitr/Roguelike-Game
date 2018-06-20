@@ -49,16 +49,14 @@ void Inventory::update(Map* map, Player* player) {
 	}
 
 	slotUnderMouseEq = false;
-	for (int i = 0; i < equippedSlots.size(); i++) {
+	for (int i = 0; i < equippedSlots.size(); i++) { // Check if mouse is on equippedSlot
 		if (mouseX >= equippedSlots[i]->rect.x && mouseX <= equippedSlots[i]->rect.x + equippedSlots[i]->rect.w
 			&& mouseY >= equippedSlots[i]->rect.y && mouseY <= equippedSlots[i]->rect.y + equippedSlots[i]->rect.h) {
 
 			slotUnderMouseEq = true;
 			slotUnderMouse = equippedSlots[i];
 		}
-
 	}
-
 
 	updateFocusOnSlot();
 }
@@ -138,7 +136,7 @@ void Inventory::draw() {
 
 void Inventory::pickUpItem(Item* item) {
 	InventorySlot* emptySlot = nullptr;
-	int i = 0;
+	int i = 0; // Find empty slot
 	for (int j = 0; j < inventorySlots[i].size() && !emptySlot; j++) {
 		for (i = 0; i < inventorySlots.size() && !emptySlot; i++) {
 			if (!inventorySlots[i][j]->item && inventorySlots[i][j] != clickedSlot)
@@ -163,7 +161,7 @@ void Inventory::dropItem(Item* item) {
 void Inventory::equipItem(InventorySlot* itemSlotToEquip) {
 	InventorySlot* toEquip = nullptr;
 
-	for (int i = 0; i < equippedSlots.size(); i++)
+	for (int i = 0; i < equippedSlots.size(); i++) // Find slot
 		if (!equippedSlots[i]->item && equippedSlots[i]->itemType == itemSlotToEquip->item->itemType()) {
 			toEquip = equippedSlots[i];
 			break;
@@ -183,7 +181,7 @@ void Inventory::unequipItem(InventorySlot* itemSlotToUnequip) {
 	InventorySlot* toUnequip = nullptr;
 
 	int i = 0;
-	for (int j = 0; j < inventorySlots[i].size() && !toUnequip; j++) {
+	for (int j = 0; j < inventorySlots[i].size() && !toUnequip; j++) { // Find slot
 		for (i = 0; i < inventorySlots.size() && !toUnequip; i++) {
 			if (!inventorySlots[i][j]->item)
 				toUnequip = inventorySlots[i][j];

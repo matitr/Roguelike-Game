@@ -11,10 +11,7 @@
 
 enum ItemType { Universal, MainWeapon, Active, Passive };
 
-enum class AnimationName { Projectile, Projectile2, ChestOpening, CoinSpin, 
-	PlayerWalkN, PlayerWalkE, PlayerWalkS, PlayerWalkW,
-	SlashN, SlashE, SlashS, SlashW,
-	DashN, DashE, DashS, DashW };
+enum class AnimationName { Projectile, Projectile2, ChestOpening, CoinSpin };
 
 
 enum class TextColor { ItemPassivesText, ItemType, MenuButtonText };
@@ -47,7 +44,6 @@ struct InventoryDetails {
 };
 
 struct AnimationDetails {
-//	TextureInfo textureDetails;
 	SDL_Point firstFrame;
 	int frames;
 	int frameTime;

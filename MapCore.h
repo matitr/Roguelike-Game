@@ -34,15 +34,15 @@ protected:
 
 	SDL_Rect minimapSrcRect, minimapDstRect;
 	MinimapSize minimapSize;
+
+	SDL_Texture* minimapBackground;
+	std::list<Room*> roomsOnMiniman;
+	SDL_Point startRender;
 public:
 	SDL_Texture* minimap;
-	SDL_Texture* minimapBackground;
-
-	std::list<Room*> roomsOnMiniman;
 
 	SDL_Rect fieldRect;
 	std::vector<std::vector<Field*>> map;
-	SDL_Point startRender;
 
 	void initValues();
 	void setSpawn(Room* room, float fieldX, float fieldY);
@@ -56,6 +56,7 @@ public:
 	SDL_Rect& getMinimapDstRect() { return minimapDstRect; }
 
 	SDL_Point getResolution() { return resolution; }
+	SDL_Point getStartRender() { return startRender; }
 
 	MapCore(int _hCenter, int _wCenter);
 	~MapCore();

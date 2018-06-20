@@ -65,6 +65,11 @@ void UnitAction::updateFrame() {
 	animations[currentDirection]->updateTexture();
 }
 
+void UnitAction::resetMove() {
+	if (movement)
+		movement->resetMove();
+}
+
 void UnitAction::makeAttack(Unit* unit, std::list <AttackType*>& monsterAttacks, SDL_Point* attackPoint) {
 	if (attack && animations[currentDirection]->firstTimuUnitOfFrame(attackFrame))
 		attack->makeAttack(unit, monsterAttacks, attackPoint);

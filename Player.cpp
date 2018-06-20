@@ -22,7 +22,6 @@ bool Player::update(std::list <AttackType*>& playerProjectiles, Map* map, SDL_Re
 		makeAttack(playerProjectiles, DataBase::animations[AnimationName::Projectile]);
 	attackCancel = false;
 	if (attackFrame > -1) {
-//		if (attackFrame + 1 == attackFrames)
 		if (attackFrame + 1 == int(60 / (attackSpeed + attackSpeed * staticPassives[StaticPassiveName::attackSpeed] / 100)))
 			attackFrame = ATTACK_POSSIBLE;
 		else
@@ -38,7 +37,7 @@ bool Player::update(std::list <AttackType*>& playerProjectiles, Map* map, SDL_Re
 	}
 
 	Field *field = nullptr;
-
+	// Check if player have collision with door. Change room
 	if (velocity.x < 0)
 		field = map->map[int(position.x - radius - speed) / fieldRect.w][int(position.y) / fieldRect.h];
 	else if (velocity.x > 0)
@@ -48,7 +47,6 @@ bool Player::update(std::list <AttackType*>& playerProjectiles, Map* map, SDL_Re
 		if (field->type() == Door && !map->currentRoom()->battle) {
 			Field * f = map->currentRoom()->doorsConnection[field];
 			map->changeRoom(map->currentRoom()->roomConnection[field], map->currentRoom()->doorsConnection[field]);
-			resetAnimation();
 			setPosition(map->getCameraX(), map->getCameraY());
 			velocity.x = 0;
 			velocity.y = 0;
@@ -64,7 +62,6 @@ bool Player::update(std::list <AttackType*>& playerProjectiles, Map* map, SDL_Re
 	if (velocity.y != 0)
 		if (field->type() == Door && !map->currentRoom()->battle) {
 			map->changeRoom(map->currentRoom()->roomConnection[field], map->currentRoom()->doorsConnection[field]);
-			resetAnimation();
 			setPosition(map->getCameraX(), map->getCameraY());
 			velocity.x = 0;
 			velocity.y = 0;
@@ -75,15 +72,15 @@ bool Player::update(std::list <AttackType*>& playerProjectiles, Map* map, SDL_Re
 	if (!velocity.y && !velocity.x)
 		//		setAnimation(Stand);
 		;
-	else {
+	else { // Make move
 		double speedMultiplier = staticPassives[StaticPassiveName::unitSpeed] ? 1 + staticPassives[StaticPassiveName::unitSpeed] / 100 : 1;
-		if (actionsManager.currActionType() == Dash) {
+		if (actionsManager.currActionType() == Dash) { // Dash
 			float dir = (float)atan2(velocity.y, velocity.x);
 			position.x += cos(dir) * rollSpeed * speedMultiplier;
 			position.y += sin(dir) * rollSpeed * speedMultiplier;
 			map->setCamera(int(position.x), int(position.y));
 		}
-		else {
+		else { // Normal move
 			float dir = (float)atan2(velocity.y, velocity.x);
 			position.x += cos(dir) * speed * speedMultiplier;
 			position.y += sin(dir) * speed * speedMultiplier;
@@ -112,7 +109,7 @@ void Player::drawStatus() {
 	statusDstRest.w = width;
 	statusSrcRect.w = width;
 
-	// Draw charge
+	// Draw attack charge
 	if (attack) {
 		int chargeBarWidth = 60;
 		int chargeBarHeight = 10;
@@ -182,10 +179,6 @@ void Player::makeAttack(std::list <AttackType*>& playerProjectiles, AnimationDet
 	attackP->makeAttack(this, playerProjectiles, &attackPos);
 }
 
-//void Player::addAnimation(ActionType actionName, int _yPosTexture, int _frames, int _frameTime) {
-//	animations[actionName] = new Animation(_yPosTexture, _frames, _frameTime);
-//}
-
 void Player::setAnimation(ActionType actionName) {
 	if (actionsManager.currActionType() == actionName)
 		return;
@@ -206,21 +199,6 @@ void Player::setAnimation(ActionType actionName) {
 	}
 }
 
-void Player::resetAnimation() {
-	return;
-	attackFrame = -1;
-	lastRollFramesAgo = 100000;
-
-	actionsManager.changeActionType(Stand);
-	frameCounter = 0;
-	textureY = animations[Stand]->yPosTexture;
-	textureFrame = 0;
-	textureFrameTime = animations[Stand]->frameTime;
-	textureFrames = animations[Stand]->frames;
-
-	srcRect.y = dstRect.h * textureY;
-}
-
 void Player::cancelAttack() {
 	attackCancel = true;
 }
@@ -233,21 +211,12 @@ void Player::takeMoney(int& m) {
 }
 
 Player::Player(SDL_Texture* txt, SDL_Point& windowResolution) : Unit(TextureManager::textureParameters[SingleTexture::PlayerT]), playerIntentory(staticPassives, windowResolution) {
-//	addAnimation(Stand, 10, 1, 15);
-//	addAnimation(Walk, 1, 2, 15);
-//	addAnimation(Dash, 2, 4, 10);
-
 	actionsManager.addAction(Walk, NULL, NULL);
-	actionsManager.addAnimation(Walk, Direction::N, DataBase::animations[AnimationName::PlayerWalkN]);
-	actionsManager.addAnimation(Walk, Direction::E, DataBase::animations[AnimationName::PlayerWalkE]);
-	actionsManager.addAnimation(Walk, Direction::S, DataBase::animations[AnimationName::PlayerWalkS]);
-	actionsManager.addAnimation(Walk, Direction::W, DataBase::animations[AnimationName::PlayerWalkW]);
+	actionsManager.addAnimations(Walk, DataBase::unitAnimations[UnitName::Unit][Walk]);
 
 	actionsManager.addAction(Dash, NULL, NULL);
-	actionsManager.addAnimation(Dash, Direction::N, DataBase::animations[AnimationName::DashN]);
-	actionsManager.addAnimation(Dash, Direction::E, DataBase::animations[AnimationName::DashE]);
-	actionsManager.addAnimation(Dash, Direction::S, DataBase::animations[AnimationName::DashS]);
-	actionsManager.addAnimation(Dash, Direction::W, DataBase::animations[AnimationName::DashW]);
+	actionsManager.addAnimations(Dash, DataBase::unitAnimations[UnitName::Unit][Walk]);
+
 	actionsManager.setActionDynamicOnly(Dash);
 	actionsManager.setStartingAction(Walk, Direction::S);
 	actionsManager.addPattern(Walk);

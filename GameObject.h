@@ -43,6 +43,7 @@ public:
 	template <class T>
 	float distanceEdges(T *gameObj);
 
+	// Change position of unit when collision detected
 	void collisionUnitFields(std::vector<std::vector<Field*>>& map, SDL_Rect& fieldRect);
 
 	void setRadius(int r) { radius = r; }

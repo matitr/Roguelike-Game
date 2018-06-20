@@ -35,7 +35,7 @@ void Item::createDescriptionTxt() {
 		if (staticPassives[i])
 			numberOfPassives++;
 
-	descriptionDstRect.h = r.h * (3 + numberOfPassives);
+	descriptionDstRect.h = r.h * (3 + numberOfPassives); // Item description height
 	itemDescription = SDL_CreateTexture(Game::renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, descriptionDstRect.w, descriptionDstRect.h);
 	SDL_SetTextureBlendMode(itemDescription, SDL_BLENDMODE_BLEND);
 
@@ -48,7 +48,7 @@ void Item::createDescriptionTxt() {
 	r.x = 10;
 	r.y = r.h * 2;
 	int counter = 0;
-	for (int i = 0; i < staticPassives.size(); i++)
+	for (int i = 0; i < staticPassives.size(); i++) // Draw passives texts on item description texture
 		if (staticPassives[i]) {
 			SDL_Texture* messageTxt = nullptr;
 			DataBase::getPassiveText(i, staticPassives[i], messageTxt);
@@ -66,6 +66,7 @@ void Item::createDescriptionTxt() {
 }
 
 void Item::drawDescription(SDL_Rect& slotRect, SDL_Point& WindowResolution) {
+	// Draw on right side of screen
 	descriptionDstRect.x = slotRect.x - descriptionDstRect.w;
 
 	descriptionDstRect.y = slotRect.y + slotRect.h / 2 - descriptionDstRect.h / 2;

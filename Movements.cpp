@@ -67,7 +67,7 @@ void A_Star::findPath() {
 	end = map->map[(int)player->getPositionX() / map->fieldWidth()][(int)player->getPositionY() / map->fieldHeight()];
 
 	while (!openSet.empty()) {
-		lowestF = (*openSet.begin());
+		lowestF = (*openSet.begin()); // Set lowestF to the best field in openSet
 		for (it = openSet.begin()++; it != openSet.end(); it++) {
 			if ((*it)->f < lowestF->f)
 				lowestF = (*it);
@@ -79,7 +79,7 @@ void A_Star::findPath() {
 			}
 		}
 		
-		if (lowestF == end) {
+		if (lowestF == end) { // Path was found
 			getVelocityOfPath(lowestF, start);
 			unitToMove->setPosition(unitStartPos.x, unitStartPos.y); 
 			return;
@@ -90,7 +90,7 @@ void A_Star::findPath() {
 
 		std::stack<Field*> neighbors; createNeighbors(lowestF, neighbors);
 
-		while (!neighbors.empty()){
+		while (!neighbors.empty()){ // Calculate values for neighbors
 			neighbor = neighbors.top();
 			neighbors.pop();
 		
@@ -109,7 +109,7 @@ void A_Star::findPath() {
 			neighbor->prevField = lowestF;
 		}
 	}
-
+	// Path was not found
 	velocity.x = 0;
 	velocity.y = 0;
 	unitToMove->setPosition(unitStartPos.x, unitStartPos.y);
@@ -129,10 +129,19 @@ A_Star::~A_Star() {
 
 #pragma region MoveForwardPlayer
 void MoveForwardPlayer::makeMove() {
-	aStar.findPath();
-	SDL_Point velocityPath = aStar.velocity;
-	unitToMove->velocity.x = velocityPath.x;
-	unitToMove->velocity.y = velocityPath.y;
+	if (!moveCooldown) {
+		aStar.findPath();
+		SDL_Point velocityPath = aStar.velocity;
+		unitToMove->velocity.x = velocityPath.x;
+		unitToMove->velocity.y = velocityPath.y;
+
+		moveCooldown = 6 + rand() % 3;
+	}
+	moveCooldown--;
+}
+
+void MoveForwardPlayer::resetMove() {
+	moveCooldown = 0;
 }
 
 MoveForwardPlayer::MoveForwardPlayer(Unit* _unitToMove, Map* _map, Unit* _player) : Movement(_unitToMove), aStar(_unitToMove, _map, _player) {

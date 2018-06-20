@@ -9,8 +9,6 @@
 
 
 void Map::generateNewLevel() {
-
-
 	generator.generateNewMap();
 	setSpawn(rooms[0], (rooms[0]->x2 - rooms[0]->x1) / 2.0f + rooms[0]->x1, (rooms[0]->y2 - rooms[0]->y1) / 2.0f + rooms[0]->y1);
 	rooms[0]->setVisited(true);
@@ -38,7 +36,7 @@ void Map::createMinimap() {
 	r.w = 1;
 	r.h = 1;
 
-	for (int i = 0; i < rooms.size(); i++) { // for every room
+	for (int i = 0; i < rooms.size(); i++) { // for every room addToMinimap if already visited
 		if (rooms[i]->visited && std::find(roomsOnMiniman.begin(), roomsOnMiniman.end(), rooms[i]) == roomsOnMiniman.end()) {
 			addToMinimap(rooms[i]);
 		}

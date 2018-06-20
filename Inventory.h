@@ -50,7 +50,7 @@ public:
 	void equipItem(InventorySlot* item);
 	void unequipItem(InventorySlot* item);
 
-	void calculatePassives();
+	void calculatePassives(); // Add passives from all equipped items
 
 	void highlightAllSlots(); // For testing
 

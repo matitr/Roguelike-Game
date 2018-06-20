@@ -22,7 +22,7 @@ public:
 	bool dynamicActivationOnly() { return (dynamicEnableOnly || distActivationMax != -1); }
 	void setDistActivationMax(double dist) { distActivationMax = dist; }
 	void setDistActivationMin(double dist) { distActivationMin = dist; }
-	bool canDynamicActivation(double dist);
+	bool canDynamicActivation(double dist); // Check distActivationMax && distActivationMin
 	void setDynamicActivationOnly() { dynamicEnableOnly = true; }
 
 	inline int makeAttackFrame() { return attackFrame; }
@@ -38,6 +38,8 @@ public:
 	void setLastFrame();
 	bool actionEnded();
 	void updateFrame();
+
+	void resetMove();
 
 	void makeAttack(Unit* unit, std::list <AttackType*>& monsterAttacks, SDL_Point* attackPoint);
 	void makeMove();

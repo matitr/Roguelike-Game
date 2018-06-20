@@ -51,7 +51,7 @@ void Projectile::setAngle(double ang) {
 
 void Projectile::homingShot(Unit* closestUnit) {
 	double dist;
-	if ((dist = distanceEdges(closestUnit)) > 70 * staticPassives[StaticPassiveName::homing])
+	if ((dist = distanceEdges(closestUnit)) > 70 * staticPassives[StaticPassiveName::homing]) // Homing radius
 		return;
 
 	if (std::find(unitsHitted.begin(), unitsHitted.end(), closestUnit) != unitsHitted.end()) // Already hitted

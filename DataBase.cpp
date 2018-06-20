@@ -67,22 +67,6 @@ void DataBase::loadAnimationsDetails() {
 	animations[AnimationName::ChestOpening] = { { 0,0 }, 3, 30, 3 };
 	animations[AnimationName::CoinSpin] = { { 0,0 }, 8, 5, 8 };
 
-
-	animations[AnimationName::PlayerWalkN] = { { 0,512 }, 8, 5, 8 };
-	animations[AnimationName::PlayerWalkW] = { { 0,576 }, 8, 5, 8 };
-	animations[AnimationName::PlayerWalkS] = { { 0,640 }, 8, 5, 8 };
-	animations[AnimationName::PlayerWalkE] = { { 0,704 }, 8, 5, 8 };
-
-	animations[AnimationName::SlashN] = { { 0,768 }, 5, 5, 5 };
-	animations[AnimationName::SlashW] = { { 0,832 }, 5, 5, 5 };
-	animations[AnimationName::SlashS] = { { 0,896 }, 5, 5, 5 };
-	animations[AnimationName::SlashE] = { { 0,960 }, 5, 5, 5 };
-
-	animations[AnimationName::DashN] = { { 0,512 }, 8, 2, 8 };
-	animations[AnimationName::DashW] = { { 0,576 }, 8, 2, 8 };
-	animations[AnimationName::DashS] = { { 0,640 }, 8, 2, 8 };
-	animations[AnimationName::DashE] = { { 0,704 }, 8, 2, 8 };
-
 	unitAnimations[UnitName::Unit][Walk][Direction::N] = { { 0,512 }, 8, 5, 8 };
 	unitAnimations[UnitName::Unit][Walk][Direction::W] = { { 0,576 }, 8, 5, 8 };
 	unitAnimations[UnitName::Unit][Walk][Direction::S] = { { 0,640 }, 8, 5, 8 };

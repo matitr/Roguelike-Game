@@ -24,10 +24,6 @@ bool Button::mouseOverButton() {
 	return false;
 }
 
-//void (ScreensManager::*Button::actionOnClick())(Game*) {
-//	return onClickAction;
-//}
-
 void Button::actionOnClick(ScreensManager* screenManager, Game* game) {
 	(screenManager->*onClickAction)(game);
 }

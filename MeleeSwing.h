@@ -12,7 +12,7 @@ public:
 	bool update(Map* map, SDL_Rect& fieldRect, Unit* closestUnit);
 	void draw(SDL_Point* startRender) {}
 
-	bool collision(Unit* u) override;
+	bool collision(Unit* u) override; // Collision type : sector
 	void setAngles(int attackAngle, int attackWidthAngle);
 
 	MeleeSwing(AnimationDetails& animation, ItemPassives& passives);

@@ -17,7 +17,7 @@ public:
 	virtual void update(Game* g) = 0;
 	virtual void draw();
 
-	Button* buttonUnderMouse();
+	Button* buttonUnderMouse(); // Return button that is under mouse else return nullptr
 
 	Screen();
 	virtual ~Screen();

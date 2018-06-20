@@ -13,8 +13,8 @@ class Button {
 public:
 	void draw();
 	
-	bool mouseOverButton();
-	void actionOnClick(ScreensManager* screenManager, Game* game);
+	bool mouseOverButton(); // Check if mouse if on button 
+	void actionOnClick(ScreensManager* screenManager, Game* game); // Activate action
 
 	Button(SDL_Rect dstR, const char* text, void (ScreensManager::*action)(Game*));
 	~Button();

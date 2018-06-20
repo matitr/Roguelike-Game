@@ -22,7 +22,7 @@ public:
 		actionsManager.setActionActivationDistMax(AttackProj, 500);
 		actionsManager.setActionActivationDistMin(AttackProj, 50);
 
-		actionsManager.addAction(Attack, NULL, new MeleeSwingAttack(DataBase::animations[AnimationName::SlashN], 60, 45), 2);
+		actionsManager.addAction(Attack, NULL, new MeleeSwingAttack(DataBase::unitAnimations[UnitName::Unit][Attack][Direction::E], 60, 45), 2);
 		actionsManager.addAnimations(Attack, DataBase::unitAnimations[UnitName::Unit][Attack]);
 		actionsManager.setActionActivationDistMax(Attack, 10);
 

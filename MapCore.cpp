@@ -14,7 +14,6 @@ void MapCore::initValues() {
 	startRenderPos.xAdditionalPixels = cameraPos.x % fieldRect.w;
 
 	startRenderPos.yField = cameraPos.y / fieldRect.h - (int)floor(fieldsToRender.y / 2);
-//	startRenderPos.yAdditionalPixels = cameraPos.y % fieldRect.h;
 	startRenderPos.yAdditionalPixels = int(fieldRect.h * HEIGHT_SCALE * float(cameraPos.y % fieldRect.h) / fieldRect.h);
 
 	// Render only room, not empty fields after room
@@ -55,9 +54,6 @@ void MapCore::setSpawn(Room* room, float x, float y) {
 		cameraPos.y = int(y * fieldRect.h + fieldRect.h / 4);
 	else
 		cameraPos.y = int(y * fieldRect.h);
-
-
-
 
 	currRoom = room;
 

@@ -7,9 +7,6 @@
 class AttackType;
 
 class Player : public Unit {
-	std::unordered_map <ActionType, Animation*> animations;
-	int textureY = 0, textureFrame = 0, textureFrameTime = 100, textureFrames = 2, frameCounter = 0, textureFramesInRow;
-
 	float attackSpeed;
 	int attackFrames;
 	int attackFrame;
@@ -40,9 +37,7 @@ public:
 	void attackPressed(int x, int y);
 	void makeAttack(std::list <AttackType*>&, AnimationDetails& animationD);
 
-//	void addAnimation(ActionType actionName, int _yPosTexture, int _frames, int _frameTime);
 	void setAnimation(ActionType actionName);
-	void resetAnimation();
 
 	void changeInteractionBlock(bool block) { isInteractionBlocked = block; }
 	bool interactionBlocked() { return isInteractionBlocked; }

@@ -18,7 +18,7 @@ public:
 	void update(Game* g) override;
 	void draw() override;
 
-	void setStats(bool win, int points);
+	void setStats(bool win, int points); // Set: endGameStatus (if playerWin), playerPoints
 
 	EndScreen(int windowResX, int windowResY);
 	~EndScreen();

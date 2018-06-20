@@ -11,10 +11,10 @@ public:
 	virtual void makeAttack(Unit* unit, std::list <AttackType*>& attacksContainer, SDL_Point* attackPoint) = 0;
 
 	AttackPattern();
-	~AttackPattern();
+	virtual ~AttackPattern();
 };
 
-class ProjectileDirection : public AttackPattern {
+class ProjectileDirection : public AttackPattern { // Projectiles 
 	float startAngle;
 	float angle;
 	int numbOfProj;
@@ -33,7 +33,7 @@ public:
 	}
 };
 
-class MultipleProjectiles : public AttackPattern {
+class MultipleProjectiles : public AttackPattern { // Multiple projectiles in one direction, seperated with a same angle.
 	int numbOfProjectiles;
 	AnimationDetails& animationD;
 public:

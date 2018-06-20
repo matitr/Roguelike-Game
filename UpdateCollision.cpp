@@ -37,9 +37,6 @@ bool UpdateCollision::detectCollisionWithField(Unit* unit, Map* map) {
 			if (map->map[x][y]->type() != Floor && unit->detectCollision(map->map[x][y]))
 				return true;
 
-			//for (auto it_collisionObj = map->map[x][y]->getCollisionObj().begin(); it_collisionObj != map->map[x][y]->getCollisionObj().end(); it_collisionObj++)
-			//	if (unit->detectCollision(*it_collisionObj))
-			//		return true;
 			if (!map->map[x][y]->getCollisionObj().empty())
 				return true;
 		}

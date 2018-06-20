@@ -46,7 +46,7 @@ public:
 
 	void render(std::vector <GameObject*>& gameObjects);
 
-	void setFieldsPositions();
+	void setFieldsPositions(); // Set fileds iterators. Coordinates (x,y)  (0...1...n, 0...1...m)
 	void changeRoom(Room* room, Field* fieldToMove);
 	void changeRoom(Room* room, Teleporter* tele);
 

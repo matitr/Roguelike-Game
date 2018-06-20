@@ -18,7 +18,7 @@ public:
 	static int mousePosY;
 	static bool quit;
 
-	static void update();
+	static void update(); // Update mouse and keyboard events
 
 
 	Input();

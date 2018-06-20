@@ -19,7 +19,7 @@ struct PointDouble;
 class ActionsManager {
 	std::unordered_map <ActionType, UnitAction*> actions;
 
-	std::list<ActionType> pattern;
+	std::list<ActionType> pattern; // Actions order
 	std::list<ActionType>::iterator currAction;
 
 	SDL_Rect& srcRectRef;

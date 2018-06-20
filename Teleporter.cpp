@@ -22,9 +22,6 @@ void Teleporter::onPlayerInteract(Map* map, std::vector <InteractiveObject*>& ob
 		player->changeInteractionBlock(true);
 		player->inventory().close();
 	}
-	else {
-
-	}
 }
 
 void Teleporter::updateInteraction(Map* map, std::vector <InteractiveObject*>& objects, Player* player) {
@@ -43,7 +40,7 @@ void Teleporter::updateInteraction(Map* map, std::vector <InteractiveObject*>& o
 			&& x >= map->rooms[i]->x1 && x <= map->rooms[i]->x2 && y >= map->rooms[i]->y1 && y <= map->rooms[i]->y2) {
 
 			SDL_SetRenderDrawColor(Game::renderer, rand() % 100 + 150, 0, 92, 200);
-			SDL_Rect r = {
+			SDL_Rect r = { // Draw rect for selection
 				map->getMinimapDstRect().x + map->rooms[i]->x1 * TELEPORT_MAP_SIZE_MULTIPLER + 1,
 				map->getMinimapDstRect().y + map->rooms[i]->y1 * TELEPORT_MAP_SIZE_MULTIPLER + 1,
 				(map->rooms[i]->x2 - map->rooms[i]->x1) * TELEPORT_MAP_SIZE_MULTIPLER,

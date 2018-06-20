@@ -22,6 +22,7 @@ typedef std::chrono::high_resolution_clock Clock;
 SDL_Renderer *Game::renderer = nullptr;
 
 void Game::run() {
+	srand(88888888);
 	auto frameStart = Clock::now();
 	double frameTime;
 	double frameDelay = 1000000000.0 / FPS;
@@ -34,25 +35,13 @@ void Game::run() {
 	player = new Player(TextureManager::textures[TextureFile::PLAYER], windowResolution);
 	map = new Map(player, windowResolution.y / 2, windowResolution.x / 2);
 
-//	map->setPlayerPointer(player);
 	map->generateNewLevel();
 	map->currentRoom()->getRoomObjects(monsters, interactiveObjects);
 	map->setFieldsPositions();
 	player->setPosition(map->getCameraX(), map->getCameraY());
 
-	interactiveObjects->push_back(new Item(ItemName::Item1, player->getPositionX(), player->getPositionY()));
-	interactiveObjects->push_back(new Item(ItemName::Item2, player->getPositionX(), player->getPositionY()));
 	interactiveObjects->push_back(new Item(ItemName::Item3, player->getPositionX() + 5, player->getPositionY() + 5));
-	interactiveObjects->push_back(new Item(ItemName::Item4, player->getPositionX() + 5, player->getPositionY() + 5));
-	interactiveObjects->push_back(new Item(player->getPositionX() + 10, player->getPositionY() + 10));
-	interactiveObjects->push_back(new Item(player->getPositionX() + 15, player->getPositionY() + 15));
-	interactiveObjects->push_back(new Item(player->getPositionX() + 20, player->getPositionY() + 20));
 
-	for (int i = 0; i < 0; i++) {
-			Unit *m = new UnitEnemy1(map, player);
-			(*monsters).push_back(m);
-			m->setPosition(map->getCameraX() + 300, map->getCameraY() + 300);
-	}
 	while (running()) {
 		if (clock() - timeCounter > CLOCKS_PER_SEC) {
 			std::cout << frameCounter << std::endl;
@@ -72,7 +61,7 @@ void Game::run() {
 		frameCounter++;
 
 		frameTime = std::chrono::duration_cast<std::chrono::nanoseconds>(Clock::now() - frameStart).count();
-		if (frameDelay > frameTime) {
+		if (frameDelay > frameTime) { // Frames limit
 			std::this_thread::sleep_for(std::chrono::nanoseconds(int(frameDelay - frameTime) + 100000));
 		}
 	}
@@ -135,14 +124,11 @@ void Game::handleEvents() {
 	else if (map->getMinimapSize() == MinimapLarge)
 		map->changeMinimapSize(MinimapSmall);
 
-//	if (!player->velocity.y && !player->velocity.x)
-//		player->setAnimation(Stand);
-
-	int mouseX, mouseY;
-	
-	if (SDL_GetMouseState(&mouseX, &mouseY) & SDL_BUTTON(SDL_BUTTON_LEFT)) {
-		if (player->attackPossible())
-			player->attackPressed(mouseX + map->startRender.x, mouseY / HEIGHT_SCALE + map->startRender.y);
+	if (Input::mouseStates[SDL_BUTTON_LEFT]) {
+		if (player->attackPossible()) {
+			int mouseX = Input::mousePosX, mouseY = Input::mousePosY;
+			player->attackPressed(mouseX + map->getStartRender().x, mouseY / HEIGHT_SCALE + map->getStartRender().y);
+		}
 	}
 }
 
