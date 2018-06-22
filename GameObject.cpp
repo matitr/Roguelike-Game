@@ -6,6 +6,7 @@
 #include "InteractiveObject.h"
 #include "Game.h"
 #include "TextureManager.h"
+#include "TextureManager.h"
 
 template <class T>
 void GameObject::collisionUnit(T *gameObj) {
@@ -195,14 +196,14 @@ template float GameObject::distanceEdges<Player>(Player *gameObj);
 template float GameObject::distanceEdges<InteractiveObject>(InteractiveObject *gameObj);
 
 
-void GameObject::collisionUnitFields(std::vector<std::vector<Field*>>& map, SDL_Rect& fieldRect) {
+void GameObject::collisionUnitFields(Map* map, SDL_Rect& fieldRect) {
 	int fieldX, fieldY;
 	Field* field;
 	double minX, deltaX, minY, deltaY;
 
-	for (fieldX = ((int)position.x - radius) / fieldRect.w; fieldX <= (position.x + radius) / fieldRect.w; fieldX++) {
-		for (fieldY = ((int)position.y - radius) / fieldRect.h; fieldY <= (position.y + radius) / fieldRect.h; fieldY++) {
-			field = map[fieldX][fieldY];
+	for (fieldY = ((int)position.y - radius) / fieldRect.h; fieldY <= (position.y + radius) / fieldRect.h; fieldY++) {
+		for (fieldX = ((int)position.x - radius) / fieldRect.w; fieldX <= (position.x + radius) / fieldRect.w; fieldX++) {
+			field = map->getField(fieldX, fieldY);
 
 			for (auto it_collisionObj = field->getCollisionObj().begin(); it_collisionObj != field->getCollisionObj().end(); it_collisionObj++)
 				collisionUnit(*it_collisionObj);

@@ -9,7 +9,7 @@
 #include "InteractiveObject.h"
 
 
-void UpdateCollision::updateAllUnits(Player* player, std::list <Unit*>& monsters, std::vector<std::vector<Field*>>& map, SDL_Rect& fieldRect) {
+void UpdateCollision::updateAllUnits(Player* player, std::list <Unit*>& monsters, Map* map, SDL_Rect& fieldRect) {
 	std::list <Unit*>::iterator it_mon;
 	std::list <Unit*>::iterator it_mon_second;
 
@@ -32,12 +32,12 @@ void UpdateCollision::updateAllUnits(Player* player, std::list <Unit*>& monsters
 }
 
 bool UpdateCollision::detectCollisionWithField(Unit* unit, Map* map) {
-	for (int x = ((int)unit->getPositionX() - unit->getRadius()) / map->fieldRect.w; x <= ((int)unit->getPositionX() - unit->getRadius()) / map->fieldRect.w; x++) {
-		for (int y = (int)(unit->getPositionY() - unit->getRadius()) / map->fieldRect.h; y <= ((int)unit->getPositionY() - unit->getRadius()) / map->fieldRect.h; y++) {
-			if (map->map[x][y]->type() != Floor && unit->detectCollision(map->map[x][y]))
+	for (int y = (int)(unit->getPositionY() - unit->getRadius()) / map->fieldRect.h; y <= ((int)unit->getPositionY() - unit->getRadius()) / map->fieldRect.h; y++) {
+		for (int x = ((int)unit->getPositionX() - unit->getRadius()) / map->fieldRect.w; x <= ((int)unit->getPositionX() - unit->getRadius()) / map->fieldRect.w; x++) {
+			if (map->getField(x, y)->type() != Floor && unit->detectCollision(map->getField(x, y)))
 				return true;
 
-			if (!map->map[x][y]->getCollisionObj().empty())
+			if (!map->getField(x, y)->getCollisionObj().empty())
 				return true;
 		}
 	}
@@ -71,16 +71,16 @@ void UpdateCollision::projectilesWithWalls(std::list <AttackType*>& playerProjec
 	std::list <AttackType*>::iterator it_proj = playerProjectiles.begin();
 
 	while (it_proj != playerProjectiles.end()) {
-		int x = ((int)(*it_proj)->getPositionX() - (*it_proj)->getRadius()) / map->fieldRect.w;
-		for (x; x <= ((*it_proj)->getPositionX() + (*it_proj)->getRadius()) / map->fieldRect.w; x++) {
-			int y = ((int)(*it_proj)->getPositionY() - (*it_proj)->getRadiusY()) / map->fieldRect.h;
-			for (y; y <= ((*it_proj)->getPositionY() + (*it_proj)->getRadiusY()) / map->fieldRect.h; y++) {
+		int y = ((int)(*it_proj)->getPositionY() - (*it_proj)->getRadiusY()) / map->fieldRect.h;
+		for (y; y <= ((*it_proj)->getPositionY() + (*it_proj)->getRadiusY()) / map->fieldRect.h; y++) {
+			int x = ((int)(*it_proj)->getPositionX() - (*it_proj)->getRadius()) / map->fieldRect.w;
+			for (x; x <= ((*it_proj)->getPositionX() + (*it_proj)->getRadius()) / map->fieldRect.w; x++) {
 
-				if (!map->map[x][y]->ground())
+				if (!map->getField(x, y)->ground())
 					(*it_proj)->onWallHit();
 				else {
-					std::vector<GameObject*>::iterator it_collisionObj = map->map[x][y]->getCollisionObj().begin();
-					for (it_collisionObj; it_collisionObj < map->map[x][y]->getCollisionObj().end(); it_collisionObj++) {
+					std::vector<GameObject*>::iterator it_collisionObj = map->getField(x, y)->getCollisionObj().begin();
+					for (it_collisionObj; it_collisionObj < map->getField(x, y)->getCollisionObj().end(); it_collisionObj++) {
 						if ((*it_proj)->detectCollision(*it_collisionObj))
 							(*it_proj)->onWallHit();
 					}

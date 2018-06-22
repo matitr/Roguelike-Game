@@ -39,9 +39,9 @@ bool Player::update(std::list <AttackType*>& playerProjectiles, Map* map, SDL_Re
 	Field *field = nullptr;
 	// Check if player have collision with door. Change room
 	if (velocity.x < 0)
-		field = map->map[int(position.x - radius - speed) / fieldRect.w][int(position.y) / fieldRect.h];
+		field = map->getField(int(position.x - radius - speed) / fieldRect.w, int(position.y) / fieldRect.h);
 	else if (velocity.x > 0)
-		field = map->map[int(position.x + radius + speed) / fieldRect.w][int(position.y) / fieldRect.h];
+		field = map->getField(int(position.x + radius + speed) / fieldRect.w, int(position.y) / fieldRect.h);
 
 	if (velocity.x != 0)
 		if (field->type() == Door && !map->currentRoom()->battle) {
@@ -55,9 +55,9 @@ bool Player::update(std::list <AttackType*>& playerProjectiles, Map* map, SDL_Re
 		}
 
 	if (velocity.y < 0)
-		field = map->map[int(position.x) / fieldRect.w][int(position.y - radius - speed) / fieldRect.h];
+		field = map->getField(int(position.x) / fieldRect.w, int(position.y - radius - speed) / fieldRect.h);
 	else if (velocity.y > 0)
-		field = map->map[int(position.x) / fieldRect.w][int(position.y + radius + speed) / fieldRect.h];
+		field = map->getField(int(position.x) / fieldRect.w, int(position.y + radius + speed) / fieldRect.h);
 
 	if (velocity.y != 0)
 		if (field->type() == Door && !map->currentRoom()->battle) {

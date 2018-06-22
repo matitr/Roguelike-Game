@@ -56,9 +56,9 @@ void Map::addToMinimap(Room* room) {
 
 	// Render room on minimap if is not renderer already
 	if (std::find(roomsOnMiniman.begin(), roomsOnMiniman.end(), room) == roomsOnMiniman.end()){
-		for (x = room->x1; x < room->x2; x++) {
-			for (y = room->y1; y < room->y2; y++) {
-				if (map[x][y] && (map[x][y]->type() == Floor)) {
+		for (y = room->y1; y < room->y2; y++) {
+			for (x = room->x1; x < room->x2; x++) {
+				if (getField(x, y) && (getField(x, y)->type() == Floor)) {
 					r.x = x;
 					r.y = y;
 					SDL_RenderFillRect(Game::renderer, &r);
@@ -85,9 +85,9 @@ void Map::addToMinimap(Room* room) {
 	// Draw hallways
 	for (std::list<Room*>::iterator it = room->hallways.begin(); it != room->hallways.end(); it++) { // for every hallway in room
 		if (std::find(roomsOnMiniman.begin(), roomsOnMiniman.end(), (*it)) == roomsOnMiniman.end()) {
-			for (x = (*it)->x1; x <= (*it)->x2; x++) {
-				for (y = (*it)->y1; y <= (*it)->y2; y++) {
-					if (map[x][y] && (map[x][y]->type() == Floor || map[x][y]->type() == Door)) {
+			for (y = (*it)->y1; y <= (*it)->y2; y++) {
+				for (x = (*it)->x1; x <= (*it)->x2; x++) {
+					if (getField(x, y) && (getField(x, y)->type() == Floor || getField(x, y)->type() == Door)) {
 						r.x = x;
 						r.y = y;
 						SDL_RenderFillRect(Game::renderer, &r);
@@ -132,8 +132,8 @@ void Map::render(std::vector <GameObject*>& gameObjects) {
 		fieldRect.y = fieldCounterY * fieldRect.h - startRenderPos.yAdditionalPixels;
 		for (fieldCounterX = 0; fieldCounterX <= fieldsToRender.x; fieldCounterX++, fieldX++) { // X
 			fieldRect.x = fieldCounterX * fieldRect.w - startRenderPos.xAdditionalPixels;
-			if (map[fieldX][fieldY] && map[fieldX][fieldY]->ground())
-				map[fieldX][fieldY]->drawField(fieldRect.x, fieldRect.y);
+			if (getField(fieldX, fieldY) && getField(fieldX, fieldY)->ground())
+				getField(fieldX, fieldY)->drawField(fieldRect.x, fieldRect.y);
 		}
 	}
 
@@ -163,8 +163,8 @@ void Map::render(std::vector <GameObject*>& gameObjects) {
 
 		for (fieldCounterX = 0; fieldCounterX <= fieldsToRender.x; fieldCounterX++, fieldX++) { // X
 			fieldRect.x = fieldCounterX * fieldRect.w - startRenderPos.xAdditionalPixels;
-			if (map[fieldX][fieldY] && !map[fieldX][fieldY]->ground())
-				map[fieldX][fieldY]->drawField(fieldRect.x, fieldRect.y);
+			if (getField(fieldX, fieldY) && !getField(fieldX, fieldY)->ground())
+				getField(fieldX, fieldY)->drawField(fieldRect.x, fieldRect.y);
 		}
 	}
 
@@ -191,31 +191,31 @@ void Map::render(std::vector <GameObject*>& gameObjects) {
 
 void Map::setFieldsPositions() {
 	int x, y;
-	for (x = 0; x < map.size(); x++)
-		for (y = 0; y < map[x].size(); y++)
-			if (map[x][y])
-				map[x][y]->setPosition(x, y);
+	for (y = 0; y < MAP_HEIGHT; y++)
+		for (x = 0; x < MAP_WIDTH; x++)
+			if (getField(x, y))
+				getField(x, y)->setPosition(x, y);
 }
 
 void Map::changeRoom(Room* room, Field* fieldToMove) {
 	int x = fieldToMove->x(), y = fieldToMove->y();
 	int newX, newY;
 	
-	if (map[x + 1][y]->type() == Door) { // Doors are horizontally
+	if (getField(x + 1, y)->type() == Door) { // Doors are horizontally
 		newX = x * fieldRect.w + fieldRect.w / 2;
 		if (y + 1 <= room->y2) // Top
 			newY = (y + 2) * fieldRect.h;
 		else
 			newY = (y - 2) * fieldRect.h;
 	}
-	else if (map[x - 1][y]->type() == Door) { // Doors are horizontally
+	else if (getField(x - 1, y)->type() == Door) { // Doors are horizontally
 		newX = x * fieldRect.w - fieldRect.w / 2;
 		if (y + 1 <= room->y2) // Top
 			newY = (y + 2) * fieldRect.h;
 		else
 			newY = (y - 2) * fieldRect.h;
 	}
-	else if (map[x][y + 1]->type() == Door) { // Doors are vertically
+	else if (getField(x, y + 1)->type() == Door) { // Doors are vertically
 		newY = y * fieldRect.w + fieldRect.w / 2;
 		if (x + 1 <= room->x2) // Left
 			newX = (x + 2) * fieldRect.w;
@@ -251,13 +251,10 @@ Map::Map(Player* p, int _hCenter, int _wCenter) : MapCore(_hCenter, _wCenter), p
 }
 
 Map::~Map() {
-	for (size_t i = 0; i < map.size(); i++)
-		for (size_t j = 0; j < map[i].size(); j++)
-			if (map[i][j])
-				delete map[i][j];
-
-	for (int i = 0; i < map.size(); i++)
-		map[i].clear();
+	for (size_t y = 0; y < MAP_HEIGHT; y++)
+		for (size_t x = 0; x < MAP_WIDTH; x++)
+			if (getField(x, y))
+				delete getField(x, y);
 
 	map.clear();
 

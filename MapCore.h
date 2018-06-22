@@ -3,7 +3,6 @@
 #include "Room.h"
 
 #define BORDER_SIZE 10
-#define MAP_SIZE (800 + BORDER_SIZE + BORDER_SIZE)
 #define MAP_WIDTH (600 + BORDER_SIZE + BORDER_SIZE)
 #define MAP_HEIGHT (600 + BORDER_SIZE + BORDER_SIZE)
 
@@ -38,11 +37,14 @@ protected:
 	SDL_Texture* minimapBackground;
 	std::list<Room*> roomsOnMiniman;
 	SDL_Point startRender;
+
+	std::vector<Field*> map;
 public:
 	SDL_Texture* minimap;
 
 	SDL_Rect fieldRect;
-	std::vector<std::vector<Field*>> map;
+
+	inline Field*& getField(int x, int y) { return map[y * MAP_WIDTH + x]; }
 
 	void initValues();
 	void setSpawn(Room* room, float fieldX, float fieldY);

@@ -67,7 +67,7 @@ void Room::spawnMonsters(Map* _map, Unit* _player) {
 			do {
 				enemyX = x1 + rand() % ((x2 - x1));
 				enemyY = y1 + rand() % ((y2 - y1));
-			} while (!_map->map[enemyX][enemyY] || _map->map[enemyX][enemyY]->type() != Floor);
+			} while (!_map->getField(enemyX, enemyY) || _map->getField(enemyX, enemyY)->type() != Floor);
 			m->setPosition(enemyX * _map->fieldRect.w, enemyY * _map->fieldRect.h);
 		}
 	}

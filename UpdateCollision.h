@@ -17,7 +17,7 @@ class UpdateCollision {
 	std::unordered_map <SDL_Scancode, float> interactiveObjDist;
 
 public:
-	void updateAllUnits(Player* player, std::list <Unit*>& monsters, std::vector<std::vector<Field*>>& map, SDL_Rect& fieldRect);
+	void updateAllUnits(Player* player, std::list <Unit*>& monsters, Map* map, SDL_Rect& fieldRect);
 	static bool detectCollisionWithField(Unit* unit, Map* map);
 
 	void projectilesWithUnits(std::list <AttackType*>& playerProjectiles, std::list <AttackType*>& monsterAttacks, Player* player, std::list <Unit*>& monsters);

@@ -172,7 +172,7 @@ void Game::updateGame() {
 		}
 	}
 
-	collision.updateAllUnits(player, (*monsters), map->map, map->fieldRect);
+	collision.updateAllUnits(player, (*monsters), map, map->fieldRect);
 	collision.projectilesWithUnits(playerProjectiles, monsterAttacks, player, (*monsters));
 	collision.updateInteractiveObjects((*interactiveObjects), objectSelected, player);
 	collision.projectilesWithWalls(playerProjectiles, map);

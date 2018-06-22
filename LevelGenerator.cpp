@@ -99,10 +99,10 @@ void LevelGenerator::findPositionForRooms(int roomsNumber) {
 
 void LevelGenerator::createRoom(Room* room) {
 	int xIter, yIter;
-	for (xIter = room->x1 + 1; xIter < room->x2; xIter++)
-		for (yIter = room->y1 + 1; yIter < room->y2; yIter++) {
-			if (!map[xIter][yIter])
-				map[xIter][yIter] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WOOD_FLOOR], Floor);
+	for (yIter = room->y1 + 1; yIter < room->y2; yIter++) {
+		for (xIter = room->x1 + 1; xIter < room->x2; xIter++)
+			if (!map.getField(xIter, yIter))
+				map.getField(xIter, yIter) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WOOD_FLOOR], Floor);
 		}
 
 	if (room->type == Monsters || room->type == Spawn) {
@@ -118,11 +118,11 @@ void LevelGenerator::createRoom(Room* room) {
 		ChestObj* chestO = new ChestObj(room->roomCenterX(fieldRect.w), room->roomCenterY(fieldRect.h));
 		room->interactiveObjects.push_back(chestO);
 
-		int x = ((int)chestO->getPositionX() - chestO->getRadius()) / fieldRect.w;
-		for (x; x <= (chestO->getPositionX() + chestO->getRadius()) / fieldRect.w; x++) {
-			int y = ((int)chestO->getPositionY() - chestO->getRadiusY()) / fieldRect.h;
-			for (y; y <= (chestO->getPositionY() + chestO->getRadiusY()) / fieldRect.h; y++) {
-				map[x][y]->addCollisionObj(chestO);
+		int y = ((int)chestO->getPositionY() - chestO->getRadiusY()) / fieldRect.h;
+		for (y; y <= (chestO->getPositionY() + chestO->getRadiusY()) / fieldRect.h; y++) {
+			int x = ((int)chestO->getPositionX() - chestO->getRadius()) / fieldRect.w;
+			for (x; x <= (chestO->getPositionX() + chestO->getRadius()) / fieldRect.w; x++) {
+				map.getField(x, y)->addCollisionObj(chestO);
 			}
 		}
 	}
@@ -167,8 +167,8 @@ void LevelGenerator::generateHallways(int &roomsNumber) {
 							p2.y = p1.y + 1;
 							createHallwayH(p1, p2);
 							rooms[i]->addHallway(rooms[j], p1, p2);
-							rooms[i]->addConnection(map[p1.x][p1.y], map[p2.x][p1.y], rooms[j]);
-							rooms[i]->addConnection(map[p1.x][p1.y + 1], map[p2.x][p1.y + 1], rooms[j]);
+							rooms[i]->addConnection(map.getField(p1.x, p1.y), map.getField(p2.x, p1.y), rooms[j]);
+							rooms[i]->addConnection(map.getField(p1.x, p1.y + 1), map.getField(p2.x, p1.y + 1), rooms[j]);
 						}
 						rooms[i]->addConnectedRoom(rooms[j]);
 					}
@@ -193,8 +193,8 @@ void LevelGenerator::generateHallways(int &roomsNumber) {
 							p2.x = p1.x + 1;
 							createHallwayV(p1, p2);
 							rooms[i]->addHallway(rooms[j], p1, p2);
-							rooms[i]->addConnection(map[p1.x][p1.y], map[p1.x][p2.y], rooms[j]);
-							rooms[i]->addConnection(map[p1.x + 1][p1.y], map[p1.x + 1][p2.y], rooms[j]);
+							rooms[i]->addConnection(map.getField(p1.x, p1.y), map.getField(p1.x, p2.y), rooms[j]);
+							rooms[i]->addConnection(map.getField(p1.x + 1, p1.y), map.getField(p1.x + 1, p2.y), rooms[j]);
 						}
 						rooms[i]->addConnectedRoom(rooms[j]);
 					}
@@ -208,14 +208,14 @@ void LevelGenerator::createHallwayH(SDL_Point& p1, SDL_Point& p2) { // Horizonta
 	int x;
 
 	for (x = p1.x + 1; x < p2.x; x++) {
-		map[x][p1.y] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WOOD_FLOOR], Floor);
-		map[x][p1.y + 1] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WOOD_FLOOR], Floor);
+		map.getField(x, p1.y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WOOD_FLOOR], Floor);
+		map.getField(x,p1.y + 1) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WOOD_FLOOR], Floor);
 	}
 
 	x = p1.x;
 	for (int i = 0; i < 2; i++) {
-		map[x][p1.y] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::DOORS], Door);
-		map[x][p1.y + 1] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::DOORS], Door);
+		map.getField(x, p1.y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::DOORS], Door);
+		map.getField(x, p1.y + 1) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::DOORS], Door);
 		x = p2.x;
 	}
 }
@@ -224,49 +224,49 @@ void LevelGenerator::createHallwayV(SDL_Point& p1, SDL_Point& p2) { // Vertical
 	int y;
 
 	for (y = p1.y + 1; y <= p2.y - 1; y++) {
-		map[p1.x][y] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WOOD_FLOOR], Floor);
-		map[p2.x][y] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WOOD_FLOOR], Floor);
+		map.getField(p1.x, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WOOD_FLOOR], Floor);
+		map.getField(p2.x, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WOOD_FLOOR], Floor);
 	}
 
 	y = p1.y;
 	for (int i = 0; i < 2; i++) {
-		map[p1.x][y] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::DOORS], Door);
-		map[p2.x][y] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::DOORS], Door);
+		map.getField(p1.x, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::DOORS], Door);
+		map.getField(p2.x, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::DOORS], Door);
 		y = p2.y;
 	}
 }
 
 void LevelGenerator::createRoomWalls(Room* room) {
 	for (int i = room->x1 + 1; i <= room->x2 - 1; i++) { // x walls
-		if (!map[i][room->y1]) { // TOP
-			map[i][room->y1] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_SIDE0], Wall);
-			map[i][room->y1 - 1] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_SIDE1], Wall);
-			map[i][room->y1 - 2] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_TOP_T], Wall);
+		if (!map.getField(i, room->y1)) { // TOP
+			map.getField(i, room->y1) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_SIDE0], Wall);
+			map.getField(i, room->y1 - 1) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_SIDE1], Wall);
+			map.getField(i, room->y1 - 2) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_TOP_T], Wall);
 		}
 
-		if (!map[i][room->y2]) { // BOTTOM
-			map[i][room->y2] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_TOP_B], Wall);
+		if (!map.getField(i, room->y2)) { // BOTTOM
+			map.getField(i, room->y2) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_TOP_B], Wall);
 		}
 	}
 
 	for (int i = room->y1 - 1; i <= room->y2 - 1; i++) { // y walls
-		if (!map[room->x1][i]) { // LEFT
-			map[room->x1][i] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_TOP_L], Wall);
+		if (!map.getField(room->x1, i)) { // LEFT
+			map.getField(room->x1, i) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_TOP_L], Wall);
 		}
 
-		if (!map[room->x2][i]) { // RIGHT
-			map[room->x2][i] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_TOP_R], Wall);
+		if (!map.getField(room->x2, i)) { // RIGHT
+			map.getField(room->x2, i) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_TOP_R], Wall);
 		}
 	}
 
-	map[room->x1][room->y1 - 2] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_CORSEN_LT], Wall);
-	map[room->x2][room->y1 - 2] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_CORSEN_RT], Wall);
-	map[room->x1][room->y2] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_CORSEN_LB], Wall);
-	map[room->x2][room->y2] = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_CORSEN_RB], Wall);
+	map.getField(room->x1, room->y1 - 2) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_CORSEN_LT], Wall);
+	map.getField(room->x2, room->y1 - 2) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_CORSEN_RT], Wall);
+	map.getField(room->x1, room->y2) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_CORSEN_LB], Wall);
+	map.getField(room->x2, room->y2) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_CORSEN_RB], Wall);
 
 }
 
-LevelGenerator::LevelGenerator(Map* _map) : mapClass(*_map), map(_map->map), rooms(_map->rooms), player(_map->getPlayer()), fieldRect(_map->fieldRect) {
+LevelGenerator::LevelGenerator(Map* _map) : mapClass(*_map), map(*_map), rooms(_map->rooms), player(_map->getPlayer()), fieldRect(_map->fieldRect) {
 
 }
 

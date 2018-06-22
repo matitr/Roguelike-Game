@@ -17,17 +17,17 @@ Movement::~Movement() {
 #pragma region A_Star
 void A_Star::createNeighbors(Field* field, std::stack<Field*>& neighbors) {
 
-	for (int x = -1; x < 2; x++) {
-		for (int y = -1; y < 2; y++) {
-			if (std::find(closedSet.begin(), closedSet.end(), map->map[field->x() + x][field->y() + y]) == closedSet.end()) {
+	for (int y = -1; y < 2; y++) {
+		for (int x = -1; x < 2; x++) {
+			if (std::find(closedSet.begin(), closedSet.end(), map->getField(field->x() + x, field->y() + y)) == closedSet.end()) {
 				unitToMove->setPosition(field->x() * map->fieldRect.w + map->fieldRect.w / 2 + x * map->fieldRect.w
 					, field->y() * map->fieldRect.h + map->fieldRect.h / 2 + y * map->fieldRect.h);
 
 				if  (!UpdateCollision::detectCollisionWithField(unitToMove, map))
-					neighbors.push(map->map[field->x() + x][field->y() + y]);
+					neighbors.push(map->getField(field->x() + x, field->y() + y));
 
-				else if (map->map[field->x() + x][field->y() + y] == end && field->prevField)
-					neighbors.push(map->map[field->x() + x][field->y() + y]);
+				else if (map->getField(field->x() + x, field->y() + y) == end && field->prevField)
+					neighbors.push(map->getField(field->x() + x, field->y() + y));
 			}
 		}
 	}
@@ -60,11 +60,11 @@ void A_Star::findPath() {
 	PointDouble unitStartPos(unitToMove->getPositionX(), unitToMove->getPositionY());
 
 	std::list<Field*>::iterator it = openSet.begin();
-	Field* start = map->map[(int)unitToMove->getPositionX() / map->fieldWidth()][(int)unitToMove->getPositionY() / map->fieldHeight()];
+	Field* start = map->getField((int)unitToMove->getPositionX() / map->fieldWidth(), (int)unitToMove->getPositionY() / map->fieldHeight());
 	start->prevField = nullptr;
 	openSet.push_back(start);
 	Field *lowestF, *neighbor;
-	end = map->map[(int)player->getPositionX() / map->fieldWidth()][(int)player->getPositionY() / map->fieldHeight()];
+	end = map->getField((int)player->getPositionX() / map->fieldWidth(), (int)player->getPositionY() / map->fieldHeight());
 
 	while (!openSet.empty()) {
 		lowestF = (*openSet.begin()); // Set lowestF to the best field in openSet

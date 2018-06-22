@@ -7,7 +7,7 @@
 
 class Unit;
 class Field;
-class Field;
+class Map;
 
 enum GameObjectType {Static, Dynamic};
 enum ObjectHitboxType { Rectangle, Circle };
@@ -44,7 +44,7 @@ public:
 	float distanceEdges(T *gameObj);
 
 	// Change position of unit when collision detected
-	void collisionUnitFields(std::vector<std::vector<Field*>>& map, SDL_Rect& fieldRect);
+	void collisionUnitFields(Map* map, SDL_Rect& fieldRect);
 
 	void setRadius(int r) { radius = r; }
 	void setRadiusY(int y) { radiusY = y; }

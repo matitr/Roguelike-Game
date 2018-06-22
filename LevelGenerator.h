@@ -13,7 +13,7 @@ class LevelGenerator {
 	Map& mapClass;
 	std::vector<Room*>& rooms;
 
-	std::vector<std::vector<Field*>>& map;
+	Map& map;
 	Player* player;
 	SDL_Rect fieldRect;
 

@@ -120,9 +120,7 @@ void MapCore::upDateMinimapPos() {
 }
 
 MapCore::MapCore(int _hCenter, int _wCenter){
-	map.resize(MAP_WIDTH);
-	for (int i = 0; i < map.size(); i++)
-		map[i].resize(MAP_HEIGHT);
+	map.resize(MAP_WIDTH * MAP_HEIGHT);
 
 	minimap = SDL_CreateTexture(Game::renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, MAP_WIDTH, MAP_HEIGHT);
 	SDL_SetTextureBlendMode(minimap, SDL_BLENDMODE_BLEND);
