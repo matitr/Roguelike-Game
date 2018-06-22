@@ -12,6 +12,7 @@ private:
 public:
 	bool lastFrameEnded() { return frameCounter == frames * frameTime ? true : false; }
 	void setOnEndOfFrame() { frameCounter = frameTime; }
+	void setFrameTime(int fTime) { frameTime = fTime; }
 
 	void updateTexture();
 

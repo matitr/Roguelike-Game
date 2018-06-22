@@ -47,7 +47,7 @@ void SpriteAnimation::setFrameCounter(SpriteAnimation& animationOther) {
 }
 
 bool SpriteAnimation::firstTimuUnitOfFrame(int frame) {
-	return (currFrame == frame && frameCounter % frameTime == 1); 
+	return (currFrame == frame && (frameCounter - frameTime * currFrame) == 1); 
 }
 
 SpriteAnimation::SpriteAnimation(AnimationDetails& animationD, SDL_Rect &_srcRect)

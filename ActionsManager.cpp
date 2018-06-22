@@ -18,6 +18,7 @@ void ActionsManager::updateAction() {
 
 		actions[*currAction]->setFirstFrame();
 		actions[*currAction]->resetMove();
+		actions[*currAction]->resetCooldown();
 	}
 
 	if (velocity.x || velocity.y) {
@@ -31,6 +32,10 @@ void ActionsManager::updateAction() {
 	}
 
 	actions[*currAction]->updateFrame();
+
+	std::unordered_map <ActionType, UnitAction*>::iterator it_action = actions.begin();
+	for (it_action; it_action != actions.end(); it_action++)
+		it_action->second->updateCooldown();
 }
 
 void ActionsManager::onClosestObj(GameObject* closestObj, double closestObjDist) {
@@ -65,6 +70,10 @@ void ActionsManager::onClosestObj(GameObject* closestObj, double closestObjDist)
 
 void ActionsManager::addAction(ActionType action, Movement* move, AttackPattern* attack, int attackFrame) {
 	actions[action] = new UnitAction(move, attack, attackFrame);
+}
+
+void ActionsManager::addAction(ActionType actionName, UnitAction* action) {
+	actions[actionName] = action;
 }
 
 void ActionsManager::addAnimation(ActionType action, Direction::Name dir, AnimationDetails& animationD) {
@@ -106,6 +115,7 @@ void ActionsManager::setActionDynamicOnly(ActionType action) {
 void ActionsManager::changeAction(std::list<ActionType>::iterator actionIt) {
 	actions[*actionIt]->setFirstFrame();
 	actions[*actionIt]->setDirection(*actions[*currAction]);
+	actions[*actionIt]->resetCooldown();
 	currAction = actionIt;
 }
 

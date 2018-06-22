@@ -4,10 +4,11 @@
 #include "TextureManager.h"
 #include "SpriteAnimation.h"
 #include <iostream>
+#include "DataBase.h"
 
 
 bool UnitAction::canDynamicActivation(double dist) {
-	if (dynamicActivationOnly() && dist <= distActivationMax && dist >= distActivationMin)
+	if (dynamicActivationOnly() && dist <= distActivationMax && dist >= distActivationMin && !presentCooldown)
 		return true;
 
 	return false;
@@ -15,6 +16,18 @@ bool UnitAction::canDynamicActivation(double dist) {
 
 void UnitAction::addAnimation(Direction::Name dir, AnimationDetails& animationData, SDL_Rect& srcRectR) {
 	animations[dir] = new SpriteAnimation(animationData, srcRectR);
+}
+
+void UnitAction::addAnimations(std::array<AnimationDetails, Direction::enum_size>& animationsToAdd, SDL_Rect& srcRectR) {
+	for (int i = 0; i < Direction::enum_size; i++) {
+		animations[i] = new SpriteAnimation(animationsToAdd[i], srcRectR);
+	}
+}
+
+void  UnitAction::setFrameTime(int frameTime) {
+	for (int i = 0; i < Direction::enum_size; i++) {
+		animations[i]->setFrameTime(frameTime);
+	}
 }
 
 void UnitAction::setDirection(Direction::Name dir) {
@@ -63,6 +76,11 @@ bool UnitAction::actionEnded() {
 
 void UnitAction::updateFrame() {
 	animations[currentDirection]->updateTexture();
+}
+
+void UnitAction::updateCooldown() {
+	if (presentCooldown > 0)
+		presentCooldown--;
 }
 
 void UnitAction::resetMove() {

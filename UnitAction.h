@@ -15,6 +15,8 @@ class UnitAction {
 	double distActivationMax = -1;
 	double distActivationMin = -1;
 	bool dynamicEnableOnly = false;
+	int actionCooldown = 0;
+	int presentCooldown = 0;
 
 	int attackFrame = 0;
 	Direction::Name currentDirection;
@@ -31,6 +33,9 @@ public:
 	Direction::Name getDirection() { return currentDirection; }
 
 	void addAnimation(Direction::Name dir, AnimationDetails& animationData, SDL_Rect& srcRectR);
+	void addAnimations(std::array<AnimationDetails, Direction::enum_size>& animations, SDL_Rect& srcRectR);
+	void setFrameTime(int frameTime);
+
 	void setDirection(Direction::Name dir);
 	void setDirection(UnitAction& actionOther);
 	void setDirection(double x, double y);
@@ -38,6 +43,10 @@ public:
 	void setLastFrame();
 	bool actionEnded();
 	void updateFrame();
+
+	void setCooldown(int cooldown) { actionCooldown = cooldown; }
+	void resetCooldown() { presentCooldown = actionCooldown; }
+	void updateCooldown();
 
 	void resetMove();
 
