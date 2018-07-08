@@ -29,6 +29,9 @@ public:
 	void drawField(int x, int y);
 	void draw(SDL_Point* startRender) {}
 
+	double distanceEdgesX(Field* otherField);
+	double distanceEdgesY(Field* otherField);
+
 	void addCollisionObj(GameObject* obj) { collisionObjects.push_back(obj); }
 	std::vector<GameObject*>& getCollisionObj() { return collisionObjects; }
 

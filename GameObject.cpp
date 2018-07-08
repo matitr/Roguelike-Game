@@ -184,7 +184,14 @@ float GameObject::distanceEdges(T *gameObj) {
 			return sqrt(deltaX * deltaX + deltaY * deltaY);
 		}
 		else { // Collision Rectangle - Rectangle
+			float xDist = abs(gameObj->position.x - position.x);
+			if (xDist)
+				xDist -= gameObj->radius + radius;
+			float yDist = abs(gameObj->position.y - position.y);
+			if (yDist)
+				yDist -= gameObj->radiusY + radiusY;
 
+			return sqrt(xDist * xDist + yDist * yDist);
 		}
 	}
 
@@ -194,6 +201,7 @@ float GameObject::distanceEdges(T *gameObj) {
 template float GameObject::distanceEdges<Unit>(Unit *gameObj);
 template float GameObject::distanceEdges<Player>(Player *gameObj);
 template float GameObject::distanceEdges<InteractiveObject>(InteractiveObject *gameObj);
+template float GameObject::distanceEdges<Field>(Field *gameObj);
 
 
 void GameObject::collisionUnitFields(Map* map, SDL_Rect& fieldRect) {

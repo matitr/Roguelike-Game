@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "Unit.h"
 #include "DataBase.h"
+#include "Movements.h"
 
 
 void ActionsManager::updateAction() {
@@ -16,9 +17,7 @@ void ActionsManager::updateAction() {
 				currAction = pattern.begin();
 		} while (actions[*currAction]->dynamicActivationOnly());
 
-		actions[*currAction]->setFirstFrame();
-		actions[*currAction]->resetMove();
-		actions[*currAction]->resetCooldown();
+		changeAction(currAction);
 	}
 
 	if (velocity.x || velocity.y) {
@@ -31,11 +30,14 @@ void ActionsManager::updateAction() {
 		actions[*currAction]->setDirection(dirPast);
 	}
 
-	actions[*currAction]->updateFrame();
+	if (!actionChanged)
+		actions[*currAction]->updateFrame();
 
 	std::unordered_map <ActionType, UnitAction*>::iterator it_action = actions.begin();
 	for (it_action; it_action != actions.end(); it_action++)
 		it_action->second->updateCooldown();
+
+	actionChanged = false;
 }
 
 void ActionsManager::onClosestObj(GameObject* closestObj, double closestObjDist) {
@@ -117,6 +119,7 @@ void ActionsManager::changeAction(std::list<ActionType>::iterator actionIt) {
 	actions[*actionIt]->setDirection(*actions[*currAction]);
 	actions[*actionIt]->resetCooldown();
 	currAction = actionIt;
+	actionChanged = true;
 }
 
 bool ActionsManager::changeActionType(ActionType action) {
@@ -136,8 +139,10 @@ void ActionsManager::setCurrentDirection(double x, double y) {
 }
 
 void ActionsManager::makeMove(Unit* unitToMove) {
-	if (actions[*currAction]->movementExists())
+	if (actions[*currAction]->movementExists()) {
 		actions[*currAction]->makeMove();
+		unitToMove->setSpeed(actions[*currAction]->getMovement()->movementSpeed(unitToMove));
+	}
 	else {
 		unitToMove->velocity.x = 0;
 		unitToMove->velocity.y = 0;

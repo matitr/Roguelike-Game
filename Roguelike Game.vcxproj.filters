@@ -234,4 +234,7 @@
       <UniqueIdentifier>{df391f99-f516-445f-bba7-03b7b4440541}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="toDo.txt" />
+  </ItemGroup>
 </Project>

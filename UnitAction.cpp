@@ -71,7 +71,14 @@ void UnitAction::setLastFrame() {
 }
 
 bool UnitAction::actionEnded() {
-	return animations[currentDirection]->lastFrameEnded();
+	if (animations[currentDirection]->lastFrameEnded()) {
+		if (!movement || movement->actionCanEnd())
+			return true;
+	}
+	else if (movement && movement->actionMovementEnded())
+		return true;
+	
+	return false;
 }
 
 void UnitAction::updateFrame() {

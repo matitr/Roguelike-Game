@@ -28,7 +28,7 @@ public:
 	float getDamage() { return damage; }
 	const ItemPassives& getPassives() { return staticPassives; }
 
-	AttackType(ItemPassives& passives);
+	AttackType(ItemPassives& passives, double attackDamage);
 	virtual ~AttackType();
 };
 

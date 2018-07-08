@@ -24,6 +24,7 @@ class Player : public Unit {
 	SDL_Point attackPos;
 	MultipleProjectiles* attackP;
 	bool attackCancel = false;
+	bool attackSkip = false;
 
 	bool isInteractionBlocked = false;
 
@@ -42,6 +43,7 @@ public:
 	void changeInteractionBlock(bool block) { isInteractionBlocked = block; }
 	bool interactionBlocked() { return isInteractionBlocked; }
 	void cancelAttack();
+	void skipAttack() { attackSkip = true; }
 
 	Inventory& inventory() { return playerIntentory; }
 

@@ -30,6 +30,10 @@ public:
 	inline int makeAttackFrame() { return attackFrame; }
 	inline bool movementExists() { return movement ? true : false; }
 	inline bool attackExists() { return attack ? true : false; }
+
+	Movement* getMovement() { return movement; }
+	AttackPattern* getAttack() { return attack; }
+
 	Direction::Name getDirection() { return currentDirection; }
 
 	void addAnimation(Direction::Name dir, AnimationDetails& animationData, SDL_Rect& srcRectR);

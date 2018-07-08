@@ -19,7 +19,7 @@ public:
 	void homingShot(Unit* closestUnit);
 	void onWallHit();
 
-	Projectile(AnimationDetails& animation, ItemPassives& passives);
+	Projectile(AnimationDetails& animation, ItemPassives& passives, double attackDamage);
 	~Projectile();
 };
 

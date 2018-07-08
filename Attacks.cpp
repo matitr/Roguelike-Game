@@ -5,6 +5,15 @@
 #include "MeleeSwing.h"
 
 
+double AttackPattern::attackDamage(ItemPassives& unitPassives) {
+	if (damage >= 0)
+		return damage;
+
+	if (damageMultiplier >= 0)
+		return (1 + unitPassives[StaticPassiveName::damage]) * damageMultiplier;
+
+	return (1 + unitPassives[StaticPassiveName::damage]);
+}
 
 AttackPattern::AttackPattern() {
 
@@ -18,7 +27,7 @@ AttackPattern::~AttackPattern() {
 void ProjectileDirection::makeAttack(Unit* unit, std::list <AttackType*>& attacksContainer, SDL_Point* attackPoint) {
 	angle = startAngle;
 	for (int i = 0; i < numbOfProj; i++) {
-		Projectile* p = new Projectile(animationD, unit->getPassives());
+		Projectile* p = new Projectile(animationD, unit->getPassives(), attackDamage(unit->getPassives()));
 		angle = startAngle + ((float)360.0 / (numbOfProj )) * i;
 		if (angle >= 360)
 			angle -= 360;
@@ -51,7 +60,7 @@ void MultipleProjectiles::makeAttack(Unit* unit, std::list <AttackType*>& attack
 		angle = 180 + (angle + 180);
 
 	for (int i = 0; i < numbOfProjectiles; i++) {
-		Projectile* p = new Projectile(animationD, unit->getPassives());
+		Projectile* p = new Projectile(animationD, unit->getPassives(), attackDamage(unit->getPassives()));
 		p->setAngle(angle);
 		p->setPosition(unit->getPositionX(), unit->getPositionY());
 		attacksContainer.push_back(p);
@@ -64,7 +73,7 @@ void MultipleProjectiles::makeAttack(Unit* unit, std::list <AttackType*>& attack
 }
 
 void MeleeSwingAttack::makeAttack(Unit* unit, std::list <AttackType*>& attacksContainer, SDL_Point* attackPoint) {
-	MeleeSwing* attack = new MeleeSwing(animationD, unit->getPassives());
+	MeleeSwing* attack = new MeleeSwing(animationD, unit->getPassives(), attackDamage(unit->getPassives()));
 
 	SDL_Point attackPos = { attackPoint->x - (int)unit->getPositionX(), attackPoint->y - (int)unit->getPositionY() };
 	if (abs(attackPos.x) < abs(attackPos.y))

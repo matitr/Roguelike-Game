@@ -21,11 +21,9 @@ bool MeleeSwing::collision(Unit* u) {
 	int tempAngle = attackAngle + 360;
 
 	if (angle >= tempAngle - attackWidthAngle && angle <= tempAngle + attackWidthAngle) {
-		std::cout << angle << std::endl;
 		return true;
 	}
 	if (angle >= tempAngle - attackWidthAngle + 360 && angle <= tempAngle + attackWidthAngle + 360) {
-		std::cout << angle << std::endl;
 		return true;
 	}
 
@@ -37,8 +35,8 @@ void MeleeSwing::setAngles(int _attackAngle, int _attackWidthAngle) {
 	attackWidthAngle = _attackWidthAngle;
 }
 
-MeleeSwing::MeleeSwing(AnimationDetails& animation, ItemPassives& passives) 
-	: AttackType(passives), frames(animation.frames - 2), frameTime(animation.frameTime) {
+MeleeSwing::MeleeSwing(AnimationDetails& animation, ItemPassives& passives, double attackDamage)
+	: AttackType(passives, attackDamage), frames(animation.frames - 2), frameTime(animation.frameTime) {
 
 }
 

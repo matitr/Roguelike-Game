@@ -162,6 +162,9 @@ void Player::makeAttack(std::list <AttackType*>& playerProjectiles, AnimationDet
 		return;
 	}
 
+	if (!attack)
+		return;
+
 	if (Input::mouseStates[SDL_BUTTON_LEFT]) {
 		if (staticPassives[StaticPassiveName::chargeProjectiles]) {
 			return;
@@ -169,8 +172,6 @@ void Player::makeAttack(std::list <AttackType*>& playerProjectiles, AnimationDet
 	}
 	else {
 		if (!staticPassives[StaticPassiveName::chargeProjectiles])
-			return;
-		else if (!attack)
 			return;
 	}
 

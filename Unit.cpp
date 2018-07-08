@@ -18,9 +18,18 @@ bool Unit::update(std::list <AttackType*>& monsterAttacks, Map* map) {
 
 	if (!(!velocity.y && !velocity.x)) {
 		double dir = atan2(velocity.y, velocity.x);
-		position.x += cos(dir) * speed;
-		position.y += sin(dir) * speed;
+		double speedMultiplier = staticPassives[StaticPassiveName::unitSpeed] ? 1 + staticPassives[StaticPassiveName::unitSpeed] / 100 : 1;
+		if (maxSpeed == -1 || (speed * speedMultiplier) <= maxSpeed) {
+			position.x += cos(dir) * speed * speedMultiplier;
+			position.y += sin(dir) * speed * speedMultiplier;
+		}
+		else {
+			position.x += cos(dir) * maxSpeed;
+			position.y += sin(dir) * maxSpeed;
+		}
 	}
+	maxSpeed = -1;
+
 	return true;
 }
 
@@ -47,6 +56,7 @@ void Unit::setClosestEnemy(Unit* u, double dist) {
 
 Unit::Unit(TextureInfo& txtInfo) : GameObject(txtInfo, Dynamic, Circle), actionsManager(srcRect, velocity, position) {
 	speed = 3;
+	baseSpeed = 3;
 	hp = 100;
 
 	velocity.x = 0;

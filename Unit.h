@@ -19,7 +19,9 @@ protected:
 	Unit* closestEnemy = nullptr;
 	double closestEnemyDist;
 
+	float baseSpeed;
 	float speed;
+	float maxSpeed;
 	float hp;
 	float maxHp;
 
@@ -35,8 +37,14 @@ public:
 	ItemPassives& getPassives() { return staticPassives; }
 	ActionsManager& getActiongManager() { return actionsManager; }
 
+	float getBaseSpeed() { return baseSpeed; }
+	void setMaxSpeed(float maxS) { maxSpeed = maxS; }
+	void setSpeed(float s) { speed = s; }
+	 
 	Unit(TextureInfo& txtInfo);
 	virtual ~Unit();
+
+	// For testing
 	void renderCircle(int _x, int _y, int radius);
 };
 

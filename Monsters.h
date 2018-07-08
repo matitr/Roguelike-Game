@@ -22,6 +22,7 @@ public:
 		action->addAnimations(DataBase::unitAnimations[UnitName::Unit][AttackProj], srcRect);
 		action->setDistActivationMax(500);
 		action->setDistActivationMin(50);
+		action->setCooldown(120);
 		actionsManager.addAction(AttackProj, action);
 
 		actionsManager.addAction(Attack, NULL, new MeleeSwingAttack(DataBase::unitAnimations[UnitName::Unit][Attack][Direction::E], 60, 45), 2);

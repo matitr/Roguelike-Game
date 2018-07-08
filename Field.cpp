@@ -22,6 +22,22 @@ void Field::drawField(int x, int y) {
 	dstRect.h = h;
 }
 
+double Field::distanceEdgesX(Field* otherField) {
+	float xDist = abs(otherField->position.x - position.x);
+	if (xDist)
+		xDist -= otherField->radius + radius;
+
+	return xDist;
+}
+
+double Field::distanceEdgesY(Field* otherField) {
+	float yDist = abs(otherField->position.y - position.y);
+	if (yDist)
+		yDist -= otherField->radiusY + radiusY;
+
+	return yDist;
+}
+
 Field::Field(SDL_Texture* txt, SDL_Rect& _srcRect, FieldType _type) : GameObject(txt, Static, Rectangle, _srcRect.w / 2) {
 	fieldType = _type;
 	if (_type == Floor)

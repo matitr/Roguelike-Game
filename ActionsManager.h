@@ -21,6 +21,7 @@ class ActionsManager {
 
 	std::list<ActionType> pattern; // Actions order
 	std::list<ActionType>::iterator currAction;
+	bool actionChanged = true;
 
 	SDL_Rect& srcRectRef;
 	const PointDouble& velocity;

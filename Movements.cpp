@@ -5,6 +5,17 @@
 #include "UpdateCollision.h"
 #include <math.h>
 
+
+double Movement::movementSpeed(Unit* unitToMove) {
+	if (speed >= 0)
+		return speed;
+
+	if (speedMultiplier >= 0)
+		return unitToMove->getPassives()[StaticPassiveName::unitSpeed] * unitToMove->getBaseSpeed() * speedMultiplier;
+
+	return unitToMove->getPassives()[StaticPassiveName::unitSpeed] * unitToMove->getBaseSpeed();
+}
+
 Movement::Movement(Unit* _unitToMove) : unitToMove(_unitToMove) {
 
 }
@@ -38,19 +49,45 @@ double A_Star::distance(int x1, int y1, int x2, int y2) {
 }
 
 void A_Star::getVelocityOfPath(Field* lastField, Field* start) {
-
+	pathLength = 0;
 	if (lastField == start) {
-		velocity.x = 0;
-		velocity.y = 0;
+		float distUnits = unitToMove->distanceEdges(player);
+		if (distUnits < 3.0f) {
+			velocity.x = 0;
+			velocity.y = 0;
+		}
+		else {
+			velocity.x = player->getPositionX() - unitToMove->getPositionX();
+			velocity.y = player->getPositionY() - unitToMove->getPositionY();
+			unitToMove->setMaxSpeed(distUnits - distUnits * 0.2f);
+		}
 		return;
 	}
 
-	while (lastField->prevField && lastField->prevField != start)
+	while (lastField->prevField && lastField->prevField != start) {
 		lastField = lastField->prevField;
+		pathLength++;
+	}
 
-	velocity.x = lastField->x() - start->x();
-	velocity.y = lastField->y() - start->y();
-	return;
+	// No collisions on the way
+	if ((int)start->distanceEdgesX(end) / map->fieldRect.w == pathLength || (int)start->distanceEdgesY(end) / map->fieldRect.h == pathLength) {
+		float distUnits = unitToMove->distanceEdges(player);
+		if (distUnits < 3.0f) {
+			velocity.x = 0;
+			velocity.y = 0;
+		}
+		else {
+			unitToMove->setMaxSpeed(distUnits - distUnits * 0.2f);
+			velocity.x = player->getPositionX() - unitToMove->getPositionX();
+			velocity.y = player->getPositionY() - unitToMove->getPositionY();
+		}
+		// toDo if collision with wall after move 
+
+	}
+	else {
+		velocity.x = lastField->x() - start->x();
+		velocity.y = lastField->y() - start->y();
+	}
 }
 
 void A_Star::findPath() {
@@ -60,7 +97,7 @@ void A_Star::findPath() {
 	PointDouble unitStartPos(unitToMove->getPositionX(), unitToMove->getPositionY());
 
 	std::list<Field*>::iterator it = openSet.begin();
-	Field* start = map->getField((int)unitToMove->getPositionX() / map->fieldWidth(), (int)unitToMove->getPositionY() / map->fieldHeight());
+	start = map->getField((int)unitToMove->getPositionX() / map->fieldWidth(), (int)unitToMove->getPositionY() / map->fieldHeight());
 	start->prevField = nullptr;
 	openSet.push_back(start);
 	Field *lowestF, *neighbor;
@@ -80,15 +117,16 @@ void A_Star::findPath() {
 		}
 		
 		if (lowestF == end) { // Path was found
-			getVelocityOfPath(lowestF, start);
-			unitToMove->setPosition(unitStartPos.x, unitStartPos.y); 
+			unitToMove->setPosition(unitStartPos.x, unitStartPos.y);
+			getVelocityOfPath(end, start);
 			return;
 		}
 
 		openSet.remove(lowestF);
 		closedSet.push_back(lowestF);
 
-		std::stack<Field*> neighbors; createNeighbors(lowestF, neighbors);
+		std::stack<Field*> neighbors; 
+		createNeighbors(lowestF, neighbors);
 
 		while (!neighbors.empty()){ // Calculate values for neighbors
 			neighbor = neighbors.top();
@@ -117,6 +155,10 @@ void A_Star::findPath() {
 	return;
 }
 
+float A_Star::distanceEdgesUnits() {
+	return unitToMove->distanceEdges(player);
+}
+
 A_Star::A_Star(Unit* _unitToMove, Map* _map, Unit* _player) : unitToMove(_unitToMove) {
 	map = _map;
 	player = _player;
@@ -129,7 +171,7 @@ A_Star::~A_Star() {
 
 #pragma region MoveForwardPlayer
 void MoveForwardPlayer::makeMove() {
-	if (!moveCooldown) {
+	if (!moveCooldown || aStar.distanceEdgesUnits() < 50) {
 		aStar.findPath();
 		SDL_Point velocityPath = aStar.velocity;
 		unitToMove->velocity.x = velocityPath.x;
@@ -169,3 +211,17 @@ NoMoveFaceEnemy::~NoMoveFaceEnemy() {
 }
 #pragma endregion
 
+
+#pragma region Charge
+void Charge::makeMove() {
+
+}
+
+Charge::Charge(Unit* _unitToMove, Unit* _player) : Movement(_unitToMove), player(_player) {
+
+}
+
+Charge::~Charge() {
+
+}
+#pragma endregion

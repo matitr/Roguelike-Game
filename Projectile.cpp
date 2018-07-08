@@ -101,9 +101,8 @@ void Projectile::onWallHit() {
 	destroyObj = true;
 }
 
-Projectile::Projectile(AnimationDetails& animationD, ItemPassives& passives) : AttackType(passives), animation(animationD, srcRect) {
+Projectile::Projectile(AnimationDetails& animationD, ItemPassives& passives, double attackDamage) : AttackType(passives, attackDamage), animation(animationD, srcRect) {
 	speed = 5;
-
 	heightFromGround = 20;
 
 	if (passives[StaticPassiveName::projectileSpeed])

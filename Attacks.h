@@ -6,9 +6,14 @@
 class Unit;
 
 class AttackPattern {
-
+	double damage = -1;
+	double damageMultiplier = -1;
 public:
 	virtual void makeAttack(Unit* unit, std::list <AttackType*>& attacksContainer, SDL_Point* attackPoint) = 0;
+
+	void setDamage(double d) { damage = d; }
+	void setDamageMultiplier(double dM) { damageMultiplier = dM; }
+	double attackDamage(ItemPassives& unitPassives);
 
 	AttackPattern();
 	virtual ~AttackPattern();
