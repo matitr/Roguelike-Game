@@ -100,6 +100,18 @@
     <ClCompile Include="Screen.cpp">
       <Filter>Screens</Filter>
     </ClCompile>
+    <ClCompile Include="Buff.cpp">
+      <Filter>Passives</Filter>
+    </ClCompile>
+    <ClCompile Include="BuffsManager.cpp">
+      <Filter>Passives</Filter>
+    </ClCompile>
+    <ClCompile Include="PassivesManager.cpp">
+      <Filter>Passives</Filter>
+    </ClCompile>
+    <ClCompile Include="Passive.cpp">
+      <Filter>Passives</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Field.h">
@@ -204,6 +216,18 @@
     <ClInclude Include="myMath.h">
       <Filter>Combat</Filter>
     </ClInclude>
+    <ClInclude Include="Buff.h">
+      <Filter>Passives</Filter>
+    </ClInclude>
+    <ClInclude Include="BuffsManager.h">
+      <Filter>Passives</Filter>
+    </ClInclude>
+    <ClInclude Include="PassivesManager.h">
+      <Filter>Passives</Filter>
+    </ClInclude>
+    <ClInclude Include="Passive.h">
+      <Filter>Passives</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Map">
@@ -232,6 +256,9 @@
     </Filter>
     <Filter Include="Screens">
       <UniqueIdentifier>{df391f99-f516-445f-bba7-03b7b4440541}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Passives">
+      <UniqueIdentifier>{e256cdd3-3f0e-428a-a309-8836fd8b960e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -189,13 +189,13 @@ void DataBase::getPassiveText(int passive, float value, SDL_Texture*& firstTextu
 SDL_Texture* DataBase::getItemTypeText(enum ItemType itemType) {
 	std::string itemTypeStr = "";
 
-	 if (itemType == Universal)
+	 if (itemType == ItemType::Universal)
 		 itemTypeStr = "Universal";
-	 else if (itemType == MainWeapon)
+	 else if (itemType == ItemType::MainWeapon)
 		 itemTypeStr = "Main Weapon";
-	 else if (itemType == Active)
+	 else if (itemType == ItemType::Active)
 		 itemTypeStr = "Active";
-	 else if (itemType == Passive)
+	 else if (itemType == ItemType::Passive)
 		 itemTypeStr = "Passive";
 
 

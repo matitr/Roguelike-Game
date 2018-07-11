@@ -94,7 +94,7 @@ Item::Item(double posX, double posY) : InteractiveObject(TextureManager::texture
 	position.x = posX;
 	position.y = posY;
 
-	type = Passive;
+	type = ItemType::Passive;
 
 	staticPassives[StaticPassiveName::pierceShots] = 2;
 	staticPassives[StaticPassiveName::homing] = 5;
@@ -110,4 +110,7 @@ Item::Item(double posX, double posY) : InteractiveObject(TextureManager::texture
 Item::~Item() {
 	if (itemDescription)
 		SDL_DestroyTexture(itemDescription);
+
+	if (passive)
+		delete passive;
 }

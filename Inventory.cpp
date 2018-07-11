@@ -5,6 +5,7 @@
 #include "Map.h"
 #include "Player.h"
 #include "DataBase.h"
+#include "PassivesManager.h"
 
 
 void Inventory::close() {
@@ -67,13 +68,22 @@ void Inventory::updateFocusOnSlot() {
 			if (!clickedSlot && slotUnderMouse->item) { // First click
 				clickedSlot = slotUnderMouse;
 				clickedItem = slotUnderMouse->item;
-				slotUnderMouse->item = nullptr;;
+				slotUnderMouse->item = nullptr;
+				clickedSlotEq = (slotUnderMouseEq) ? true : false;
 			}
 			else if (clickedSlot) { // Move item
 				if (!slotUnderMouseEq || (slotUnderMouse->itemType == clickedItem->itemType())) { // Check item type
+					if (clickedSlotEq && !slotUnderMouseEq)
+						unitPassivesManager->unequipItem(clickedItem);
+					else if (!clickedSlotEq && slotUnderMouseEq)
+						unitPassivesManager->equipItem(clickedItem);
 					if (slotUnderMouse->item) {
 						slotUnderMouse->item->setPositionX(clickedSlot->rect.x + clickedSlot->rect.w / 2);
 						slotUnderMouse->item->setPositionY(clickedSlot->rect.y + clickedSlot->rect.h / 2);
+						if (clickedSlotEq && !slotUnderMouseEq)
+							unitPassivesManager->equipItem(slotUnderMouse->item);
+						else if (!clickedSlotEq && slotUnderMouseEq)
+							unitPassivesManager->unequipItem(slotUnderMouse->item);
 					}
 					clickedSlot->item = slotUnderMouse->item;
 					slotUnderMouse->item = clickedItem;
@@ -81,7 +91,6 @@ void Inventory::updateFocusOnSlot() {
 					clickedItem->setPositionY(slotUnderMouse->rect.y + slotUnderMouse->rect.h / 2);
 					clickedSlot = nullptr;
 					clickedItem = nullptr;
-					calculatePassives();
 				}
 			}
 		}
@@ -168,13 +177,14 @@ void Inventory::equipItem(InventorySlot* itemSlotToEquip) {
 		}
 
 	if (toEquip) {
+		unitPassivesManager->equipItem(itemSlotToEquip->item);
 		toEquip->item = itemSlotToEquip->item;
 		toEquip->item->setPositionX(toEquip->rect.x + toEquip->rect.w / 2);
 		toEquip->item->setPositionY(toEquip->rect.y + toEquip->rect.h / 2);
 		itemSlotToEquip->item = nullptr;
 	}
 
-	calculatePassives();
+//	calculatePassives();
 }
 
 void Inventory::unequipItem(InventorySlot* itemSlotToUnequip) {
@@ -190,16 +200,18 @@ void Inventory::unequipItem(InventorySlot* itemSlotToUnequip) {
 	}
 
 	if (toUnequip) {
+		unitPassivesManager->unequipItem(itemSlotToUnequip->item);
 		toUnequip->item = itemSlotToUnequip->item;
 		toUnequip->item->setPositionX(toUnequip->rect.x + toUnequip->rect.w / 2);
 		toUnequip->item->setPositionY(toUnequip->rect.y + toUnequip->rect.h / 2);
 		itemSlotToUnequip->item = nullptr;
 	}
 
-	calculatePassives();
+//	calculatePassives();
 }
 
 void Inventory::calculatePassives() {
+	/*
 	// Default values
 	for (int i = 0; i < staticPassives.size(); i++)
 		staticPassives[i] = 0;
@@ -220,6 +232,7 @@ void Inventory::calculatePassives() {
 		else if (staticPassives[i] > DataBase::passivesLimits[i].max)
 			staticPassives[i] = DataBase::passivesLimits[i].max;
 	}
+	*/
 }
 
 void Inventory::highlightAllSlots() {
@@ -251,7 +264,7 @@ void Inventory::highlightAllSlots() {
 	}
 }
 
-Inventory::Inventory(ItemPassives& passives, SDL_Point& _windowResolution) : details(DataBase::inventoryDelails), staticPassives(passives), windowResolution(_windowResolution){
+Inventory::Inventory(PassivesManager* passivesManager, SDL_Point& _windowResolution) : details(DataBase::inventoryDelails), unitPassivesManager(passivesManager), windowResolution(_windowResolution){
 	dstRectInv.w = details.width;
 	dstRectInv.h = details.height;
 
@@ -282,8 +295,6 @@ Inventory::Inventory(ItemPassives& passives, SDL_Point& _windowResolution) : det
 Inventory::~Inventory() {
 	for (int i = 0; i < inventorySlots.size(); i++)
 		for (int j = 0; j < inventorySlots[i].size(); j++) {
-			if (inventorySlots[i][j]->item)
-				delete inventorySlots[i][j]->item;
 			delete inventorySlots[i][j];
 		}
 

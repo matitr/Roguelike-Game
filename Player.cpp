@@ -5,10 +5,14 @@
 #include "Attacks.h"
 #include "Input.h"
 #include "UnitAction.h"
+#include "PassivesManager.h"
+#include "Passive.h"
 #include <math.h>
 
 
 bool Player::update(std::list <AttackType*>& playerProjectiles, Map* map, SDL_Rect& fieldRect) {
+	passivesManager->activatePassives(PassiveActivateOn::Passive);
+	passivesManager->updateAllPassives();
 	if (isInteractionBlocked) {
 		attack = false;
 		velocity.x = 0;
@@ -211,7 +215,7 @@ void Player::takeMoney(int& m) {
 	money -= m; 
 }
 
-Player::Player(SDL_Texture* txt, SDL_Point& windowResolution) : Unit(TextureManager::textureParameters[SingleTexture::PlayerT]), playerIntentory(staticPassives, windowResolution) {
+Player::Player(SDL_Texture* txt, SDL_Point& windowResolution) : Unit(TextureManager::textureParameters[SingleTexture::PlayerT]), playerIntentory(passivesManager, windowResolution) {
 	actionsManager.addAction(Walk, NULL, NULL);
 	actionsManager.addAnimations(Walk, DataBase::unitAnimations[UnitName::Unit][Walk]);
 

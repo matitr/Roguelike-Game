@@ -3,6 +3,9 @@
 #include "UnitAction.h"
 #include "Attacks.h"
 #include "Player.h"
+#include "PassivesManager.h"
+#include "BuffsManager.h"
+#include "Passive.h"
 #include <math.h>
 
 bool Unit::update(std::list <AttackType*>& monsterAttacks, Map* map) {
@@ -11,6 +14,8 @@ bool Unit::update(std::list <AttackType*>& monsterAttacks, Map* map) {
 
 	actionsManager.onClosestObj(closestEnemy, closestEnemyDist);
 	actionsManager.updateAction();
+	passivesManager->activatePassives(PassiveActivateOn::Passive);
+	passivesManager->updateAllPassives();
 
 	SDL_Point p = { (int)map->getPlayer()->getPositionX(), (int)map->getPlayer()->getPositionY() };
 	actionsManager.makeAttack(this, monsterAttacks, &p);
@@ -55,6 +60,8 @@ void Unit::setClosestEnemy(Unit* u, double dist) {
 }
 
 Unit::Unit(TextureInfo& txtInfo) : GameObject(txtInfo, Dynamic, Circle), actionsManager(srcRect, velocity, position) {
+	passivesManager = new PassivesManager(staticPassives);
+
 	speed = 3;
 	baseSpeed = 3;
 	hp = 100;
@@ -65,7 +72,7 @@ Unit::Unit(TextureInfo& txtInfo) : GameObject(txtInfo, Dynamic, Circle), actions
 
 
 Unit::~Unit() {
-
+	delete passivesManager;
 }
 
 

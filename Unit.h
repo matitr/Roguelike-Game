@@ -11,6 +11,8 @@ class AttackType;
 class UnitAction;
 class AttackPattern;
 class Movement;
+class PassivesManager;
+class BuffsManager;
 
 class Unit : public GameObject {
 protected:
@@ -26,6 +28,7 @@ protected:
 	float maxHp;
 
 	ItemPassives staticPassives;
+	PassivesManager* passivesManager;
 public:
 	virtual bool update(std::list <AttackType*>& monsterAttacks, Map* map);
 	virtual void draw(SDL_Point* startRender);
@@ -36,6 +39,7 @@ public:
 	void takeDamage(float damage) { hp -= damage; }
 	ItemPassives& getPassives() { return staticPassives; }
 	ActionsManager& getActiongManager() { return actionsManager; }
+	PassivesManager* getPassivesManager() { return passivesManager; }
 
 	float getBaseSpeed() { return baseSpeed; }
 	void setMaxSpeed(float maxS) { maxSpeed = maxS; }

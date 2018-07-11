@@ -9,7 +9,7 @@
 #include "Item.h"
 
 
-enum ItemType { Universal, MainWeapon, Active, Passive };
+enum class ItemType { Universal, MainWeapon, Active, Passive };
 
 enum class AnimationName { Projectile, Projectile2, ChestOpening, CoinSpin };
 

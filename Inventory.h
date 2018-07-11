@@ -5,6 +5,7 @@
 class Item;
 class Map;
 class Player;
+class PassivesManager;
 enum class PassiveActivateOn;
 
 struct InventorySlot {
@@ -14,6 +15,10 @@ struct InventorySlot {
 
 	InventorySlot(int x, int y, SDL_Point s) : itemType(ItemType::Universal), rect({ x,y, s.x, s.y }), item(nullptr)  {}
 	InventorySlot(ItemType t, SDL_Rect& r, SDL_Rect& dstR) : itemType(t), rect({ r.x + dstR.x, r.y + dstR.y, r.w,r.h }), item(nullptr) {}
+	~InventorySlot() {
+		if (item)
+			delete item;
+	}
 };
 
 
@@ -30,8 +35,9 @@ class Inventory {
 
 	InventorySlot* clickedSlot = nullptr;
 	Item* clickedItem = nullptr;
+	bool clickedSlotEq = false;
 
-	ItemPassives& staticPassives;
+	PassivesManager* unitPassivesManager;
 
 	SDL_Point windowResolution;
 
@@ -54,7 +60,7 @@ public:
 
 	void highlightAllSlots(); // For testing
 
-	Inventory(ItemPassives& passives, SDL_Point& windowResolution);
+	Inventory(PassivesManager* passivesManager, SDL_Point& windowResolution);
 	~Inventory();
 };
 
