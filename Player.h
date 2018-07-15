@@ -47,7 +47,7 @@ public:
 
 	Inventory& inventory() { return playerIntentory; }
 
-	bool alive() { return hp > 0 ? true : false; }
+	bool alive() { return staticPassives[StaticPassiveName::hp] > 0 ? true : false; }
 	void addMoney(int m) { money += m; }
 	int getMoney() { return money; }
 	void takeMoney(int& m);

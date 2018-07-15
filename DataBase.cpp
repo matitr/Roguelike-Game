@@ -7,6 +7,8 @@
 #include <sstream>
 #include <iostream>
 
+#define ITEM_DESCRIPTION_PRECISION 1
+
 InventoryDetails DataBase::inventoryDelails;
 std::unordered_map<AnimationName, AnimationDetails> DataBase::animations;
 std::unordered_map<TextColor, SDL_Color> DataBase::colors;
@@ -102,7 +104,8 @@ void DataBase::loadFontData() {
 		if (!it->second)
 			std::cout << "Error while opening font" << std::endl;
 	
-	colors[TextColor::ItemPassivesText] = { 0, 153, 255,255 };
+	colors[TextColor::ItemStatText] = { 0, 153, 255,255 };
+	colors[TextColor::ItemPassive] = { 249, 124, 0, 255 };
 	colors[TextColor::ItemType] = { 255, 204, 0,255 };
 	colors[TextColor::MenuButtonText] = { 255, 255, 255,255 };
 }
@@ -113,74 +116,99 @@ void DataBase::loadItems() {
 	items[ItemName::Item1].passives[StaticPassiveName::chargeProjectiles] = 1;
 
 	items[ItemName::Item2].type = ItemType::MainWeapon;
-	items[ItemName::Item2].passives[StaticPassiveName::attackSpeed] = 100;
+	items[ItemName::Item2].passives[StaticPassiveName::attackSpeedMult] = 0.5;
 
 	items[ItemName::Item3].type = ItemType::MainWeapon;
-	items[ItemName::Item3].passives[StaticPassiveName::attackSpeed] = 100;
+	items[ItemName::Item3].passives[StaticPassiveName::attackSpeedMult] = 0.7;
 	items[ItemName::Item3].passives[StaticPassiveName::numbOfProjectiles] = 72;
+	items[ItemName::Item3].passives[StaticPassiveName::unitSpeedMult] = 0.5;
+	items[ItemName::Item3].passiveName = PassiveName::OnEnemyKillMoveSpeed;
 
 	items[ItemName::Item4].type = ItemType::Passive;
-	items[ItemName::Item4].passives[StaticPassiveName::attackSpeed] = 200;
+	items[ItemName::Item4].passives[StaticPassiveName::attackSpeedMult] = 2;
 
 }
 
 void DataBase::loadPassivesLimits() {
-	passivesLimits[StaticPassiveName::damage] = { -10,30 };
+	passivesLimits[StaticPassiveName::hp] = { 0,3000 };
+	passivesLimits[StaticPassiveName::hpMax] = { 0,3000 };
+	passivesLimits[StaticPassiveName::damage] = { -10,3000 };
+	passivesLimits[StaticPassiveName::damageMult] = { -60,300 };
 	passivesLimits[StaticPassiveName::numbOfProjectiles] = { 1,5 };
 	passivesLimits[StaticPassiveName::pierceShots] = { 0,5 };
 	passivesLimits[StaticPassiveName::chargeProjectiles] = { 0,1 };
 	passivesLimits[StaticPassiveName::homing] = { -10,25 };
-	passivesLimits[StaticPassiveName::projectileSpeed] = { -50,300 };
-	passivesLimits[StaticPassiveName::projectileSize] = { -50,300 };
-	passivesLimits[StaticPassiveName::attackSpeed] = { -80,300 };
-	passivesLimits[StaticPassiveName::unitSpeed] = { -30,30 };
+	passivesLimits[StaticPassiveName::projectileSpeedMult] = { -50,300 };
+	passivesLimits[StaticPassiveName::projectileSizeMult] = { -50,300 };
+	passivesLimits[StaticPassiveName::attackSpeedMult] = { -80,300 };
+	passivesLimits[StaticPassiveName::unitSpeed] = { 1,9 };
+	passivesLimits[StaticPassiveName::unitSpeedMult] = { -70,300 };
 }
 
 void DataBase::getPassiveText(int passive, float value, SDL_Texture*& firstTexture) {
 	std::string passiveText = "";
 
 	if (passive == StaticPassiveName::numbOfProjectiles) {
-		passiveText = "Increase number of projectiles by " + std::to_string(int(value));
+		passiveText = "Increases number of projectiles by " + std::to_string(int(value));
 	}
 	else if (passive == StaticPassiveName::pierceShots) {
-		passiveText = "Increase pierce by " + std::to_string(int(value));
+		passiveText = "Increases pierce by " + std::to_string(int(value));
 	}
 	else if (passive == StaticPassiveName::homing) {
-		passiveText = "Increase homing by " + std::to_string(int(value));
+		passiveText = "Increases homing by " + std::to_string(int(value));
 	}
 	else if (passive == StaticPassiveName::unitSpeed) {
 		std::stringstream stream;
-		stream << std::fixed << std::setprecision(1) << value;
-		passiveText = "Increase movement speed by " + stream.str() + "%";
+		stream << std::fixed << std::setprecision(ITEM_DESCRIPTION_PRECISION) << value;
+		passiveText = "Increases movement speed by " + stream.str();
+	}
+	else if (passive == StaticPassiveName::unitSpeedMult) {
+		std::stringstream stream;
+		stream << std::fixed << std::setprecision(ITEM_DESCRIPTION_PRECISION) << value * 100;
+		passiveText = "Increases movement speed by " + stream.str() + "%";
 	}
 	else if (passive == StaticPassiveName::chargeProjectiles) {
 		passiveText = "Charge shots";
 	}
-	else if (passive == StaticPassiveName::projectileSpeed) {
+	else if (passive == StaticPassiveName::projectileSpeedMult) {
 		std::stringstream stream;
-		stream << std::fixed << std::setprecision(1) << value;
-		passiveText = "Increase projectile speed by " + stream.str() + "%";
+		stream << std::fixed << std::setprecision(ITEM_DESCRIPTION_PRECISION) << value * 100;
+		passiveText = "Increases projectile speed by " + stream.str() + "%";
 	}
 	else if (passive == StaticPassiveName::damage) {
 		std::stringstream stream;
-		stream << std::fixed << std::setprecision(1) << value;
-		passiveText = "Increase damage by " + stream.str();
+		stream << std::fixed << std::setprecision(ITEM_DESCRIPTION_PRECISION) << value;
+		passiveText = "Increases damage by " + stream.str();
 	}
-	else if (passive == StaticPassiveName::projectileSize) {
+	else if (passive == StaticPassiveName::damageMult) {
 		std::stringstream stream;
-		stream << std::fixed << std::setprecision(1) << value;
-		passiveText = "Increase projectile size by " + stream.str() + "%";
+		stream << std::fixed << std::setprecision(ITEM_DESCRIPTION_PRECISION) << value * 100;
+		passiveText = "Increases damage by " + stream.str() + "%";
 	}
-	else if (passive == StaticPassiveName::attackSpeed) {
+	else if (passive == StaticPassiveName::projectileSizeMult) {
 		std::stringstream stream;
-		stream << std::fixed << std::setprecision(1) << value;
-		passiveText = "Increase attack speed by " + stream.str() + "%";
+		stream << std::fixed << std::setprecision(ITEM_DESCRIPTION_PRECISION) << value * 100;
+		passiveText = "Increases projectile size by " + stream.str() + "%";
 	}
-
+	else if (passive == StaticPassiveName::attackSpeedMult) {
+		std::stringstream stream;
+		stream << std::fixed << std::setprecision(ITEM_DESCRIPTION_PRECISION) << value * 100;
+		passiveText = "Increases attack speed by " + stream.str() + "%";
+	}
+	else if (passive == StaticPassiveName::hp) {
+		std::stringstream stream;
+		stream << std::fixed << std::setprecision(ITEM_DESCRIPTION_PRECISION) << value;
+		passiveText = "Heal for " + stream.str();
+	}
+	else if (passive == StaticPassiveName::hpMax) {
+		std::stringstream stream;
+		stream << std::fixed << std::setprecision(ITEM_DESCRIPTION_PRECISION) << value;
+		passiveText = "Increases max health by " + stream.str();
+	}
 
 	char text[100];
 	strcpy_s(text, passiveText.c_str());
-	SDL_Surface* surfaceMessage = TTF_RenderText_Blended(fonts[FontPurpose::ItemDescription], text, colors[TextColor::ItemPassivesText]);
+	SDL_Surface* surfaceMessage = TTF_RenderText_Blended(fonts[FontPurpose::ItemDescription], text, colors[TextColor::ItemStatText]);
 
 	firstTexture = SDL_CreateTextureFromSurface(Game::renderer, surfaceMessage);
 	SDL_FreeSurface(surfaceMessage);

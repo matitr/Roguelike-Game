@@ -25,7 +25,8 @@ public:
 	void addPassive(Passive* passive);
 	void removePassive(Passive* passive);
 
-	void addStartingStat(StaticPassiveName::StaticPassiveName, float value);
+	void addStartingStat(StaticPassiveName::StaticPassiveName statName, float value);
+	void setStartingStat(StaticPassiveName::StaticPassiveName statName, float value);
 
 	PassivesManager(ItemPassives& unitStatistics);
 	~PassivesManager();

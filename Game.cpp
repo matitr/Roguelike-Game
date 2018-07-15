@@ -44,6 +44,10 @@ void Game::run() {
 
 	interactiveObjects->push_back(new Item(ItemName::Item3, player->getPositionX() + 5, player->getPositionY() + 5));
 	interactiveObjects->push_back(new Item(ItemName::Item4, player->getPositionX() + 5, player->getPositionY() + 5));
+	interactiveObjects->push_back(new Item(ItemName::Item1, player->getPositionX() + 5, player->getPositionY() + 5));
+
+	updateGame();
+	SDL_RenderClear(Game::renderer);
 
 	while (running()) {
 		if (clock() - timeCounter > CLOCKS_PER_SEC) {
@@ -146,6 +150,8 @@ void Game::updateGame() {
 	if (player->inventory().isOpened())
 		player->inventory().update(map, player);
 
+	updateGameProjectiles();
+	updateUnits();
 	player->update(playerProjectiles, map, map->fieldRect);
 	gameObjects.push_back(player);
 
@@ -158,8 +164,6 @@ void Game::updateGame() {
 	if (!map->currentRoom()->visited && map->currentRoom()->battle) {
 		map->currentRoom()->setVisited(true);
 	}
-
-	updateUnits();
 	it_interactiveObj = (*interactiveObjects).begin();
 
 	// Update interactiveObj
@@ -183,8 +187,6 @@ void Game::updateGame() {
 
 	map->setCamera(int(player->getPositionX()), int(player->getPositionY()));
 	map->upDateMinimapPos();
-
-	updateGameProjectiles();
 
 	map->render(gameObjects);
 	player->drawStatus();

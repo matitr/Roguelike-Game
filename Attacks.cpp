@@ -10,9 +10,9 @@ double AttackPattern::attackDamage(ItemPassives& unitPassives) {
 		return damage;
 
 	if (damageMultiplier >= 0)
-		return (1 + unitPassives[StaticPassiveName::damage]) * damageMultiplier;
+		return unitPassives[StaticPassiveName::damage] * (1 + unitPassives[StaticPassiveName::damageMult]) * damageMultiplier;
 
-	return (1 + unitPassives[StaticPassiveName::damage]);
+	return unitPassives[StaticPassiveName::damage] * (1 + unitPassives[StaticPassiveName::damageMult]);
 }
 
 AttackPattern::AttackPattern() {

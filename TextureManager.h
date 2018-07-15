@@ -1,5 +1,6 @@
 #pragma once
 #include "SDL_image.h"
+#include "SDL_ttf.h"
 #include <unordered_map>
 
 
@@ -52,6 +53,8 @@ public:
 	static void loadAllTextures();
 	static void loadAllTextureSrcRect();
 	static SDL_Texture* LoadTexture(const char*);
+
+	static SDL_Texture* textureFromText(std::string textStr, TTF_Font* font, SDL_Color& color, int maxTextWidth);
 
 	static void clearData();
 

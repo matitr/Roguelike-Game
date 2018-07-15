@@ -9,7 +9,7 @@ void PassivesManager::updateAllPassives() {
 	for (int i = 0; i < passives.size(); i++) {
 		passives[i]->update();
 	}
-
+	buffsManager->updateAllBuffs();
 	limitStatistics();
 
 	static int o = 0;
@@ -80,9 +80,13 @@ void PassivesManager::addStartingStat(StaticPassiveName::StaticPassiveName statN
 	unitStatsWithoutLimit[statName] += value;
 }
 
+void PassivesManager::setStartingStat(StaticPassiveName::StaticPassiveName statName, float value) {
+	unitStatsWithoutLimit[statName] = value;
+}
+
 PassivesManager::PassivesManager(ItemPassives& unitStatistics) : unitStatisticsRef(unitStatistics) {
 	passives.reserve(4);
-	buffsManager = new BuffsManager;
+	buffsManager = new BuffsManager(unitStatsWithoutLimit);
 }
 
 

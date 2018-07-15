@@ -6,16 +6,19 @@
 #include "PassivesManager.h"
 #include "BuffsManager.h"
 #include "Passive.h"
+#include "HealthBar.h"
 #include <math.h>
 
 bool Unit::update(std::list <AttackType*>& monsterAttacks, Map* map) {
-	if (hp <= 0)
-		return false;
-
 	actionsManager.onClosestObj(closestEnemy, closestEnemyDist);
 	actionsManager.updateAction();
 	passivesManager->activatePassives(PassiveActivateOn::Passive);
 	passivesManager->updateAllPassives();
+
+	speed = staticPassives[StaticPassiveName::unitSpeed];
+
+	if (staticPassives[StaticPassiveName::hp] <= 0)
+		return false;
 
 	SDL_Point p = { (int)map->getPlayer()->getPositionX(), (int)map->getPlayer()->getPositionY() };
 	actionsManager.makeAttack(this, monsterAttacks, &p);
@@ -23,10 +26,9 @@ bool Unit::update(std::list <AttackType*>& monsterAttacks, Map* map) {
 
 	if (!(!velocity.y && !velocity.x)) {
 		double dir = atan2(velocity.y, velocity.x);
-		double speedMultiplier = staticPassives[StaticPassiveName::unitSpeed] ? 1 + staticPassives[StaticPassiveName::unitSpeed] / 100 : 1;
-		if (maxSpeed == -1 || (speed * speedMultiplier) <= maxSpeed) {
-			position.x += cos(dir) * speed * speedMultiplier;
-			position.y += sin(dir) * speed * speedMultiplier;
+		if (maxSpeed == -1 || (speed * (1 + staticPassives[StaticPassiveName::unitSpeedMult])) <= maxSpeed) {
+			position.x += cos(dir) * speed * (1 + staticPassives[StaticPassiveName::unitSpeedMult]);
+			position.y += sin(dir) * speed * (1 + staticPassives[StaticPassiveName::unitSpeedMult]);
 		}
 		else {
 			position.x += cos(dir) * maxSpeed;
@@ -43,6 +45,7 @@ void Unit::draw(SDL_Point* startRender) {
 	dstRect.y = int((position.y - startRender->y) * HEIGHT_SCALE) - positionShiftY;
 
 	SDL_RenderCopy(Game::renderer, texture, &srcRect, &dstRect);	
+	healthBar->draw();
 
 	// Draw hitbox
 //	SDL_Rect r;
@@ -59,12 +62,18 @@ void Unit::setClosestEnemy(Unit* u, double dist) {
 	closestEnemyDist = dist;
 }
 
-Unit::Unit(TextureInfo& txtInfo) : GameObject(txtInfo, Dynamic, Circle), actionsManager(srcRect, velocity, position) {
-	passivesManager = new PassivesManager(staticPassives);
+void Unit::takeDamage(float damage) {
+	passivesManager->addStartingStat(StaticPassiveName::hp, -damage); 
+}
 
-	speed = 3;
-	baseSpeed = 3;
-	hp = 100;
+Unit::Unit(TextureInfo& txtInfo, UnitType uType) : GameObject(txtInfo, Dynamic, Circle), actionsManager(srcRect, velocity, position), unitType(uType) {
+	passivesManager = new PassivesManager(staticPassives);
+	healthBar = new HealthBar(dstRect, staticPassives[StaticPassiveName::hp], staticPassives[StaticPassiveName::hpMax], unitType);
+	healthBar->draw();
+	passivesManager->setStartingStat(StaticPassiveName::damage, 1);
+	passivesManager->setStartingStat(StaticPassiveName::hp, 100);
+	passivesManager->setStartingStat(StaticPassiveName::hpMax, 100);
+	passivesManager->setStartingStat(StaticPassiveName::unitSpeed, 3);
 
 	velocity.x = 0;
 	velocity.y = 0;

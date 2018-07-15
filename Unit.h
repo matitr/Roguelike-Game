@@ -13,19 +13,23 @@ class AttackPattern;
 class Movement;
 class PassivesManager;
 class BuffsManager;
+class HealthBar;
+
+enum class UnitType { Monster, Boss, Player };
 
 class Unit : public GameObject {
 protected:
+	UnitType unitType;
+
 	ActionsManager actionsManager;
 
 	Unit* closestEnemy = nullptr;
 	double closestEnemyDist;
 
-	float baseSpeed;
-	float speed;
 	float maxSpeed;
-	float hp;
-	float maxHp;
+	float speed;
+
+	HealthBar* healthBar;
 
 	ItemPassives staticPassives;
 	PassivesManager* passivesManager;
@@ -35,17 +39,16 @@ public:
 
 	void setClosestEnemy(Unit* u, double dist);
 
-	void setHp(int _hp) { hp = float(hp); }
-	void takeDamage(float damage) { hp -= damage; }
+	void takeDamage(float damage);
 	ItemPassives& getPassives() { return staticPassives; }
 	ActionsManager& getActiongManager() { return actionsManager; }
 	PassivesManager* getPassivesManager() { return passivesManager; }
 
-	float getBaseSpeed() { return baseSpeed; }
+	float getBaseSpeed() { return staticPassives[StaticPassiveName::unitSpeed]; }
 	void setMaxSpeed(float maxS) { maxSpeed = maxS; }
 	void setSpeed(float s) { speed = s; }
 	 
-	Unit(TextureInfo& txtInfo);
+	Unit(TextureInfo& txtInfo, UnitType uType);
 	virtual ~Unit();
 
 	// For testing

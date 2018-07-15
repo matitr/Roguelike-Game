@@ -11,9 +11,9 @@ double Movement::movementSpeed(Unit* unitToMove) {
 		return speed;
 
 	if (speedMultiplier >= 0)
-		return unitToMove->getPassives()[StaticPassiveName::unitSpeed] * unitToMove->getBaseSpeed() * speedMultiplier;
+		return (1 + unitToMove->getPassives()[StaticPassiveName::unitSpeedMult]) * unitToMove->getBaseSpeed() * speedMultiplier;
 
-	return unitToMove->getPassives()[StaticPassiveName::unitSpeed] * unitToMove->getBaseSpeed();
+	return (1 + unitToMove->getPassives()[StaticPassiveName::unitSpeedMult]) * unitToMove->getBaseSpeed();
 }
 
 Movement::Movement(Unit* _unitToMove) : unitToMove(_unitToMove) {

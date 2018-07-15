@@ -1,6 +1,7 @@
 #include "TextureManager.h"
 #include "Game.h"
 #include <iostream>
+#include <string>
 
 std::unordered_map <TextureFile, SDL_Texture*> TextureManager::textures;
 std::unordered_map <SingleFieldTexture, SDL_Rect> TextureManager::fieldTextureSrcRect;
@@ -80,6 +81,76 @@ SDL_Texture* TextureManager::LoadTexture(const char* dir) {
 	if (!texture)
 		throw dir;
 
+	return texture;
+}
+
+SDL_Texture* TextureManager::textureFromText(std::string textStr, TTF_Font* font, SDL_Color& color, int maxTextWidth) {
+	SDL_Surface* surfaceText = nullptr;
+	int lineWidth = 0;
+	TTF_SizeText(font, textStr.c_str(), &lineWidth, NULL);
+
+	if (lineWidth > maxTextWidth) {
+		int surfaceWidth = 0;
+		int surfaceHeight = 0;
+
+		// Split textStr into lines
+		std::vector<std::string> lines;
+		std::string test = textStr.substr(0, -1);
+		do {
+			bool deleteSplitChar = true;
+			std::size_t foundSplitPos = 0;
+			std::size_t tempSplitPos = -1;
+
+			do {
+				foundSplitPos = tempSplitPos;
+				tempSplitPos = textStr.find(" ", tempSplitPos + 1);
+				TTF_SizeText(font, textStr.substr(0, tempSplitPos).c_str(), &lineWidth, NULL);
+			} while (tempSplitPos != std::string::npos && lineWidth < maxTextWidth);
+
+			if (tempSplitPos == std::string::npos) { // Not found split point
+				lines.push_back(textStr);
+				textStr = "";
+			}
+			else {
+				lines.push_back(textStr.substr(0, foundSplitPos));
+				textStr.erase(0, foundSplitPos + int(deleteSplitChar));
+			}
+		} while (!textStr.empty());
+
+		std::vector<SDL_Surface*> surfaces;
+		for (int i = 0; i < lines.size(); i++) {
+			SDL_Surface* surfaceLine = TTF_RenderText_Blended(font, lines[i].c_str(), color);
+			
+			surfaces.push_back(surfaceLine);
+			surfaceHeight += surfaceLine->h;
+			if (surfaceLine->w > surfaceWidth)
+				surfaceWidth = surfaceLine->w;
+		}
+
+//		Uint32 rmask = 0x000000ff, gmask = 0x0000ff00, bmask = 0x00ff0000, amask = 0xff000000;
+//#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+//		rmask = 0xff000000;
+//		gmask = 0x00ff0000;
+//		bmask = 0x0000ff00;
+//		amask = 0x000000ff;
+//#endif
+
+		surfaceText = SDL_CreateRGBSurface(SDL_SWSURFACE, surfaceWidth, surfaceHeight, 32, 0, 0, 0, 0);
+		
+		surfaceHeight = 0;
+		for (int i = 0; i < surfaces.size(); i++) { // Make one surface from all surfaces(lines)
+			SDL_Rect r = { 0, surfaceHeight, 0, 0 };
+			surfaceHeight += surfaces[i]->h;
+			SDL_BlitSurface(surfaces[i], NULL, surfaceText, &r);
+			SDL_FreeSurface(surfaces[i]);
+		}
+	}
+	else {
+		surfaceText = TTF_RenderText_Blended(font, textStr.c_str(), color);
+	}
+
+	SDL_Texture* texture = SDL_CreateTextureFromSurface(Game::renderer, surfaceText);
+	SDL_FreeSurface(surfaceText);
 	return texture;
 }
 

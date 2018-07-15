@@ -12,8 +12,8 @@ class UnitAction;
 class UnitEnemy1 : public Unit {
 
 public:
-	UnitEnemy1(Map* _map, Unit* _player) : Unit(TextureManager::textureParameters[SingleTexture::UnitT]) {
-		staticPassives[StaticPassiveName::projectileSpeed] = 0.5;
+	UnitEnemy1(Map* _map, Unit* _player) : Unit(TextureManager::textureParameters[SingleTexture::UnitT], UnitType::Monster) {
+		staticPassives[StaticPassiveName::projectileSpeedMult] = 0.5;
 
 		actionsManager.addAction(Walk, new MoveForwardPlayer(this, _map, _player), NULL, 1);
 		actionsManager.addAnimations(Walk, DataBase::unitAnimations[UnitName::Unit][Walk]);
@@ -44,8 +44,8 @@ public:
 class UnitEnemy2 : public Unit {
 
 public:
-	UnitEnemy2(Map* _map, Unit* _player) : Unit(TextureManager::textureParameters[SingleTexture::UnitT]) {
-		staticPassives[StaticPassiveName::projectileSpeed] = -0.3f;
+	UnitEnemy2(Map* _map, Unit* _player) : Unit(TextureManager::textureParameters[SingleTexture::UnitT], UnitType::Monster) {
+		staticPassives[StaticPassiveName::projectileSpeedMult] = -0.3f;
 
 		actionsManager.addAction(Walk, new MoveForwardPlayer(this, _map, _player), NULL, 1);
 		actionsManager.addAnimations(Walk, DataBase::unitAnimations[UnitName::Unit][Walk]);
@@ -68,7 +68,7 @@ public:
 
 class Boss1 : public Unit {
 public:
-	Boss1(Map* _map, Unit* _player) : Unit(TextureManager::textureParameters[SingleTexture::UnitT]) {
+	Boss1(Map* _map, Unit* _player) : Unit(TextureManager::textureParameters[SingleTexture::UnitT], UnitType::Boss) {
 		actionsManager.addAction(Walk, new MoveForwardPlayer(this, _map, _player), new ProjectileDirection(DataBase::animations[AnimationName::Projectile2], 90, 40), 1);
 		actionsManager.addAnimations(Walk, DataBase::unitAnimations[UnitName::Unit][Walk]);
 

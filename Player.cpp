@@ -13,20 +13,21 @@
 bool Player::update(std::list <AttackType*>& playerProjectiles, Map* map, SDL_Rect& fieldRect) {
 	passivesManager->activatePassives(PassiveActivateOn::Passive);
 	passivesManager->updateAllPassives();
+	speed = staticPassives[StaticPassiveName::unitSpeed];
 	if (isInteractionBlocked) {
 		attack = false;
 		velocity.x = 0;
 		velocity.y = 0;
 	}
 	if (staticPassives[StaticPassiveName::numbOfProjectiles])
-		attackP->setNumberOfProj((int)staticPassives[StaticPassiveName::numbOfProjectiles] + 1);
+		attackP->setNumberOfProj((int)staticPassives[StaticPassiveName::numbOfProjectiles]);
 	else
 		attackP->setNumberOfProj(1);
 	if (attackFrame == ATTACK_POSSIBLE)
 		makeAttack(playerProjectiles, DataBase::animations[AnimationName::Projectile]);
 	attackCancel = false;
 	if (attackFrame > -1) {
-		if (attackFrame + 1 == int(60 / (attackSpeed + attackSpeed * staticPassives[StaticPassiveName::attackSpeed] / 100)))
+		if (attackFrame + 1 == int(60 / (attackSpeed + attackSpeed * (1 + staticPassives[StaticPassiveName::attackSpeedMult]))))
 			attackFrame = ATTACK_POSSIBLE;
 		else
 			attackFrame++;
@@ -77,17 +78,16 @@ bool Player::update(std::list <AttackType*>& playerProjectiles, Map* map, SDL_Re
 		//		setAnimation(Stand);
 		;
 	else { // Make move
-		double speedMultiplier = staticPassives[StaticPassiveName::unitSpeed] ? 1 + staticPassives[StaticPassiveName::unitSpeed] / 100 : 1;
 		if (actionsManager.currActionType() == Dash) { // Dash
 			float dir = (float)atan2(velocity.y, velocity.x);
-			position.x += cos(dir) * rollSpeed * speedMultiplier;
-			position.y += sin(dir) * rollSpeed * speedMultiplier;
+			position.x += cos(dir) * rollSpeed * (1 + staticPassives[StaticPassiveName::unitSpeedMult]);
+			position.y += sin(dir) * rollSpeed * (1 + staticPassives[StaticPassiveName::unitSpeedMult]);
 			map->setCamera(int(position.x), int(position.y));
 		}
 		else { // Normal move
 			float dir = (float)atan2(velocity.y, velocity.x);
-			position.x += cos(dir) * speed * speedMultiplier;
-			position.y += sin(dir) * speed * speedMultiplier;
+			position.x += cos(dir) * speed * (1 + staticPassives[StaticPassiveName::unitSpeedMult]);
+			position.y += sin(dir) * speed * (1 + staticPassives[StaticPassiveName::unitSpeedMult]);
 			map->setCamera(int(position.x), int(position.y));
 		}
 	}
@@ -105,7 +105,7 @@ void Player::drawStatus() {
 
 	SDL_RenderCopy(Game::renderer, playerStatsTxt, &statusSrcRect, &statusDstRest);
 	int width = statusSrcRect.w;
-	statusDstRest.w = int((statusDstRest.w - 4) * (hp / 8.0));
+	statusDstRest.w = int((statusDstRest.w - 4) * (staticPassives[StaticPassiveName::hp] / 8.0));
 	statusSrcRect.w = statusDstRest.w;
 	statusSrcRect.y = 30;
 	SDL_RenderCopy(Game::renderer, playerStatsTxt, &statusSrcRect, &statusDstRest);
@@ -215,7 +215,7 @@ void Player::takeMoney(int& m) {
 	money -= m; 
 }
 
-Player::Player(SDL_Texture* txt, SDL_Point& windowResolution) : Unit(TextureManager::textureParameters[SingleTexture::PlayerT]), playerIntentory(passivesManager, windowResolution) {
+Player::Player(SDL_Texture* txt, SDL_Point& windowResolution) : Unit(TextureManager::textureParameters[SingleTexture::PlayerT], UnitType::Player), playerIntentory(passivesManager, windowResolution) {
 	actionsManager.addAction(Walk, NULL, NULL);
 	actionsManager.addAnimations(Walk, DataBase::unitAnimations[UnitName::Unit][Walk]);
 
@@ -229,8 +229,12 @@ Player::Player(SDL_Texture* txt, SDL_Point& windowResolution) : Unit(TextureMana
 
 	rollCooldown = 2 * 60;
 	lastRollFramesAgo = rollCooldown;
-	hp = 8;
-	maxHp = 8;
+
+	passivesManager->setStartingStat(StaticPassiveName::damage, 1);
+	passivesManager->setStartingStat(StaticPassiveName::hp, 8);
+	passivesManager->setStartingStat(StaticPassiveName::hpMax, 8);
+	passivesManager->setStartingStat(StaticPassiveName::unitSpeed, 4);
+
 	money = 0;
 	playerStatsTxt = TextureManager::textures[TextureFile::PLAYER_STATS];
 	attackSpeed = 3;
@@ -241,7 +245,6 @@ Player::Player(SDL_Texture* txt, SDL_Point& windowResolution) : Unit(TextureMana
 	statusSrcRect.h = 30;
 	statusDstRest.w = 200;
 	statusDstRest.h = 30;
-	speed = 4;
 	rollSpeed = 10;
 
 	attack = false;

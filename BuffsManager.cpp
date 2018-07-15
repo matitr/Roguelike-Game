@@ -16,15 +16,15 @@ void BuffsManager::addBuffCopy(Buff* buff) {
 
 	if (it_found != buffs.end()) { // Found existing buff from the same passive
 		// Reset cooldown / reset buff
-		(*it_found)->deactivate();
+		(*it_found)->deactivate(unitStats);
 		*(*it_found) = *buff; // Copy buff
-		(*it_found)->activate();
+		(*it_found)->activate(unitStats);
 		return;
 	}
 	else {
 		buff = buff->getCopy();
 		buffs.push_back(buff);
-		buff->activate();
+		buff->activate(unitStats);
 	}
 }
 
@@ -32,9 +32,9 @@ void BuffsManager::removeBuffs(Passive* parentPassive) {
 	auto it = buffs.begin();
 	while (it != buffs.end()) {
 		if ((*it)->getParentPassive() == parentPassive) { // Remove buff
-			(*it)->deactivate();
+			(*it)->deactivate(unitStats);
 			delete (*it);
-			buffs.erase(it);
+			it = buffs.erase(it);
 		}
 		else
 			it++;
@@ -43,18 +43,19 @@ void BuffsManager::removeBuffs(Passive* parentPassive) {
 
 void BuffsManager::updateAllBuffs() {
 	auto it = buffs.begin();
+	auto it2 = buffs.begin();
 	while (it != buffs.end()) {
 		if (!(*it)->update()) { // Remove buff
-			(*it)->deactivate();
+			(*it)->deactivate(unitStats);
 			delete (*it);
-			buffs.erase(it);
+			it = buffs.erase(it);
 		}
 		else
 			it++;
 	}
 }
 
-BuffsManager::BuffsManager() {
+BuffsManager::BuffsManager(ItemPassives& statsWithoutLimit) : unitStats(statsWithoutLimit) {
 	buffs.reserve(4);
 }
 

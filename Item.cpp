@@ -16,7 +16,6 @@ void Item::onPlayerInteract(Map* map, std::vector <InteractiveObject*>& objects,
 
 void Item::createDescriptionTxt() { 
 	descriptionDstRect.w = 350;
-	float descriptionHeight = 0;
 
 	SDL_Rect r = { 10,5,0,0 };
 
@@ -25,25 +24,42 @@ void Item::createDescriptionTxt() {
 
 	SDL_SetRenderDrawColor(Game::renderer, 255, 255, 255, 255);
 
-	SDL_Texture* message = DataBase::getItemTypeText(type);
-	SDL_QueryTexture(message, NULL, NULL, &r.w, &r.h);
+	SDL_Texture* itemTypeTextTexture = DataBase::getItemTypeText(type);
+	SDL_QueryTexture(itemTypeTextTexture, NULL, NULL, &r.w, &r.h);
 	r.x = descriptionDstRect.w - r.w - 5;
+	int lineHeight = r.h;
 
 	int numberOfPassives = 0;
-
 	for (int i = 0; i < staticPassives.size(); i++)
 		if (staticPassives[i])
 			numberOfPassives++;
 
-	descriptionDstRect.h = r.h * (3 + numberOfPassives); // Item description height
+	SDL_Rect passiveTextRect;
+	SDL_Texture* passiveText = nullptr;
+
+	descriptionDstRect.h = lineHeight * (2.5 + numberOfPassives); // Item description height
+
+	if (passive) {
+		passiveText = TextureManager::textureFromText(passive->description(), DataBase::fonts[FontPurpose::ItemDescription], DataBase::colors[TextColor::ItemPassive], 350 - 10 * 2);
+		SDL_QueryTexture(passiveText, NULL, NULL, &passiveTextRect.w, &passiveTextRect.h);
+		passiveTextRect.x = 10;
+		descriptionDstRect.h += 5 + passiveTextRect.h;
+		passiveTextRect.y = descriptionDstRect.h - passiveTextRect.h - lineHeight * 0.5;
+	}
+
 	itemDescription = SDL_CreateTexture(Game::renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, descriptionDstRect.w, descriptionDstRect.h);
 	SDL_SetTextureBlendMode(itemDescription, SDL_BLENDMODE_BLEND);
 
 	SDL_SetRenderTarget(Game::renderer, itemDescription);
 	SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 200);
 	SDL_RenderClear(Game::renderer);
-	SDL_RenderCopy(Game::renderer, message, NULL, &r);
-	SDL_DestroyTexture(message);
+	SDL_RenderCopy(Game::renderer, itemTypeTextTexture, NULL, &r);
+	SDL_DestroyTexture(itemTypeTextTexture);
+
+	if (passive) {
+		SDL_RenderCopy(Game::renderer, passiveText, NULL, &passiveTextRect);
+		SDL_DestroyTexture(passiveText);
+	}
 
 	r.x = 10;
 	r.y = r.h * 2;
@@ -81,11 +97,10 @@ void Item::drawDescription(SDL_Rect& slotRect, SDL_Point& WindowResolution) {
 
 Item::Item(ItemName::Name itemName, double posX, double posY)
 	: InteractiveObject(TextureManager::itemTextureDetails[itemName], DataBase::inventoryDelails.slotSize, SDL_SCANCODE_E), type(DataBase::items[itemName].type)
-	, staticPassives(DataBase::items[itemName].passives) {
+	, staticPassives(DataBase::items[itemName].passives), passive(Passive::createPassive(DataBase::items[itemName].passiveName)) {
 
 	position.x = posX;
 	position.y = posY;
-	staticPassives[StaticPassiveName::unitSpeed] = 25.0;
 
 	createDescriptionTxt();
 }
@@ -98,9 +113,9 @@ Item::Item(double posX, double posY) : InteractiveObject(TextureManager::texture
 
 	staticPassives[StaticPassiveName::pierceShots] = 2;
 	staticPassives[StaticPassiveName::homing] = 5;
-	staticPassives[StaticPassiveName::unitSpeed] = 25.0;
+	staticPassives[StaticPassiveName::unitSpeedMult] = 25.0;
 	staticPassives[StaticPassiveName::numbOfProjectiles] = 1;
-	staticPassives[StaticPassiveName::projectileSize] = 100;
+	staticPassives[StaticPassiveName::projectileSizeMult] = 1;
 	//	staticPassives[StaticPassiveName::chargeProjectiles] = 1;
 
 	createDescriptionTxt();

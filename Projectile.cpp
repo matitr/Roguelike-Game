@@ -105,12 +105,12 @@ Projectile::Projectile(AnimationDetails& animationD, ItemPassives& passives, dou
 	speed = 5;
 	heightFromGround = 20;
 
-	if (passives[StaticPassiveName::projectileSpeed])
-		speed = speed + speed * passives[StaticPassiveName::projectileSpeed];
+	if (passives[StaticPassiveName::projectileSpeedMult])
+		speed = speed * (1 + passives[StaticPassiveName::projectileSpeedMult]);
 
-	if (passives[StaticPassiveName::projectileSize]) {
-		dstRect.w = int(dstRect.w + dstRect.w * passives[StaticPassiveName::projectileSize] / 100);
-		dstRect.h = int(dstRect.h + dstRect.h * passives[StaticPassiveName::projectileSize] / 100);
+	if (passives[StaticPassiveName::projectileSizeMult]) {
+		dstRect.w = int(dstRect.w + dstRect.w * (1 + passives[StaticPassiveName::projectileSizeMult]));
+		dstRect.h = int(dstRect.h + dstRect.h * (1 + passives[StaticPassiveName::projectileSizeMult]));
 		setRadius(dstRect.w / 2);
 	}
 }

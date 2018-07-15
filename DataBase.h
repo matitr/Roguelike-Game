@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include "TextureManager.h"
 #include "Item.h"
+#include "Passive.h"
 
 
 enum class ItemType { Universal, MainWeapon, Active, Passive };
@@ -14,7 +15,7 @@ enum class ItemType { Universal, MainWeapon, Active, Passive };
 enum class AnimationName { Projectile, Projectile2, ChestOpening, CoinSpin };
 
 
-enum class TextColor { ItemPassivesText, ItemType, MenuButtonText };
+enum class TextColor { ItemStatText, ItemPassive, ItemType, MenuButtonText };
 enum class FontPurpose { ItemDescription, GameEndResult, MenuButtonsText };
 
 enum class UnitName { Unit, Player };
@@ -53,6 +54,7 @@ struct AnimationDetails {
 struct ItemDetails {
 	ItemType type;
 	ItemPassives passives;
+	PassiveName passiveName;
 };
 
 struct Limits_t {

@@ -112,6 +112,12 @@
     <ClCompile Include="Passive.cpp">
       <Filter>Passives</Filter>
     </ClCompile>
+    <ClCompile Include="Settings.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="HealthBar.cpp">
+      <Filter>Unit</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Field.h">
@@ -227,6 +233,12 @@
     </ClInclude>
     <ClInclude Include="Passive.h">
       <Filter>Passives</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="HealthBar.h">
+      <Filter>Unit</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

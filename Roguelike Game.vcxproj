@@ -147,6 +147,7 @@
     <ClCompile Include="Field.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="HealthBar.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="InteractiveObject.cpp" />
     <ClCompile Include="Inventory.cpp" />
@@ -166,6 +167,7 @@
     <ClCompile Include="Room.cpp" />
     <ClCompile Include="Screen.cpp" />
     <ClCompile Include="ScreensManager.cpp" />
+    <ClCompile Include="Settings.cpp" />
     <ClCompile Include="SpriteAnimation.cpp" />
     <ClCompile Include="Teleporter.cpp" />
     <ClCompile Include="TextureManager.cpp" />
@@ -186,6 +188,7 @@
     <ClInclude Include="Field.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="HealthBar.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="InteractiveObject.h" />
     <ClInclude Include="Inventory.h" />
@@ -206,6 +209,7 @@
     <ClInclude Include="Room.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="ScreensManager.h" />
+    <ClInclude Include="Settings.h" />
     <ClInclude Include="SpriteAnimation.h" />
     <ClInclude Include="Teleporter.h" />
     <ClInclude Include="TextureManager.h" />
