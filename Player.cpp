@@ -11,7 +11,7 @@
 
 
 bool Player::update(std::list <AttackType*>& playerProjectiles, Map* map, SDL_Rect& fieldRect) {
-	passivesManager->activatePassives(PassiveActivateOn::Passive);
+	passivesManager->activatePassives(PassiveActivateOn::Passive, playerProjectiles, &attackPos);
 	passivesManager->updateAllPassives();
 	speed = staticPassives[StaticPassiveName::unitSpeed];
 	if (isInteractionBlocked) {
@@ -55,7 +55,7 @@ bool Player::update(std::list <AttackType*>& playerProjectiles, Map* map, SDL_Re
 			setPosition(map->getCameraX(), map->getCameraY());
 			velocity.x = 0;
 			velocity.y = 0;
-//			setAnimation(Stand);
+//			setAnimation(Idle);
 			return true;
 		}
 
@@ -70,12 +70,12 @@ bool Player::update(std::list <AttackType*>& playerProjectiles, Map* map, SDL_Re
 			setPosition(map->getCameraX(), map->getCameraY());
 			velocity.x = 0;
 			velocity.y = 0;
-//			setAnimation(Stand);
+//			setAnimation(Idle);
 			return true;
 		}
 
 	if (!velocity.y && !velocity.x)
-		//		setAnimation(Stand);
+		//		setAnimation(Idle);
 		;
 	else { // Make move
 		if (actionsManager.currActionType() == Dash) { // Dash
@@ -245,14 +245,14 @@ Player::Player(SDL_Texture* txt, SDL_Point& windowResolution) : Unit(TextureMana
 	statusSrcRect.h = 30;
 	statusDstRest.w = 200;
 	statusDstRest.h = 30;
-	rollSpeed = 10;
+	rollSpeed = 6;
 
 	attack = false;
 	attackP = new MultipleProjectiles(DataBase::animations[AnimationName::Projectile], 5);
 
 	setPositionShift(0.5f, 0.8f, 0.55f);
 	setAnimation(Walk);
-	setAnimation(Stand);
+	setAnimation(Idle);
 };
 
 

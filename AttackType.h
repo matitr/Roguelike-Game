@@ -2,6 +2,7 @@
 #include "SpriteAnimation.h"
 #include "GameObject.h"
 #include "Item.h"
+#include "PassivesManager.h"
 
 class Map;
 struct AnimationDetails;
@@ -15,7 +16,10 @@ protected:
 	ItemPassives staticPassives;
 	std::vector<Unit*> unitsHitted;
 
+	AttackPassivesManager attackPassivesManager;
 public:
+	AttackPassivesManager& getAttackPassivesManager() { return attackPassivesManager; }
+
 	virtual bool update(Map* map, SDL_Rect& fieldRect, Unit* closestUnit) = 0;
 	virtual void draw(SDL_Point* startRender);
 
@@ -28,7 +32,7 @@ public:
 	float getDamage() { return damage; }
 	const ItemPassives& getPassives() { return staticPassives; }
 
-	AttackType(ItemPassives& passives, double attackDamage);
+	AttackType(PassivesManager* passivesManager, double attackDamage);
 	virtual ~AttackType();
 };
 

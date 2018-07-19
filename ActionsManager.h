@@ -13,7 +13,7 @@ class AttackType;
 struct AnimationDetails;
 enum Name;
 
-enum ActionType { Stand, Walk, Dash, AttackProj, Attack };
+enum ActionType { Idle, Walk, Dash, AttackProj, Attack };
 struct PointDouble;
 
 class ActionsManager {

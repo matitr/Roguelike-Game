@@ -17,10 +17,7 @@
       <Filter>Unit</Filter>
     </ClCompile>
     <ClCompile Include="SpriteAnimation.cpp">
-      <Filter>Textures</Filter>
-    </ClCompile>
-    <ClCompile Include="Animation.cpp">
-      <Filter>Textures</Filter>
+      <Filter>Interface\Textures</Filter>
     </ClCompile>
     <ClCompile Include="UnitAction.cpp">
       <Filter>Combat</Filter>
@@ -71,7 +68,7 @@
       <Filter>Game</Filter>
     </ClCompile>
     <ClCompile Include="TextureManager.cpp">
-      <Filter>Textures</Filter>
+      <Filter>Interface\Textures</Filter>
     </ClCompile>
     <ClCompile Include="Projectile.cpp">
       <Filter>Combat\Attacks</Filter>
@@ -116,7 +113,13 @@
       <Filter>Game</Filter>
     </ClCompile>
     <ClCompile Include="HealthBar.cpp">
-      <Filter>Unit</Filter>
+      <Filter>Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="CombatText.cpp">
+      <Filter>Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="CombatTextManager.cpp">
+      <Filter>Interface</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -129,9 +132,6 @@
     <ClInclude Include="Room.h">
       <Filter>Map</Filter>
     </ClInclude>
-    <ClInclude Include="Animation.h">
-      <Filter>Textures</Filter>
-    </ClInclude>
     <ClInclude Include="Unit.h">
       <Filter>Unit</Filter>
     </ClInclude>
@@ -139,7 +139,7 @@
       <Filter>Unit</Filter>
     </ClInclude>
     <ClInclude Include="SpriteAnimation.h">
-      <Filter>Textures</Filter>
+      <Filter>Interface\Textures</Filter>
     </ClInclude>
     <ClInclude Include="UnitAction.h">
       <Filter>Combat</Filter>
@@ -187,7 +187,7 @@
       <Filter>Game</Filter>
     </ClInclude>
     <ClInclude Include="TextureManager.h">
-      <Filter>Textures</Filter>
+      <Filter>Interface\Textures</Filter>
     </ClInclude>
     <ClInclude Include="Projectile.h">
       <Filter>Combat\Attacks</Filter>
@@ -238,15 +238,18 @@
       <Filter>Game</Filter>
     </ClInclude>
     <ClInclude Include="HealthBar.h">
-      <Filter>Unit</Filter>
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="CombatText.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="CombatTextManager.h">
+      <Filter>Interface</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Map">
       <UniqueIdentifier>{02228ff1-c577-4a3c-b4c5-6e7e108269d2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Textures">
-      <UniqueIdentifier>{410b34ce-d4cb-443b-83d1-d44225611aaf}</UniqueIdentifier>
     </Filter>
     <Filter Include="Unit">
       <UniqueIdentifier>{a0701841-36c5-476a-a0c2-88862fba92ed}</UniqueIdentifier>
@@ -271,6 +274,12 @@
     </Filter>
     <Filter Include="Passives">
       <UniqueIdentifier>{e256cdd3-3f0e-428a-a309-8836fd8b960e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Interface">
+      <UniqueIdentifier>{dafebd68-ddb4-42bc-b330-01f388eec6bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Interface\Textures">
+      <UniqueIdentifier>{410b34ce-d4cb-443b-83d1-d44225611aaf}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

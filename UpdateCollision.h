@@ -21,7 +21,7 @@ public:
 	static bool detectCollisionWithField(Unit* unit, Map* map);
 
 	void projectilesWithUnits(std::list <AttackType*>& playerProjectiles, std::list <AttackType*>& monsterAttacks, Player* player, std::list <Unit*>& monsters);
-	void projectilesWithWalls(std::list <AttackType*>& playerProjectiles, Map* map);
+	void projectilesWithWalls(std::list <AttackType*>& projectiles, Map* map);
 
 	void updateInteractiveObjects(std::vector <InteractiveObject*>& objects, std::unordered_map <SDL_Scancode, InteractiveObject*>& objectSelected, Player* player);
 

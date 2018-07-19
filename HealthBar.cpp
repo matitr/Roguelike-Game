@@ -39,7 +39,7 @@ void HealthBar::draw() {
 
 HealthBar::HealthBar(SDL_Rect& _unitDstRect, float& _hp, float& _hpMax, UnitType& uType) : unitDstRect(_unitDstRect), hp(_hp), hpMax(_hpMax), unitType(uType) {
 	healthBarDstRect.w = 60;
-	healthBarDstRect.h = 10;
+	healthBarDstRect.h = 5;
 
 }
 

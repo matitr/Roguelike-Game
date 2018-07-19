@@ -95,10 +95,12 @@ void DataBase::loadFontData() {
 	RWops[FontPurpose::ItemDescription] = SDL_RWFromFile("Font/font.ttf", "r");
 	RWops[FontPurpose::GameEndResult] = SDL_RWFromFile("Font/font.ttf", "r");
 	RWops[FontPurpose::MenuButtonsText] = SDL_RWFromFile("Font/font.ttf", "r");
+	RWops[FontPurpose::CombatText] = SDL_RWFromFile("Font/font.ttf", "r");
 
 	fonts[FontPurpose::ItemDescription] = TTF_OpenFontRW(RWops[FontPurpose::ItemDescription], 0, 18);
 	fonts[FontPurpose::GameEndResult] = TTF_OpenFontRW(RWops[FontPurpose::GameEndResult], 0, 64);
 	fonts[FontPurpose::MenuButtonsText] = TTF_OpenFontRW(RWops[FontPurpose::MenuButtonsText], 0, 32);
+	fonts[FontPurpose::CombatText] = TTF_OpenFontRW(RWops[FontPurpose::CombatText], 0, 16);
 
 	for (auto it = fonts.begin(); it != fonts.end(); it++)
 		if (!it->second)
@@ -108,6 +110,7 @@ void DataBase::loadFontData() {
 	colors[TextColor::ItemPassive] = { 249, 124, 0, 255 };
 	colors[TextColor::ItemType] = { 255, 204, 0,255 };
 	colors[TextColor::MenuButtonText] = { 255, 255, 255,255 };
+	colors[TextColor::CombatTextDamage] = { 255, 204, 102, 255 };
 }
 
 void DataBase::loadItems() {
@@ -116,7 +119,7 @@ void DataBase::loadItems() {
 	items[ItemName::Item1].passives[StaticPassiveName::chargeProjectiles] = 1;
 
 	items[ItemName::Item2].type = ItemType::MainWeapon;
-	items[ItemName::Item2].passives[StaticPassiveName::attackSpeedMult] = 0.5;
+	items[ItemName::Item2].passiveName = PassiveName::OnHitSlowMoveSpeed;
 
 	items[ItemName::Item3].type = ItemType::MainWeapon;
 	items[ItemName::Item3].passives[StaticPassiveName::attackSpeedMult] = 0.7;
@@ -133,16 +136,16 @@ void DataBase::loadPassivesLimits() {
 	passivesLimits[StaticPassiveName::hp] = { 0,3000 };
 	passivesLimits[StaticPassiveName::hpMax] = { 0,3000 };
 	passivesLimits[StaticPassiveName::damage] = { -10,3000 };
-	passivesLimits[StaticPassiveName::damageMult] = { -60,300 };
+	passivesLimits[StaticPassiveName::damageMult] = { -0.6f,3 };
 	passivesLimits[StaticPassiveName::numbOfProjectiles] = { 1,5 };
 	passivesLimits[StaticPassiveName::pierceShots] = { 0,5 };
 	passivesLimits[StaticPassiveName::chargeProjectiles] = { 0,1 };
-	passivesLimits[StaticPassiveName::homing] = { -10,25 };
-	passivesLimits[StaticPassiveName::projectileSpeedMult] = { -50,300 };
-	passivesLimits[StaticPassiveName::projectileSizeMult] = { -50,300 };
-	passivesLimits[StaticPassiveName::attackSpeedMult] = { -80,300 };
+	passivesLimits[StaticPassiveName::homing] = { 0,25 };
+	passivesLimits[StaticPassiveName::projectileSpeedMult] = { -0.5f,3 };
+	passivesLimits[StaticPassiveName::projectileSizeMult] = { -0.5f,3 };
+	passivesLimits[StaticPassiveName::attackSpeedMult] = { -0.8f,3 };
 	passivesLimits[StaticPassiveName::unitSpeed] = { 1,9 };
-	passivesLimits[StaticPassiveName::unitSpeedMult] = { -70,300 };
+	passivesLimits[StaticPassiveName::unitSpeedMult] = { -0.7f,3 };
 }
 
 void DataBase::getPassiveText(int passive, float value, SDL_Texture*& firstTexture) {

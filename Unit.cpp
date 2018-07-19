@@ -7,12 +7,15 @@
 #include "BuffsManager.h"
 #include "Passive.h"
 #include "HealthBar.h"
+#include "CombatTextManager.h"
 #include <math.h>
 
 bool Unit::update(std::list <AttackType*>& monsterAttacks, Map* map) {
+	SDL_Point p = { (int)map->getPlayer()->getPositionX(), (int)map->getPlayer()->getPositionY() };
+
 	actionsManager.onClosestObj(closestEnemy, closestEnemyDist);
 	actionsManager.updateAction();
-	passivesManager->activatePassives(PassiveActivateOn::Passive);
+	passivesManager->activatePassives(PassiveActivateOn::Passive, monsterAttacks, &p);
 	passivesManager->updateAllPassives();
 
 	speed = staticPassives[StaticPassiveName::unitSpeed];
@@ -20,7 +23,6 @@ bool Unit::update(std::list <AttackType*>& monsterAttacks, Map* map) {
 	if (staticPassives[StaticPassiveName::hp] <= 0)
 		return false;
 
-	SDL_Point p = { (int)map->getPlayer()->getPositionX(), (int)map->getPlayer()->getPositionY() };
 	actionsManager.makeAttack(this, monsterAttacks, &p);
 	actionsManager.makeMove(this);
 
@@ -63,6 +65,7 @@ void Unit::setClosestEnemy(Unit* u, double dist) {
 }
 
 void Unit::takeDamage(float damage) {
+	CombatTextManager::get().addDamage(damage, this);
 	passivesManager->addStartingStat(StaticPassiveName::hp, -damage); 
 }
 

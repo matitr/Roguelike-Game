@@ -5,6 +5,40 @@
 #include <iostream>
 
 
+#pragma region AttackPassivesManager
+void AttackPassivesManager::activateHitEnemy(std::list <AttackType*>& attacks, BuffsManager* buffsManager) {
+	for (int i = 0; i < attackPassives.size(); i++) {
+		if (attackPassives[i]->activateOn() == PassiveActivateOn::HitEnemy || attackPassives[i]->activateOn() == PassiveActivateOn::HitWallOrEnemy) {
+			if (attackPassives[i]->activate(attacks, NULL) && attackPassives[i]->buffOnActivate()) {
+				buffsManager->addBuffCopy(attackPassives[i]->buffOnActivate());
+			}
+		}
+	}
+}
+
+void AttackPassivesManager::activateHitWall(std::list <AttackType*>& attacks, BuffsManager* buffsManager) {
+	for (int i = 0; i < attackPassives.size(); i++) {
+		if (attackPassives[i]->activateOn() == PassiveActivateOn::HitWall || attackPassives[i]->activateOn() == PassiveActivateOn::HitWallOrEnemy) {
+			if (attackPassives[i]->activate(attacks, NULL) && attackPassives[i]->buffOnActivate()) {
+				buffsManager->addBuffCopy(attackPassives[i]->buffOnActivate());
+			}
+		}
+	}
+}
+
+void AttackPassivesManager::addAttackPassive(Passive* passive) {
+	attackPassives.push_back(passive);
+}
+
+void AttackPassivesManager::removeAttackPassive(Passive* passive) {
+	auto it_found = std::find(attackPassives.begin(), attackPassives.end(), passive);
+
+	if (it_found != attackPassives.end())
+		attackPassives.erase(it_found);
+}
+#pragma endregion
+
+
 void PassivesManager::updateAllPassives() {
 	for (int i = 0; i < passives.size(); i++) {
 		passives[i]->update();
@@ -53,10 +87,10 @@ void PassivesManager::limitStatistics() {
 	}
 }
 
-void PassivesManager::activatePassives(PassiveActivateOn activationType) {
+void PassivesManager::activatePassives(PassiveActivateOn activationType, std::list <AttackType*>& attacks, SDL_Point* attackPoint) {
 	for (int i = 0; i < passives.size(); i++) {
 		if (passives[i]->activateOn() == activationType) {
-			if (passives[i]->activate() && passives[i]->buffOnActivate()) {
+			if (passives[i]->activate(attacks, attackPoint) && passives[i]->buffOnActivate()) {
 				buffsManager->addBuffCopy(passives[i]->buffOnActivate());
 			}
 		}
@@ -64,7 +98,10 @@ void PassivesManager::activatePassives(PassiveActivateOn activationType) {
 }
 
 void PassivesManager::addPassive(Passive* passive) {
-	passives.push_back(passive);
+	if (passive->activateOn() == PassiveActivateOn::HitEnemy || passive->activateOn() == PassiveActivateOn::HitWall || passive->activateOn() == PassiveActivateOn::HitWallOrEnemy)
+		addAttackPassive(passive);
+	else
+		passives.push_back(passive);
 }
 
 void PassivesManager::removePassive(Passive* passive) {
@@ -74,6 +111,8 @@ void PassivesManager::removePassive(Passive* passive) {
 		passives.erase(it_found);
 
 	buffsManager->removeBuffs(passive);
+
+	removeAttackPassive(passive);
 }
 
 void PassivesManager::addStartingStat(StaticPassiveName::StaticPassiveName statName, float value) {

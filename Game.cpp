@@ -15,6 +15,7 @@
 #include "EndScreen.h"
 #include "PassivesManager.h"
 #include "Passive.h"
+#include "CombatTextManager.h"
 
 #include "Money.h"
 #include "Chest.h"
@@ -190,7 +191,6 @@ void Game::updateGame() {
 
 	map->render(gameObjects);
 	player->drawStatus();
-
 	for (it_objectSelected = objectSelected.begin(); it_objectSelected != objectSelected.end(); it_objectSelected++)
 		if ((*it_objectSelected).second && (*it_objectSelected).second->interacting())
 			(*it_objectSelected).second->updateInteraction(map, *interactiveObjects, player);
@@ -210,7 +210,7 @@ void Game::updateUnits() {
 
 	while (it_monsters != (*monsters).end()) {
 		if (!(*it_monsters)->update(monsterAttacks, map)) {
-			player->getPassivesManager()->activatePassives(PassiveActivateOn::EnemyKill);
+			player->getPassivesManager()->activatePassives(PassiveActivateOn::EnemyKill, playerProjectiles, NULL);
 			(*interactiveObjects).push_back(new Money((*it_monsters)->getPositionX(), (*it_monsters)->getPositionY())); // drop money	
 			std::list<AttackType*>::iterator it_projPlayer = playerProjectiles.begin(); // Delete Unit pointers in projectiles
 			while (it_projPlayer != playerProjectiles.end()) {
@@ -225,7 +225,7 @@ void Game::updateUnits() {
 			(*monsters).erase(tempItMonster);
 			if ((*monsters).empty()) {
 				map->currentRoom()->setBattle(false);
-				player->getPassivesManager()->activatePassives(PassiveActivateOn::RoomClear);
+				player->getPassivesManager()->activatePassives(PassiveActivateOn::RoomClear, monsterAttacks, NULL);
 			}
 
 			if (map->currentRoom()->type == Boss && monsters->empty()) { // Boss killed
@@ -311,6 +311,7 @@ void Game::newGame() {
 	map->currentRoom()->getRoomObjects(monsters, interactiveObjects);
 	map->setFieldsPositions();
 	player->setPosition(map->getCameraX(), map->getCameraY());
+	updateGame();
 }
 
 void Game::quitGame() {

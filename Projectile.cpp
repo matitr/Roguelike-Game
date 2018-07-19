@@ -101,16 +101,16 @@ void Projectile::onWallHit() {
 	destroyObj = true;
 }
 
-Projectile::Projectile(AnimationDetails& animationD, ItemPassives& passives, double attackDamage) : AttackType(passives, attackDamage), animation(animationD, srcRect) {
+Projectile::Projectile(AnimationDetails& animationD, PassivesManager* passivesManager, double attackDamage) : AttackType(passivesManager, attackDamage), animation(animationD, srcRect) {
 	speed = 5;
 	heightFromGround = 20;
 
-	if (passives[StaticPassiveName::projectileSpeedMult])
-		speed = speed * (1 + passives[StaticPassiveName::projectileSpeedMult]);
+	if (passivesManager->getUnitStatistics()[StaticPassiveName::projectileSpeedMult])
+		speed = speed * (1 + passivesManager->getUnitStatistics()[StaticPassiveName::projectileSpeedMult]);
 
-	if (passives[StaticPassiveName::projectileSizeMult]) {
-		dstRect.w = int(dstRect.w + dstRect.w * (1 + passives[StaticPassiveName::projectileSizeMult]));
-		dstRect.h = int(dstRect.h + dstRect.h * (1 + passives[StaticPassiveName::projectileSizeMult]));
+	if (passivesManager->getUnitStatistics()[StaticPassiveName::projectileSizeMult]) {
+		dstRect.w = int(dstRect.w + dstRect.w * (1 + passivesManager->getUnitStatistics()[StaticPassiveName::projectileSizeMult]));
+		dstRect.h = int(dstRect.h + dstRect.h * (1 + passivesManager->getUnitStatistics()[StaticPassiveName::projectileSizeMult]));
 		setRadius(dstRect.w / 2);
 	}
 }

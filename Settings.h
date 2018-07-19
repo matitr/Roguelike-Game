@@ -13,7 +13,8 @@ public:
 	PointInt resolution;
 	bool showPlayerHp;
 	bool showEnemyHp;
-
+	bool showDamage;
+	bool showEnemyDamage;
 
 
 

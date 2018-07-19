@@ -1,11 +1,14 @@
 #pragma once
 #ifndef PASSIVE_H
 #include <string>
+#include <list>
 
-enum class PassiveActivateOn { RoomClear, EnemyKill, Passive, size_of_enum };
-enum class PassiveName { None, OnRoomClearHeal, OnEnemyKillMoveSpeed, size_of_enum };
+enum class PassiveActivateOn { RoomClear, EnemyKill, Passive, TakeDamage, CreateAttack, HitEnemy, HitWall, HitWallOrEnemy, size_of_enum };
+enum class PassiveName { None, OnRoomClearHeal, OnEnemyKillMoveSpeed, OnHitSlowMoveSpeed, size_of_enum };
 
+struct SDL_Point;
 class Buff;
+class AttackType;
 
 class Passive {
 	PassiveActivateOn passActivateOn;
@@ -18,7 +21,7 @@ public:
 	Buff* buffOnActivate() { return buffFromPassive; }
 	std::string description() { return passiveDescription; }
 
-	virtual bool activate() { return true; }
+	virtual bool activate(std::list <AttackType*>& attacks, SDL_Point* attackPoint) { return true; }
 	virtual void update() {}
 
 	Passive(PassiveActivateOn activationOn);
@@ -32,7 +35,6 @@ public:
 class PassiveOnRoomClearHeal : public Passive {
 
 public:
-	bool activate() override;
 
 	PassiveOnRoomClearHeal() : Passive(PassiveActivateOn::RoomClear) {}
 	~PassiveOnRoomClearHeal() {}
@@ -42,10 +44,18 @@ public:
 class PassiveOnEnemyKillMoveSpeed : public Passive {
 
 public:
-	bool activate() override;
 
 	PassiveOnEnemyKillMoveSpeed();
 	~PassiveOnEnemyKillMoveSpeed() {}
+};
+
+
+class PassiveOnHitSlowMoveSpeed : public Passive {
+
+public:
+
+	PassiveOnHitSlowMoveSpeed();
+	~PassiveOnHitSlowMoveSpeed() {}
 };
 
 

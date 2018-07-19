@@ -35,8 +35,8 @@ void MeleeSwing::setAngles(int _attackAngle, int _attackWidthAngle) {
 	attackWidthAngle = _attackWidthAngle;
 }
 
-MeleeSwing::MeleeSwing(AnimationDetails& animation, ItemPassives& passives, double attackDamage)
-	: AttackType(passives, attackDamage), frames(animation.frames - 2), frameTime(animation.frameTime) {
+MeleeSwing::MeleeSwing(AnimationDetails& animation, PassivesManager* passivesManager, double attackDamage)
+	: AttackType(passivesManager, attackDamage), frames(animation.frames - 2), frameTime(animation.frameTime) {
 
 }
 

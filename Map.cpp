@@ -6,6 +6,7 @@
 #include "Chest.h"
 #include "Player.h"
 #include <algorithm>
+#include "CombatTextManager.h"
 
 
 void Map::generateNewLevel() {
@@ -31,6 +32,7 @@ void Map::createMinimap() {
 
 	// Minimap
 	SDL_SetRenderTarget(Game::renderer, minimap);
+	SDL_RenderClear(Game::renderer);
 	SDL_SetRenderDrawColor(Game::renderer, 255, 184, 77, 200);
 
 	r.w = 1;
@@ -173,6 +175,8 @@ void Map::render(std::vector <GameObject*>& gameObjects) {
 		gameObjects[iGameObject]->draw(&startRender);
 		iGameObject++;
 	}
+
+	CombatTextManager::get().drawAndUpdate(&startRender);
 
 	// Render minimap
 	if (minimapSize != MinimapClosed) {

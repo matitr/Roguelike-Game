@@ -34,16 +34,15 @@ void AttackType::onWallHit() {
 
 }
 
-AttackType::AttackType(ItemPassives& passives, double attackDamage)
-	: GameObject(TextureManager::textureParameters[SingleTexture::ProjectileT], Dynamic, Circle), staticPassives(passives) {
+AttackType::AttackType(PassivesManager* passivesManager, double attackDamage)
+	: GameObject(TextureManager::textureParameters[SingleTexture::ProjectileT], Dynamic, Circle), staticPassives(passivesManager->getUnitStatistics())
+, attackPassivesManager(*passivesManager) {
 
 	damage = attackDamage;
 	enemyHitted = false;
 	destroyObj = false;
 
 	unitsHitted.reserve(10);
-
-	damage += staticPassives[StaticPassiveName::damage];
 }
 
 

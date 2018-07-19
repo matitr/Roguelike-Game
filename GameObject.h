@@ -57,10 +57,12 @@ public:
 	void setPositionShiftY(float positionShiftY); // Pixels from top
 	void setDstRectSize(int x, int y);
 
+	const PointDouble& getPosition() const { return position; }
 	inline double getPositionX() const { return position.x; }
 	inline double getPositionY() const { return position.y; }
 	int getRadius() { return radius; }
 	int getRadiusY() { return radiusY; }
+	int getPositionShiftY() const { return positionShiftY; }
 	bool flatTextureOnFloor() const { return flatObjOnFloor; }
 
 	virtual void draw(SDL_Point* startRender);

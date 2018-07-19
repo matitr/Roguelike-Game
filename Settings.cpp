@@ -15,6 +15,8 @@ Settings* Settings::get() {
 Settings::Settings() {
 	showPlayerHp = 0;
 	showEnemyHp = 1;
+	showDamage = 1;
+	showEnemyDamage = 1;
 }
 
 

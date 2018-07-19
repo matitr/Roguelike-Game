@@ -15,7 +15,7 @@ public:
 	bool collision(Unit* u) override; // Collision type : sector
 	void setAngles(int attackAngle, int attackWidthAngle);
 
-	MeleeSwing(AnimationDetails& animation, ItemPassives& passives, double attackDamage);
+	MeleeSwing(AnimationDetails& animation, PassivesManager* passivesManager, double attackDamage);
 	~MeleeSwing();
 };
 

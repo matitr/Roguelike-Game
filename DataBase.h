@@ -15,8 +15,8 @@ enum class ItemType { Universal, MainWeapon, Active, Passive };
 enum class AnimationName { Projectile, Projectile2, ChestOpening, CoinSpin };
 
 
-enum class TextColor { ItemStatText, ItemPassive, ItemType, MenuButtonText };
-enum class FontPurpose { ItemDescription, GameEndResult, MenuButtonsText };
+enum class TextColor { ItemStatText, ItemPassive, ItemType, MenuButtonText, CombatTextDamage };
+enum class FontPurpose { ItemDescription, GameEndResult, MenuButtonsText, CombatText };
 
 enum class UnitName { Unit, Player };
 
@@ -58,8 +58,8 @@ struct ItemDetails {
 };
 
 struct Limits_t {
-	int min;
-	int max;
+	float min;
+	float max;
 };
 
 typedef std::array<Limits_t, StaticPassiveName::enum_size> ItemPassivesLimits;

@@ -3,13 +3,12 @@
 
 
 void SpriteAnimation::updateTexture() {
-	if (!(frameCounter % frameTime) && frameCounter) { // Next texture frame
+	if (frameCounter == frameTime) { // Next texture frame
 		if (currFrame + 1 == frames) { // The last texture frame has ended
 
 			srcRectAnimation.x = firstFrame.x;
 			srcRectAnimation.y = firstFrame.y;
 
-			frameCounter = 0;
 			currFrame = 0;
 		}
 		else { // Update frame
@@ -21,6 +20,7 @@ void SpriteAnimation::updateTexture() {
 				srcRectAnimation.x += srcRectAnimation.w;
 			currFrame++;
 		}
+		frameCounter = 0;
 	}
 	frameCounter++;
 }
@@ -29,7 +29,7 @@ void SpriteAnimation::setFirstFrame() {
 	srcRectAnimation.x = firstFrame.x;
 	srcRectAnimation.y = firstFrame.y;
 
-	frameCounter = 0;
+	frameCounter = 1;
 	currFrame = 0;
 }
 
@@ -47,7 +47,7 @@ void SpriteAnimation::setFrameCounter(SpriteAnimation& animationOther) {
 }
 
 bool SpriteAnimation::firstTimuUnitOfFrame(int frame) {
-	return (currFrame == frame && (frameCounter - frameTime * currFrame) == 1); 
+	return (currFrame == frame && frameCounter == 1); 
 }
 
 SpriteAnimation::SpriteAnimation(AnimationDetails& animationD, SDL_Rect &_srcRect)
@@ -55,7 +55,7 @@ SpriteAnimation::SpriteAnimation(AnimationDetails& animationD, SDL_Rect &_srcRec
 
 	srcRectAnimation.x = animationD.firstFrame.x;
 	srcRectAnimation.y = animationD.firstFrame.y;
-	frameCounter = 0;
+	frameCounter = 1;
 	currFrame = 0;
 }
 

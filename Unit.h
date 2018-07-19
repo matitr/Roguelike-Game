@@ -1,5 +1,4 @@
 #pragma once
-#include "Animation.h"
 #include "Map.h"
 #include "Attacks.h"
 #include "GameObject.h"
@@ -40,6 +39,7 @@ public:
 	void setClosestEnemy(Unit* u, double dist);
 
 	void takeDamage(float damage);
+	const UnitType& getUnitType() { return unitType; }
 	ItemPassives& getPassives() { return staticPassives; }
 	ActionsManager& getActiongManager() { return actionsManager; }
 	PassivesManager* getPassivesManager() { return passivesManager; }

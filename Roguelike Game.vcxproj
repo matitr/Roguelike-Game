@@ -69,7 +69,12 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -136,12 +141,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ActionsManager.cpp" />
-    <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Attacks.cpp" />
     <ClCompile Include="Buff.cpp" />
     <ClCompile Include="BuffsManager.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Chest.cpp" />
+    <ClCompile Include="CombatText.cpp" />
+    <ClCompile Include="CombatTextManager.cpp" />
     <ClCompile Include="DataBase.cpp" />
     <ClCompile Include="EndScreen.cpp" />
     <ClCompile Include="Field.cpp" />
@@ -177,12 +183,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ActionsManager.h" />
-    <ClInclude Include="Animation.h" />
     <ClInclude Include="Attacks.h" />
     <ClInclude Include="Buff.h" />
     <ClInclude Include="BuffsManager.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="Chest.h" />
+    <ClInclude Include="CombatText.h" />
+    <ClInclude Include="CombatTextManager.h" />
     <ClInclude Include="DataBase.h" />
     <ClInclude Include="EndScreen.h" />
     <ClInclude Include="Field.h" />
