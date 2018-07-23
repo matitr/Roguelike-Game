@@ -178,6 +178,13 @@ void Map::render(std::vector <GameObject*>& gameObjects) {
 
 	CombatTextManager::get().drawAndUpdate(&startRender);
 
+	renderMinimap();
+	fieldRect.h = fieldRectH;
+}
+
+void Map::renderMinimap() {
+	SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 100);
+
 	// Render minimap
 	if (minimapSize != MinimapClosed) {
 		SDL_RenderCopy(Game::renderer, minimapBackground, &minimapSrcRect, &minimapDstRect);
@@ -185,12 +192,24 @@ void Map::render(std::vector <GameObject*>& gameObjects) {
 		SDL_RenderDrawRect(Game::renderer, &minimapDstRect);
 	}
 
-	if (minimapSize == MinimapLarge)
-		SDL_RenderDrawPoint(Game::renderer, minimapDstRect.x + cameraPos.x / fieldRect.w, minimapDstRect.y + cameraPos.y / fieldRect.h);
-	else if (minimapSize == MinimapSmall)
-		SDL_RenderDrawPoint(Game::renderer, minimapDstRect.x + MINIMAP_WIDTH / 2, minimapDstRect.y + MINIMAP_HEIGHT / 2);
+	// Show player on minimap
+	SDL_Rect r = { minimapDstRect.x + cameraPos.x / fieldRect.w, minimapDstRect.y + cameraPos.y / fieldRect.h, MINIMAP_SCALE, MINIMAP_SCALE };
+	if (r.h < 0) {
+		r.w = 1; r.h = 1;
+	}
 
-	fieldRect.h = fieldRectH;
+	if (minimapSize == MinimapLarge) {
+		minimapDstRect.x -= (int)r.w;
+		minimapDstRect.y -= (int)r.h;
+		SDL_RenderFillRect(Game::renderer, &r);
+	}
+	else if (minimapSize == MinimapSmall) {
+		r.x = minimapDstRect.x + MINIMAP_WIDTH / 2;
+		r.y = minimapDstRect.y + MINIMAP_HEIGHT / 2;
+		minimapDstRect.x -= (int)r.w;
+		minimapDstRect.y -= (int)r.h;
+		SDL_RenderFillRect(Game::renderer, &r);
+	}
 }
 
 void Map::setFieldsPositions() {

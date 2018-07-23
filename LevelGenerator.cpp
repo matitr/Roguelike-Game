@@ -11,21 +11,12 @@
 void LevelGenerator::generateNewMap() {
 	int roomsNumber = 1 + 1 + 2 + 2 + rand() % 5 + 10;
 	rooms.resize(roomsNumber);
-	generateSpecialRooms(roomsNumber);
+	generateRooms(roomsNumber);
 	levelTexture = TextureManager::textures[TextureFile::LEVEL_1];
 	int x, y;
 	int i;
 
-	for (i = 1; i < roomsNumber; i++) {
-		if (!rooms[i]) {
-			x = rand() % (MAP_WIDTH - BORDER_SIZE - BORDER_SIZE - 50) + BORDER_SIZE;
-			y = rand() % (MAP_HEIGHT - BORDER_SIZE - BORDER_SIZE - 50) + BORDER_SIZE;
-			rooms[i] = new Room(x, y, x + rand() % 20 + 30, y + rand() % 20 + 20, Monsters); // mobs room
-		}
-	}
-
 	findPositionForRooms(roomsNumber);
-
 	generateHallways(roomsNumber);
 
 	for (i = 0; i < roomsNumber; i++)
@@ -35,8 +26,17 @@ void LevelGenerator::generateNewMap() {
 		createRoom(rooms[i]);
 }
 
-void LevelGenerator::generateSpecialRooms(int &roomsNumber) {
+void LevelGenerator::generateRooms(int &roomsNumber) {
 	int x, y;
+
+	for (int i = 1; i < roomsNumber; i++) {
+		if (!rooms[i]) {
+			x = rand() % (MAP_WIDTH - BORDER_SIZE - BORDER_SIZE - 50) + BORDER_SIZE;
+			y = rand() % (MAP_HEIGHT - BORDER_SIZE - BORDER_SIZE - 50) + BORDER_SIZE;
+			rooms[i] = new Room(x, y, x + rand() % 20 + 30, y + rand() % 20 + 20, Monsters); // mobs room
+		}
+	}
+
 	rooms[0] = new Room(MAP_WIDTH / 2 - 15, MAP_HEIGHT / 2 - 15, MAP_WIDTH / 2 - 15 + 30, MAP_HEIGHT / 2 - 15 + 15, Spawn); // start room
 
 	x = rand() % (MAP_WIDTH - BORDER_SIZE - BORDER_SIZE - 50) + BORDER_SIZE;

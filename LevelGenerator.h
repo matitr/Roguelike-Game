@@ -17,7 +17,7 @@ class LevelGenerator {
 	Player* player;
 	SDL_Rect fieldRect;
 
-	void generateSpecialRooms(int &roomNumber);
+	void generateRooms(int &roomNumber);
 	void findPositionForRooms(int roomsNumber);
 	void createRoom(Room* room);
 	void generateHallways(int &roomsNumber);

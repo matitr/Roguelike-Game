@@ -107,7 +107,7 @@ SDL_Texture* TextureManager::textureFromText(std::string textStr, TTF_Font* font
 				TTF_SizeText(font, textStr.substr(0, tempSplitPos).c_str(), &lineWidth, NULL);
 			} while (tempSplitPos != std::string::npos && lineWidth < maxTextWidth);
 
-			if (tempSplitPos == std::string::npos) { // Not found split point
+			if (tempSplitPos == std::string::npos && lineWidth < maxTextWidth) { // Not found split point
 				lines.push_back(textStr);
 				textStr = "";
 			}

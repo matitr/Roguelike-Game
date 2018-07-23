@@ -214,7 +214,20 @@ NoMoveFaceEnemy::~NoMoveFaceEnemy() {
 
 #pragma region Charge
 void Charge::makeMove() {
+	if (getChargeTargetPos) {
+		getChargeTargetPos = false;
 
+		chargeTargetPos.x = player->getPositionX();
+		chargeTargetPos.y = player->getPositionY();
+    }
+
+	unitToMove->velocity.x = chargeTargetPos.x - unitToMove->getPositionX();
+	unitToMove->velocity.y = chargeTargetPos.y - unitToMove->getPositionY();
+}
+
+void Charge::resetMove() {
+	getChargeTargetPos = true;
+	movementCanEnd = false;
 }
 
 Charge::Charge(Unit* _unitToMove, Unit* _player) : Movement(_unitToMove), player(_player) {

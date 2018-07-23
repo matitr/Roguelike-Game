@@ -23,6 +23,7 @@ class Map: public MapCore {
 	SDL_Texture* teleportMap;
 
 	LevelGenerator generator;
+	void renderMinimap();
 public:
 	std::vector<Room*> rooms; // rooms[0] is spawn
 

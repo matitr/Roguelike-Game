@@ -78,27 +78,21 @@ void MapCore::changeMinimapSize(MinimapSize showM){
 	minimapSize = showM;
 
 	if (minimapSize == MinimapLarge || minimapSize == MinimapClosed) {
-		minimapDstRect.x = resolution.x / 2 - MAP_WIDTH / 2;
-		minimapDstRect.y = resolution.y / 2 - MAP_HEIGHT / 2;
 		minimapDstRect.w = MAP_WIDTH;
 		minimapDstRect.h = MAP_HEIGHT;
 
 		minimapSrcRect.w = MAP_WIDTH;
 		minimapSrcRect.h = MAP_HEIGHT;
-		minimapSrcRect.x = 0;
-		minimapSrcRect.y = 0;
 	}
 	else if (minimapSize == MinimapSmall) {
-		minimapDstRect.x = resolution.x - MINIMAP_WIDTH - 20;
-		minimapDstRect.y = 20;
 		minimapDstRect.w = MINIMAP_WIDTH;
 		minimapDstRect.h = MINIMAP_HEIGHT;
 
-		minimapSrcRect.w = MINIMAP_WIDTH;
-		minimapSrcRect.h = MINIMAP_HEIGHT;
-		minimapSrcRect.x = cameraPos.x / fieldRect.w - MINIMAP_WIDTH / 2;
-		minimapSrcRect.y = HEIGHT_SCALE * cameraPos.y / fieldRect.h - MINIMAP_HEIGHT / 2;
+		minimapSrcRect.w = MINIMAP_WIDTH / MINIMAP_SCALE;
+		minimapSrcRect.h = MINIMAP_HEIGHT / MINIMAP_SCALE;
 	}
+
+	upDateMinimapPos();
 }
 
 void MapCore::upDateMinimapPos() {
@@ -114,8 +108,8 @@ void MapCore::upDateMinimapPos() {
 		minimapDstRect.x = resolution.x - MINIMAP_WIDTH - 20;
 		minimapDstRect.y = 20;
 
-		minimapSrcRect.x = cameraPos.x / fieldRect.w - MINIMAP_WIDTH / 2;
-		minimapSrcRect.y = HEIGHT_SCALE * cameraPos.y / fieldRect.h - MINIMAP_HEIGHT / 2;
+		minimapSrcRect.x = cameraPos.x / fieldRect.w - (MINIMAP_WIDTH / 2) / MINIMAP_SCALE;
+		minimapSrcRect.y = HEIGHT_SCALE * cameraPos.y / fieldRect.h - (MINIMAP_HEIGHT / 2) / MINIMAP_SCALE;
 	}
 }
 

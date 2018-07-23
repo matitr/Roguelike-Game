@@ -10,6 +10,8 @@
 #define MINIMAP_HEIGHT 140
 #define MINIMAP_WIDTH 180
 
+#define MINIMAP_SCALE 2
+
 #define HEIGHT_SCALE 1
 
 struct SDL_Texture;

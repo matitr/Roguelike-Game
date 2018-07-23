@@ -24,7 +24,7 @@ void ActionsManager::updateAction() {
 		actions[*currAction]->setDirection(velocity.x, velocity.y);
 	}
 	else {
-		if (!actions[*currAction]->dynamicActivationOnly())
+		if (!actions[*currAction]->dynamicActivationOnly()) // Idle
 			actions[*currAction]->setFirstFrame();
 
 		actions[*currAction]->setDirection(dirPast);
@@ -118,6 +118,7 @@ void ActionsManager::changeAction(std::list<ActionType>::iterator actionIt) {
 	actions[*actionIt]->setFirstFrame();
 	actions[*actionIt]->setDirection(*actions[*currAction]);
 	actions[*actionIt]->resetCooldown();
+	actions[*actionIt]->resetMove();
 	currAction = actionIt;
 	actionChanged = true;
 }

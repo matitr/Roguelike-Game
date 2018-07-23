@@ -3,6 +3,7 @@
 #include <stack>
 #include <vector>
 #include "SDL.h"
+#include "myMath.h"
 
 class Map;
 class Unit;
@@ -12,11 +13,11 @@ class Movement {
 	double speed = -1;
 	double speedMultiplier = -1;
 
-	bool movementCanEnd = true;
-	bool movementEnded = false;
-
 protected:
 	Unit* unitToMove;
+
+	bool movementCanEnd = true;
+	bool movementEnded = false;
 public:
 	virtual void makeMove() = 0;
 	virtual void resetMove() {}
@@ -58,8 +59,8 @@ class MoveForwardPlayer : public Movement {
 	A_Star aStar;
 	int moveCooldown = 0;
 public:
-	void makeMove();
-	void resetMove();
+	void makeMove() override;
+	void resetMove() override;
 
 	MoveForwardPlayer(Unit* unitToMove, Map* _map, Unit* _player);
 	~MoveForwardPlayer();
@@ -68,7 +69,7 @@ public:
 class NoMoveFaceEnemy : public Movement {
 	Unit* player;
 public:
-	void makeMove();
+	void makeMove() override;
 
 	NoMoveFaceEnemy(Unit* unitToMove, Unit* _player);
 	~NoMoveFaceEnemy();
@@ -76,8 +77,11 @@ public:
 
 class Charge : public Movement {
 	Unit* player;
+	PointInt chargeTargetPos;
+	bool getChargeTargetPos = true;
 public:
-	void makeMove();
+	void makeMove() override;
+	void resetMove() override;
 
 	Charge(Unit* unitToMove, Unit* _player);
 	~Charge();
