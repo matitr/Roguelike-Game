@@ -39,7 +39,7 @@ void Map::createMinimap() {
 	r.h = 1;
 
 	for (int i = 0; i < rooms.size(); i++) { // for every room addToMinimap if already visited
-		if (rooms[i]->visited && std::find(roomsOnMiniman.begin(), roomsOnMiniman.end(), rooms[i]) == roomsOnMiniman.end()) {
+		if (std::find(roomsOnMiniman.begin(), roomsOnMiniman.end(), rooms[i]) == roomsOnMiniman.end()) {
 			addToMinimap(rooms[i]);
 		}
 	}
@@ -60,7 +60,7 @@ void Map::addToMinimap(Room* room) {
 	if (std::find(roomsOnMiniman.begin(), roomsOnMiniman.end(), room) == roomsOnMiniman.end()){
 		for (y = room->y1; y < room->y2; y++) {
 			for (x = room->x1; x < room->x2; x++) {
-				if (getField(x, y) && (getField(x, y)->type() == Floor)) {
+				if (getField(x, y) && (getField(x, y)->type() == FieldType::Floor)) {
 					r.x = x;
 					r.y = y;
 					SDL_RenderFillRect(Game::renderer, &r);
@@ -89,7 +89,7 @@ void Map::addToMinimap(Room* room) {
 		if (std::find(roomsOnMiniman.begin(), roomsOnMiniman.end(), (*it)) == roomsOnMiniman.end()) {
 			for (y = (*it)->y1; y <= (*it)->y2; y++) {
 				for (x = (*it)->x1; x <= (*it)->x2; x++) {
-					if (getField(x, y) && (getField(x, y)->type() == Floor || getField(x, y)->type() == Door)) {
+					if (getField(x, y) && (getField(x, y)->type() == FieldType::Floor || getField(x, y)->type() == FieldType::Door)) {
 						r.x = x;
 						r.y = y;
 						SDL_RenderFillRect(Game::renderer, &r);
@@ -224,34 +224,34 @@ void Map::changeRoom(Room* room, Field* fieldToMove) {
 	int x = fieldToMove->x(), y = fieldToMove->y();
 	int newX, newY;
 	
-	if (getField(x + 1, y)->type() == Door) { // Doors are horizontally
-		newX = x * fieldRect.w + fieldRect.w / 2;
+	if (getField(x + 1, y)->type() == FieldType::Door) { // Doors are horizontally
+		newX = x * fieldRect.w + fieldRect.w;
 		if (y + 1 <= room->y2) // Top
-			newY = (y + 2) * fieldRect.h;
+			newY = (y + 1.5) * fieldRect.h;
 		else
-			newY = (y - 2) * fieldRect.h;
+			newY = (y - 0.5) * fieldRect.h;
 	}
-	else if (getField(x - 1, y)->type() == Door) { // Doors are horizontally
-		newX = x * fieldRect.w - fieldRect.w / 2;
+	else if (getField(x - 1, y)->type() == FieldType::Door) { // Doors are horizontally
+		newX = x * fieldRect.w;
 		if (y + 1 <= room->y2) // Top
-			newY = (y + 2) * fieldRect.h;
+			newY = (y + 1.5) * fieldRect.h;
 		else
-			newY = (y - 2) * fieldRect.h;
+			newY = (y - 0.5) * fieldRect.h;
 	}
-	else if (getField(x, y + 1)->type() == Door) { // Doors are vertically
-		newY = y * fieldRect.w + fieldRect.w / 2;
+	else if (getField(x, y + 1)->type() == FieldType::Door) { // Doors are vertically
+		newY = y * fieldRect.w + fieldRect.w;
 		if (x + 1 <= room->x2) // Left
-			newX = (x + 2) * fieldRect.w;
+			newX = (x + 1.5) * fieldRect.w;
 		else
-			newX = (x - 2) * fieldRect.w;
+			newX = (x - 0.5) * fieldRect.w;
 
 	}
 	else { // Doors are vertically
-		newY = y * fieldRect.w - fieldRect.w / 2;
+		newY = y * fieldRect.w;
 		if (x + 1 <= room->x2)
-			newX = (x + 2) * fieldRect.w;
+			newX = (x + 1.5) * fieldRect.w;
 		else
-			newX = (x - 2) * fieldRect.w;
+			newX = (x - 0.5) * fieldRect.w;
 	}
 
 	currRoom = room;

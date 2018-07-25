@@ -216,7 +216,7 @@ void GameObject::collisionUnitFields(Map* map, SDL_Rect& fieldRect) {
 			for (auto it_collisionObj = field->getCollisionObj().begin(); it_collisionObj != field->getCollisionObj().end(); it_collisionObj++)
 				collisionUnit(*it_collisionObj);
 
-			if (field->type() != Floor) { // Check collision
+			if (field->type() != FieldType::Floor) { // Check collision
 				minX = position.x < (field->getPositionX() + field->getRadius()) ? position.x : (field->getPositionX() + field->getRadius());
 				deltaX = position.x - ((field->getPositionX() - field->getRadius()) > minX ? (field->getPositionX() - field->getRadius()) : minX);
 

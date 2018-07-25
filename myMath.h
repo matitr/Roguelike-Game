@@ -1,4 +1,5 @@
 #pragma once
+#include <utility> 
 
 
 
@@ -25,7 +26,7 @@ struct PointDouble {
 };
 
 struct PointInt {
-	double x, y;
+	int x, y;
 
 	PointInt() {
 		x = 0;
@@ -35,9 +36,19 @@ struct PointInt {
 		x = _x;
 		y = _y;
 	}
+	bool const operator== (const PointInt &p) const {
+		return x == p.x && y == p.y;
+	}
+	bool const operator< (const PointInt &p) const {
+		return x < p.x || (x == p.x && y < p.y);
+	}
 };
 
-
+struct PointInt_cmp {
+	bool operator() (PointInt a, PointInt b) const {
+		return std::make_pair(a.x, a.y) > std::make_pair(b.x, b.y);
+	}
+};
 
 
 

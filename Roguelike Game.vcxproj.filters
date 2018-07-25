@@ -219,9 +219,6 @@
     <ClInclude Include="Screen.h">
       <Filter>Screens</Filter>
     </ClInclude>
-    <ClInclude Include="myMath.h">
-      <Filter>Combat</Filter>
-    </ClInclude>
     <ClInclude Include="Buff.h">
       <Filter>Passives</Filter>
     </ClInclude>
@@ -245,6 +242,9 @@
     </ClInclude>
     <ClInclude Include="CombatTextManager.h">
       <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="myMath.h">
+      <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

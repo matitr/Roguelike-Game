@@ -5,8 +5,8 @@
 
 
 void Field::setPosition(int _x, int _y) {
-	xPos = _x;
-	yPos = _y;
+	fieldPos.x = _x;
+	fieldPos.y = _y;
 
 	position.x = (_x * dstRect.w) + radius;
 	position.y = (_y * dstRect.h) + radius;
@@ -40,7 +40,7 @@ double Field::distanceEdgesY(Field* otherField) {
 
 Field::Field(SDL_Texture* txt, SDL_Rect& _srcRect, FieldType _type) : GameObject(txt, Static, Rectangle, _srcRect.w / 2) {
 	fieldType = _type;
-	if (_type == Floor)
+	if (_type == FieldType::Floor)
 		isGround = true;
 
 	srcRect.x = _srcRect.x;

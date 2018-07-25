@@ -49,9 +49,10 @@ bool Player::update(std::list <AttackType*>& playerProjectiles, Map* map, SDL_Re
 		field = map->getField(int(position.x + radius + speed) / fieldRect.w, int(position.y) / fieldRect.h);
 
 	if (velocity.x != 0)
-		if (field->type() == Door && !map->currentRoom()->battle) {
-			Field * f = map->currentRoom()->doorsConnection[field];
-			map->changeRoom(map->currentRoom()->roomConnection[field], map->currentRoom()->doorsConnection[field]);
+		if (field->type() == FieldType::Door && !map->currentRoom()->battle) {
+			const PointInt& fieldPos = field->getFieldPos();
+			const PointInt& fieldToMovePos = map->currentRoom()->doorsConnection[fieldPos];
+			map->changeRoom(map->currentRoom()->roomConnection[fieldPos], map->getField(fieldToMovePos.x, fieldToMovePos.y));
 			setPosition(map->getCameraX(), map->getCameraY());
 			velocity.x = 0;
 			velocity.y = 0;
@@ -65,8 +66,10 @@ bool Player::update(std::list <AttackType*>& playerProjectiles, Map* map, SDL_Re
 		field = map->getField(int(position.x) / fieldRect.w, int(position.y + radius + speed) / fieldRect.h);
 
 	if (velocity.y != 0)
-		if (field->type() == Door && !map->currentRoom()->battle) {
-			map->changeRoom(map->currentRoom()->roomConnection[field], map->currentRoom()->doorsConnection[field]);
+		if (field->type() == FieldType::Door && !map->currentRoom()->battle) {
+			const PointInt& fieldPos = field->getFieldPos();
+			const PointInt& fieldToMovePos = map->currentRoom()->doorsConnection[fieldPos];
+			map->changeRoom(map->currentRoom()->roomConnection[fieldPos], map->getField(fieldToMovePos.x, fieldToMovePos.y));
 			setPosition(map->getCameraX(), map->getCameraY());
 			velocity.x = 0;
 			velocity.y = 0;

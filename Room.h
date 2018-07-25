@@ -1,6 +1,9 @@
 #pragma once
+#include "SDL.h"
 #include "Field.h"
+#include "myMath.h"
 #include <unordered_map>
+#include <map>
 #include <vector>
 #include <list>
 
@@ -25,8 +28,10 @@ public:
 	int x2, y2;
 	std::list<Room*> connectedRooms;
 	std::list<Room*> hallways;
-	std::unordered_map<Field*, Field*> doorsConnection;
-	std::unordered_map<Field*, Room*> roomConnection;
+
+	std::map<PointInt, PointInt, PointInt_cmp> doorsConnection;
+	std::map<PointInt, Room*, PointInt_cmp> roomConnection;
+
 
 	Teleporter* telporter;
 
@@ -42,11 +47,11 @@ public:
 	double roomCenterX(int fieldW) { return (x1 + (x2 - x1) / 2.0) * fieldW + fieldW / 2.0; }
 	double roomCenterY(int fieldY) { return (y1 + (y2 - y1) / 2.0) * fieldY + fieldY / 2.0; }
 
-	void addConnection(Field* fieldThisRoom, Field* fieldOtherRoom, Room* otherRoom);
+	void addConnection(const PointInt& fieldThisRoom, const PointInt& fieldOtherRoom, Room* otherRoom);
 	bool addConnectedRoom(Room* r);
 	bool connectedRoom(Room* r);
 
-	void addHallway(Room* otherRoom, SDL_Point&, SDL_Point&);
+	void addHallway(Room* otherRoom, PointInt&, PointInt&);
 
 	void spawnMonsters(Map* _map, Unit* _player);
 	void getRoomObjects(std::list <Unit*>*& monsters, std::vector <InteractiveObject*>*& interactiveObjects);

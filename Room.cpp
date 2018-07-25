@@ -28,7 +28,7 @@ bool Room::addConnectedRoom(Room* r) {
 	return true;
 }
 
-void Room::addConnection(Field* fieldThisRoom, Field* fieldOtherRoom, Room* otherRoom) {
+void Room::addConnection(const PointInt& fieldThisRoom, const PointInt& fieldOtherRoom, Room* otherRoom) {
 	doorsConnection[fieldThisRoom] = fieldOtherRoom;
 	roomConnection[fieldThisRoom] = otherRoom;
 
@@ -43,7 +43,7 @@ bool Room::connectedRoom(Room* r) {
 	return false;
 }
 
-void Room::addHallway(Room* otherRoom, SDL_Point& p1, SDL_Point& p2) {
+void Room::addHallway(Room* otherRoom, PointInt& p1, PointInt& p2) {
 	Room* hallway = new Room(p1.x, p1.y, p2.x, p2.y, Hallway);
 
 	hallways.push_back(hallway);
@@ -67,7 +67,7 @@ void Room::spawnMonsters(Map* _map, Unit* _player) {
 			do {
 				enemyX = x1 + rand() % ((x2 - x1));
 				enemyY = y1 + rand() % ((y2 - y1));
-			} while (!_map->getField(enemyX, enemyY) || _map->getField(enemyX, enemyY)->type() != Floor);
+			} while (!_map->getField(enemyX, enemyY) || _map->getField(enemyX, enemyY)->type() != FieldType::Floor);
 			m->setPosition(enemyX * _map->fieldRect.w, enemyY * _map->fieldRect.h);
 		}
 	}
