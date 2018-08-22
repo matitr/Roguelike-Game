@@ -21,7 +21,6 @@ class Player : public Unit {
 	SDL_Rect statusSrcRect, statusDstRest;
 
 	int attack;
-	SDL_Point attackPos;
 	MultipleProjectiles* attackP;
 	bool attackCancel = false;
 	bool attackSkip = false;
@@ -47,7 +46,6 @@ public:
 
 	Inventory& inventory() { return playerIntentory; }
 
-	bool alive() { return staticPassives[StaticPassiveName::hp] > 0 ? true : false; }
 	void addMoney(int m) { money += m; }
 	int getMoney() { return money; }
 	void takeMoney(int& m);

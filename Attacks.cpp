@@ -24,7 +24,7 @@ AttackPattern::~AttackPattern() {
 
 }
 
-void ProjectileDirection::makeAttack(Unit* unit, std::list <AttackType*>& attacksContainer, SDL_Point* attackPoint) {
+void ProjectileDirection::makeAttack(Unit* unit, std::list <AttackType*>& attacksContainer, PointInt* attackPoint) {
 	angle = startAngle;
 	for (int i = 0; i < numbOfProj; i++) {
 		Projectile* p = new Projectile(animationD, unit->getPassivesManager(), attackDamage(unit->getPassives()));
@@ -39,12 +39,10 @@ void ProjectileDirection::makeAttack(Unit* unit, std::list <AttackType*>& attack
 
 		p->setPosition(unit->getPositionX(), unit->getPositionY());
 		attacksContainer.push_back(p);
-		if (i > 25)
-			i = i;
 	}
 }
 
-void MultipleProjectiles::makeAttack(Unit* unit, std::list <AttackType*>& attacksContainer, SDL_Point* posToShot) {
+void MultipleProjectiles::makeAttack(Unit* unit, std::list <AttackType*>& attacksContainer, PointInt* posToShot) {
 	
 	double dir = atan2((posToShot->y - (int)unit->getPositionY()), (posToShot->x - (int)unit->getPositionX()));
 	int startingAngle = int(dir * 180.0 / 3.14159265);
@@ -72,7 +70,7 @@ void MultipleProjectiles::makeAttack(Unit* unit, std::list <AttackType*>& attack
 	}
 }
 
-void MeleeSwingAttack::makeAttack(Unit* unit, std::list <AttackType*>& attacksContainer, SDL_Point* attackPoint) {
+void MeleeSwingAttack::makeAttack(Unit* unit, std::list <AttackType*>& attacksContainer, PointInt* attackPoint) {
 	MeleeSwing* attack = new MeleeSwing(animationD, unit->getPassivesManager(), attackDamage(unit->getPassives()));
 
 	SDL_Point attackPos = { attackPoint->x - (int)unit->getPositionX(), attackPoint->y - (int)unit->getPositionY() };

@@ -26,13 +26,17 @@ class LevelGenerator {
 
 	void generateRooms(int &roomNumber);
 	void findPositionForRooms(int roomsNumber);
-	void createRoom(Room* room);
 	void generateHallways(int &roomsNumber);
 	void createHallwayH(PointInt&, PointInt&); // Horizontal, (p1.y >= p2.y)
 	void createHallwayV(PointInt&, PointInt&); // Vertical, (p1.y >= p2.y)
 
-	void generateRoomFields(Room* room);
+	void createRoom(Room* room);
+	void generateColumns(Room* room);
+
+	void addWallsDepth(Room* room);
 	void createAllFields();
+	void createFieldsLeftIsWall(int x, int y);
+	void createFieldsRighttIsWall(int x, int y);
 	void createRoomObjects(Room* room);
 public:
 	void generateNewMap();

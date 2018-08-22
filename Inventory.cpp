@@ -59,10 +59,10 @@ void Inventory::update(Map* map, Player* player) {
 		}
 	}
 
-	updateFocusOnSlot();
+	updateFocusOnSlot(player);
 }
 
-void Inventory::updateFocusOnSlot() {
+void Inventory::updateFocusOnSlot(Unit* unit) {
 	if (slotUnderMouse) {
 		if (Input::mousePressed[SDL_BUTTON_LEFT]) { // Move item
 			if (!clickedSlot && slotUnderMouse->item) { // First click
@@ -76,12 +76,12 @@ void Inventory::updateFocusOnSlot() {
 					if (clickedSlotEq && !slotUnderMouseEq)
 						unitPassivesManager->unequipItem(clickedItem);
 					else if (!clickedSlotEq && slotUnderMouseEq)
-						unitPassivesManager->equipItem(clickedItem);
+						unitPassivesManager->equipItem(clickedItem, unit);
 					if (slotUnderMouse->item) {
 						slotUnderMouse->item->setPositionX(clickedSlot->rect.x + clickedSlot->rect.w / 2);
 						slotUnderMouse->item->setPositionY(clickedSlot->rect.y + clickedSlot->rect.h / 2);
 						if (clickedSlotEq && !slotUnderMouseEq)
-							unitPassivesManager->equipItem(slotUnderMouse->item);
+							unitPassivesManager->equipItem(slotUnderMouse->item, unit);
 						else if (!clickedSlotEq && slotUnderMouseEq)
 							unitPassivesManager->unequipItem(slotUnderMouse->item);
 					}
@@ -100,7 +100,7 @@ void Inventory::updateFocusOnSlot() {
 					unequipItem(slotUnderMouse);
 				}
 				else { // Slot in inventory
-					equipItem(slotUnderMouse);
+					equipItem(slotUnderMouse, unit);
 				}
 			}
 		}
@@ -167,7 +167,7 @@ void Inventory::dropItem(Item* item) {
 
 }	
 
-void Inventory::equipItem(InventorySlot* itemSlotToEquip) {
+void Inventory::equipItem(InventorySlot* itemSlotToEquip, Unit* unit) {
 	InventorySlot* toEquip = nullptr;
 
 	for (int i = 0; i < equippedSlots.size(); i++) // Find slot
@@ -177,7 +177,7 @@ void Inventory::equipItem(InventorySlot* itemSlotToEquip) {
 		}
 
 	if (toEquip) {
-		unitPassivesManager->equipItem(itemSlotToEquip->item);
+		unitPassivesManager->equipItem(itemSlotToEquip->item, unit);
 		toEquip->item = itemSlotToEquip->item;
 		toEquip->item->setPositionX(toEquip->rect.x + toEquip->rect.w / 2);
 		toEquip->item->setPositionY(toEquip->rect.y + toEquip->rect.h / 2);

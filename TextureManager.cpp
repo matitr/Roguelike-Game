@@ -35,20 +35,42 @@ void TextureManager::loadAllTextures() {
 
 void TextureManager::loadAllTextureSrcRect() { // srcRect = { x, y, w, h }
 	int fieldSize = 60;
-
+	// FLOORS
 	fieldTextureSrcRect[SingleFieldTexture::WOOD_FLOOR] = { fieldSize * 0,fieldSize * 0,fieldSize,fieldSize };
-	fieldTextureSrcRect[SingleFieldTexture::DOORS] = { fieldSize * 1,fieldSize * 0,fieldSize,fieldSize };
-	fieldTextureSrcRect[SingleFieldTexture::WALL_SIDE0] = { fieldSize * 2,fieldSize * 0,fieldSize,fieldSize };
-	fieldTextureSrcRect[SingleFieldTexture::WALL_SIDE1] = { fieldSize * 3,fieldSize * 0,fieldSize,fieldSize };
-	fieldTextureSrcRect[SingleFieldTexture::WALL_CORSEN_LT] = { fieldSize * 5,fieldSize * 1,fieldSize,fieldSize };
-	fieldTextureSrcRect[SingleFieldTexture::WALL_CORSEN_RT] = { fieldSize * 4,fieldSize * 1,fieldSize,fieldSize };
-	fieldTextureSrcRect[SingleFieldTexture::WALL_CORSEN_LB] = { fieldSize * 5,fieldSize * 0,fieldSize,fieldSize };
-	fieldTextureSrcRect[SingleFieldTexture::WALL_CORSEN_RB] = { fieldSize * 4,fieldSize * 0,fieldSize,fieldSize };
 
-	fieldTextureSrcRect[SingleFieldTexture::WALL_TOP_T] = { fieldSize * 0,fieldSize * 1,fieldSize,fieldSize };
-	fieldTextureSrcRect[SingleFieldTexture::WALL_TOP_R] = { fieldSize * 1,fieldSize * 1,fieldSize,fieldSize };
-	fieldTextureSrcRect[SingleFieldTexture::WALL_TOP_B] = { fieldSize * 2,fieldSize * 1,fieldSize,fieldSize };
-	fieldTextureSrcRect[SingleFieldTexture::WALL_TOP_L] = { fieldSize * 3,fieldSize * 1,fieldSize,fieldSize };
+	fieldTextureSrcRect[SingleFieldTexture::FLOOR_NEAR_WALL_N] = { fieldSize * 6, fieldSize * 0, fieldSize, fieldSize };
+	fieldTextureSrcRect[SingleFieldTexture::FLOOR_NEAR_WALL_E] = { fieldSize * 7, fieldSize * 1, fieldSize, fieldSize };
+	fieldTextureSrcRect[SingleFieldTexture::FLOOR_NEAR_WALL_S] = { fieldSize * 7, fieldSize * 0, fieldSize, fieldSize };
+	fieldTextureSrcRect[SingleFieldTexture::FLOOR_NEAR_WALL_W] = { fieldSize * 6, fieldSize * 1, fieldSize, fieldSize };
+
+	fieldTextureSrcRect[SingleFieldTexture::FLOOR_NEAR_WALL_NW] = { fieldSize * 6, fieldSize * 2, fieldSize, fieldSize };
+	fieldTextureSrcRect[SingleFieldTexture::FLOOR_NEAR_WALL_NE] = { fieldSize * 7, fieldSize * 2, fieldSize, fieldSize };
+	fieldTextureSrcRect[SingleFieldTexture::FLOOR_NEAR_WALL_SW] = { fieldSize * 6, fieldSize * 3, fieldSize, fieldSize };
+	fieldTextureSrcRect[SingleFieldTexture::FLOOR_NEAR_WALL_SE] = { fieldSize * 7, fieldSize * 3, fieldSize, fieldSize };
+
+	fieldTextureSrcRect[SingleFieldTexture::FLOOR_NEAR_COLUMN_SE] = { fieldSize * 4, fieldSize * 2, fieldSize, fieldSize };
+	fieldTextureSrcRect[SingleFieldTexture::FLOOR_NEAR_COLUMN_SW] = { fieldSize * 5, fieldSize * 2, fieldSize, fieldSize };
+	fieldTextureSrcRect[SingleFieldTexture::FLOOR_NEAR_COLUMN_NE] = { fieldSize * 4, fieldSize * 3, fieldSize, fieldSize };
+	fieldTextureSrcRect[SingleFieldTexture::FLOOR_NEAR_COLUMN_NW] = { fieldSize * 5, fieldSize * 3, fieldSize, fieldSize };
+
+	// WALLS
+	fieldTextureSrcRect[SingleFieldTexture::DOORS] = { fieldSize * 1,fieldSize * 0,fieldSize,fieldSize };
+	fieldTextureSrcRect[SingleFieldTexture::WALL_FRONT0] = { fieldSize * 2,fieldSize * 0,fieldSize,fieldSize };
+	fieldTextureSrcRect[SingleFieldTexture::WALL_FRONT1] = { fieldSize * 3,fieldSize * 0,fieldSize,fieldSize };
+	fieldTextureSrcRect[SingleFieldTexture::WALL_CORNER_LT] = { fieldSize * 5,fieldSize * 1,fieldSize,fieldSize };
+	fieldTextureSrcRect[SingleFieldTexture::WALL_CORNER_RT] = { fieldSize * 4,fieldSize * 1,fieldSize,fieldSize };
+	fieldTextureSrcRect[SingleFieldTexture::WALL_CORNER_LB] = { fieldSize * 5,fieldSize * 0,fieldSize,fieldSize };
+	fieldTextureSrcRect[SingleFieldTexture::WALL_CORNER_RB] = { fieldSize * 4,fieldSize * 0,fieldSize,fieldSize };
+
+	fieldTextureSrcRect[SingleFieldTexture::WALL_TOP_T] = { fieldSize * 0, fieldSize * 1, fieldSize, fieldSize };
+	fieldTextureSrcRect[SingleFieldTexture::WALL_TOP_R] = { fieldSize * 1, fieldSize * 1, fieldSize, fieldSize };
+	fieldTextureSrcRect[SingleFieldTexture::WALL_TOP_B] = { fieldSize * 2, fieldSize * 1, fieldSize, fieldSize };
+	fieldTextureSrcRect[SingleFieldTexture::WALL_TOP_L] = { fieldSize * 3, fieldSize * 1, fieldSize, fieldSize };
+
+	fieldTextureSrcRect[SingleFieldTexture::WALL_COLUMN_SW] = { fieldSize * 0, fieldSize * 2, fieldSize, fieldSize };
+	fieldTextureSrcRect[SingleFieldTexture::WALL_COLUMN_SE] = { fieldSize * 1, fieldSize * 2, fieldSize, fieldSize };
+	fieldTextureSrcRect[SingleFieldTexture::WALL_COLUMN_NW] = { fieldSize * 2, fieldSize * 2, fieldSize, fieldSize };
+	fieldTextureSrcRect[SingleFieldTexture::WALL_COLUMN_NE] = { fieldSize * 3, fieldSize * 2, fieldSize, fieldSize };
 
 	// Parameters:
 	//  { SDL_Rect srcRect = { x, y, w, h }, Rect dstRect = { w, h }, SDL_Texture* texture };

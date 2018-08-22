@@ -214,20 +214,31 @@ NoMoveFaceEnemy::~NoMoveFaceEnemy() {
 
 #pragma region Charge
 void Charge::makeMove() {
-	if (getChargeTargetPos) {
-		getChargeTargetPos = false;
-
-		chargeTargetPos.x = player->getPositionX();
-		chargeTargetPos.y = player->getPositionY();
-    }
-
-	unitToMove->velocity.x = chargeTargetPos.x - unitToMove->getPositionX();
-	unitToMove->velocity.y = chargeTargetPos.y - unitToMove->getPositionY();
+	unitToMove->velocity.x = chargeVelocity.x;
+	unitToMove->velocity.y = chargeVelocity.y;
 }
 
 void Charge::resetMove() {
-	getChargeTargetPos = true;
+	getChargeTargetPos = false;
+
+	chargeTargetPos.x = player->getPositionX();
+	chargeTargetPos.y = player->getPositionY();
+
+	chargeVelocity.x = chargeTargetPos.x - unitToMove->getPositionX();
+	chargeVelocity.y = chargeTargetPos.y - unitToMove->getPositionY();
+
+	chargeAngleRadians = atan2(chargeTargetPos.y - unitToMove->getPositionY(), chargeTargetPos.x - unitToMove->getPositionX());
+
 	movementCanEnd = false;
+	movementEnded = false;
+}
+
+void Charge::update() {
+	double currentAngleRadians = atan2(chargeTargetPos.y - unitToMove->getPositionY(), chargeTargetPos.x - unitToMove->getPositionX());
+
+	if ((!unitToMove->velocity.x && !unitToMove->velocity.y) || abs((currentAngleRadians + M_PI) - (chargeAngleRadians + M_PI)) > 0.6 
+		|| unitToMove->detectedCollisionUnit() || unitToMove->detectedCollisionWall())
+ 		movementEnded = true;
 }
 
 Charge::Charge(Unit* _unitToMove, Unit* _player) : Movement(_unitToMove), player(_player) {

@@ -11,20 +11,31 @@
 #include <math.h>
 
 bool Unit::update(std::list <AttackType*>& monsterAttacks, Map* map) {
-	SDL_Point p = { (int)map->getPlayer()->getPositionX(), (int)map->getPlayer()->getPositionY() };
+	attackPos.x = (int)closestEnemy->getPositionX();
+	attackPos.y = (int)closestEnemy->getPositionY();
 
-	actionsManager.onClosestObj(closestEnemy, closestEnemyDist);
-	actionsManager.updateAction();
-	passivesManager->activatePassives(PassiveActivateOn::Passive, monsterAttacks, &p);
-	passivesManager->updateAllPassives();
+	if (staticPassives[StaticPassiveName::hp] <= 0) {
+		passivesManager->activatePassives(PassiveActivateOn::Death, monsterAttacks);
+	}
+
+	if (staticPassives[StaticPassiveName::hp] <= 0) {
+		isAlive = false;
+		return actionsManager.updateDeathAction(this, monsterAttacks, &attackPos);
+	}
+
+	actionsManager.updateMove();
+	actionsManager.onClosestObj(map, closestEnemy, closestEnemyDist, position);
+	actionsManager.updateAction(velocity);
+	passivesManager->activatePassives(PassiveActivateOn::Passive, monsterAttacks);
+	passivesManager->updateAllPassives(this);
 
 	speed = staticPassives[StaticPassiveName::unitSpeed];
 
-	if (staticPassives[StaticPassiveName::hp] <= 0)
-		return false;
-
-	actionsManager.makeAttack(this, monsterAttacks, &p);
+	actionsManager.makeAttack(this, monsterAttacks, &attackPos);
 	actionsManager.makeMove(this);
+
+	unitDetectedCollisionUnit = false;
+	unitDetectedCollisionWall = false;
 
 	if (!(!velocity.y && !velocity.x)) {
 		double dir = atan2(velocity.y, velocity.x);
@@ -64,12 +75,17 @@ void Unit::setClosestEnemy(Unit* u, double dist) {
 	closestEnemyDist = dist;
 }
 
-void Unit::takeDamage(float damage) {
-	CombatTextManager::get().addDamage(damage, this);
-	passivesManager->addStartingStat(StaticPassiveName::hp, -damage); 
+void Unit::takeDamage(float& damage, DamageType damageType) {
+	passivesManager->takeDamage(damage, damageType);
+
+	if (damage < 0)
+		damageType = DamageType::Heal;
+
+	CombatTextManager::get().addDamage(damage, damageType, this);
 }
 
-Unit::Unit(TextureInfo& txtInfo, UnitType uType) : GameObject(txtInfo, Dynamic, Circle), actionsManager(srcRect, velocity, position), unitType(uType) {
+Unit::Unit(TextureInfo& txtInfo, UnitType uType) 
+	: GameObject(txtInfo, Dynamic, Circle), actionsManager(srcRect, staticPassives[StaticPassiveName::unitSpeedMult], staticPassives[StaticPassiveName::attackSpeedMult], this), unitType(uType) {
 	passivesManager = new PassivesManager(staticPassives);
 	healthBar = new HealthBar(dstRect, staticPassives[StaticPassiveName::hp], staticPassives[StaticPassiveName::hpMax], unitType);
 	healthBar->draw();
@@ -85,6 +101,7 @@ Unit::Unit(TextureInfo& txtInfo, UnitType uType) : GameObject(txtInfo, Dynamic, 
 
 Unit::~Unit() {
 	delete passivesManager;
+	delete healthBar;
 }
 
 

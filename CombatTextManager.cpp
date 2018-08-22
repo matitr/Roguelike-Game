@@ -3,6 +3,7 @@
 #include "Unit.h"
 #include "Settings.h"
 #include "DataBase.h"
+#include "PassivesManager.h"
 #include <sstream>
 #include <iomanip>
 
@@ -27,7 +28,7 @@ void CombatTextManager::drawAndUpdate(SDL_Point* startRender) {
 	}
 }
 
-void CombatTextManager::addDamage(float value, Unit* unit) {
+void CombatTextManager::addDamage(float value, DamageType damageType, Unit* unit) {
 	if (unit->getUnitType() == UnitType::Player) {
 		if (!Settings::get()->showEnemyDamage)
 			return;
@@ -37,16 +38,21 @@ void CombatTextManager::addDamage(float value, Unit* unit) {
 			return;
 
 	std::stringstream stream;
-	stream << std::fixed << std::setprecision(2) << roundf(value);
+	stream << std::fixed << std::setprecision(2) << (value);
 	
 	CombatText* combatT = new CombatText(unit);
-	combatT->setText(stream.str(), DataBase::fonts[FontPurpose::CombatText], DataBase::colors[TextColor::CombatTextDamage]);
+
+	SDL_Color color;
+	if (damageType == DamageType::Physical)
+		color = DataBase::colors[TextColor::CombatTextDamage];
+	else if (damageType == DamageType::Fire)
+		color = DataBase::colors[TextColor::CombatTextFireDmg];
+	else if (damageType == DamageType::Heal)
+		color = DataBase::colors[TextColor::CombatTextHeal];
+
+	combatT->setText(stream.str(), DataBase::fonts[FontPurpose::CombatTextDmg], color);
 
 	combatTexts.push_back(combatT);
-}
-
-void CombatTextManager::addHeal(float value, Unit* unit) {
-
 }
 
 void CombatTextManager::addDebuff(float value, Unit* unit) {

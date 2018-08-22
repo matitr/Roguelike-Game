@@ -41,7 +41,7 @@ class Inventory {
 
 	SDL_Point windowResolution;
 
-	void updateFocusOnSlot();
+	void updateFocusOnSlot(Unit* unit);
 public:
 	void open() { invIsOpened = true; }
 	void close();
@@ -53,7 +53,7 @@ public:
 	void pickUpItem(Item* item);
 	void dropItem(Item* item);
 
-	void equipItem(InventorySlot* item);
+	void equipItem(InventorySlot* item, Unit* unit);
 	void unequipItem(InventorySlot* item);
 
 	void calculatePassives(); // Add passives from all equipped items

@@ -24,6 +24,20 @@ void UnitAction::addAnimations(std::array<AnimationDetails, Direction::enum_size
 	}
 }
 
+bool UnitAction::animationsExists() {
+	int animationsSize = animations.size();
+
+	if (!animationsSize)
+		return false;
+
+	for (int i = 0; i < animationsSize; i++) {
+		if (!animations[i])
+			return false;
+	}
+
+	return true;
+}
+
 void  UnitAction::setFrameTime(int frameTime) {
 	for (int i = 0; i < Direction::enum_size; i++) {
 		animations[i]->setFrameTime(frameTime);
@@ -81,8 +95,13 @@ bool UnitAction::actionEnded() {
 	return false;
 }
 
-void UnitAction::updateFrame() {
-	animations[currentDirection]->updateTexture();
+void UnitAction::updateFrame(const float& moveSpeedMult, const float& attackSpeedMult) {
+	if (attack)
+		animations[currentDirection]->updateTexture(attackSpeedMult);
+	else if (movement)
+		animations[currentDirection]->updateTexture(moveSpeedMult);
+	else
+		animations[currentDirection]->updateTexture();
 }
 
 void UnitAction::updateCooldown() {
@@ -95,8 +114,13 @@ void UnitAction::resetMove() {
 		movement->resetMove();
 }
 
-void UnitAction::makeAttack(Unit* unit, std::list <AttackType*>& monsterAttacks, SDL_Point* attackPoint) {
-	if (attack && animations[currentDirection]->firstTimuUnitOfFrame(attackFrame))
+void UnitAction::updateMove() {
+	if (movement)
+		movement->update();
+}
+
+void UnitAction::makeAttack(Unit* unit, std::list <AttackType*>& monsterAttacks, PointInt* attackPoint, float attackSpeedMult) {
+	if (attack && animations[currentDirection]->firstTimuUnitOfFrame(attackFrame, attackSpeedMult))
 		attack->makeAttack(unit, monsterAttacks, attackPoint);
 }
 

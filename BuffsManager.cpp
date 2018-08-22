@@ -1,6 +1,7 @@
 #include "BuffsManager.h"
 #include "Buff.h"
 #include "Passive.h"
+#include "Unit.h"
 
 
 
@@ -41,11 +42,11 @@ void BuffsManager::removeBuffs(Passive* parentPassive) {
 	}
 }
 
-void BuffsManager::updateAllBuffs() {
+void BuffsManager::updateAllBuffs(Unit* unit) {
 	auto it = buffs.begin();
 	auto it2 = buffs.begin();
 	while (it != buffs.end()) {
-		if (!(*it)->update()) { // Remove buff
+		if (!(*it)->update(unit)) { // Remove buff
 			(*it)->deactivate(unitStats);
 			delete (*it);
 			it = buffs.erase(it);

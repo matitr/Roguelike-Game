@@ -7,6 +7,7 @@
 #include "Player.h"
 #include <algorithm>
 #include "CombatTextManager.h"
+#include "myMath.h"
 
 
 void Map::generateNewLevel() {
@@ -176,6 +177,18 @@ void Map::render(std::vector <GameObject*>& gameObjects) {
 		iGameObject++;
 	}
 
+	// Draw drawLast fields
+	fieldY = startRenderPos.yField;
+	for (fieldCounterY = 0; fieldCounterY <= fieldsToRender.y; fieldCounterY++, fieldY++) { // Y
+		fieldX = startRenderPos.xField;
+		fieldRect.y = fieldCounterY * fieldRect.h - startRenderPos.yAdditionalPixels;
+
+		for (fieldCounterX = 0; fieldCounterX <= fieldsToRender.x; fieldCounterX++, fieldX++) { // X
+			fieldRect.x = fieldCounterX * fieldRect.w - startRenderPos.xAdditionalPixels;
+			if (getField(fieldX, fieldY) && getField(fieldX, fieldY)->drawLast())
+				getField(fieldX, fieldY)->drawField(fieldRect.x, fieldRect.y);
+		}
+	}
 	CombatTextManager::get().drawAndUpdate(&startRender);
 
 	renderMinimap();
@@ -264,6 +277,144 @@ void Map::changeRoom(Room* room, Teleporter* tele) {
 	currRoom = room;
 	player->setPosition(tele->getPositionX(), tele->getPositionY());
 	_roomChanged = true;
+}
+
+bool Map::checkClearPath(GameObject* object, GameObject* objectTarget) {
+
+	double angle = atan2(((int)objectTarget->getPositionY() - (int)object->getPositionY()), ((int)objectTarget->getPositionX() - (int)object->getPositionX()));
+	bool goHorizontal = (abs(angle) > (M_PI / 4) && abs(angle) < (3 * M_PI / 4)) ? false : true;
+	angle -= M_PI / 2; // - 90 degrees
+
+	PointDouble p1(object->getPositionX() + cos(angle) * object->getRadius(), object->getPositionY() + sin(angle) * object->getRadius());
+	PointDouble p2(objectTarget->getPositionX() + cos(angle) * objectTarget->getRadius(), objectTarget->getPositionY() + sin(angle) * objectTarget->getRadius());
+
+	angle += M_PI;
+
+
+	for (int i = 0; i < 3; i++) { // Check 3 lines
+		LineSegment lineS(p1, p2);
+
+		if (goHorizontal) {
+			if (p2.x < p1.x) {
+				PointDouble temp(p1);
+				p1 = p2;
+				p2 = temp;
+			}
+
+			int fieldX = p1.x / fieldRect.w;
+			int fieldY = p1.y / fieldRect.h;
+
+			if (!checkClearField(getField(fieldX, fieldY), lineS))
+				return false;
+			fieldX++;
+
+			int goalFieldX = p2.x / fieldRect.w + 1;
+			int prevFieldY = fieldY;
+
+			while (fieldX < goalFieldX) {
+				double d = lineS.y(fieldX * fieldRect.w + fieldRect.w / 2) / fieldRect.w;
+				fieldY = lineS.y(fieldX * fieldRect.w + fieldRect.w / 2) / fieldRect.w;
+				if (fieldY != prevFieldY) { // Move vertical
+					int y = lineS.y(fieldX * fieldRect.w) / fieldRect.h;
+					if (y == fieldY) { // Left
+						if (!checkClearField(getField(fieldX - 1, fieldY), lineS))
+							return false;
+					}
+					else { // Check prevFieldY
+						if (!checkClearField(getField(fieldX, prevFieldY), lineS))
+							return false;
+					}
+					prevFieldY = fieldY;
+				}
+
+				if (!checkClearField(getField(fieldX, fieldY), lineS))
+					return false;
+				fieldX++;
+			}
+		}
+		else {
+			if (p2.y < p1.y) {
+				PointDouble temp(p1);
+				p1 = p2;
+				p2 = temp;
+			}
+
+			int fieldX = p1.x / fieldRect.w;
+			int fieldY = p1.y / fieldRect.h;
+
+			if (!checkClearField(getField(fieldX, fieldY), lineS))
+				return false;
+			fieldY++;
+
+			int goalFieldY = p2.y / fieldRect.h + 1;
+			int prevFieldX = fieldX;
+
+			while (fieldY < goalFieldY) {
+				fieldX = lineS.x(fieldY * fieldRect.h + fieldRect.h / 2) / fieldRect.h;
+				if (fieldX < prevFieldX) { // Move vertical
+					int x = lineS.x(fieldY * fieldRect.h) / fieldRect.w;
+					if (x == fieldX) { // Check up
+						if (!checkClearField(getField(fieldX, fieldY - 1), lineS))
+							return false;
+					}
+					else { // Check prevFieldX
+						if (!checkClearField(getField(prevFieldX, fieldY), lineS))
+							return false;
+					}
+					prevFieldX = fieldX;
+				}
+
+				if (!checkClearField(getField(fieldX, fieldY), lineS))
+					return false;
+				fieldY++;
+			}
+		}
+
+		p1.x += cos(angle) * object->getRadius();
+		p1.y += sin(angle) * object->getRadius();
+		p2.x += cos(angle) * object->getRadius();
+		p2.y += sin(angle) * object->getRadius();
+	}
+
+	return true;
+}
+
+bool Map::checkClearField(Field* field, LineSegment& lineS) {
+	if (field->type() == FieldType::Floor) {
+		PointInt fieldPos((int)field->getPositionX(), (int)field->getPositionY());
+		PointInt radius((int)field->getRadius(), (int)field->getRadiusY());
+
+		SDL_SetRenderDrawColor(Game::renderer, rand() % 150, rand() % 150, rand() % 150, 255);
+		SDL_Rect r = { fieldPos.x - radius.x - startRender.x, fieldPos.y - radius.y - startRender.y, radius.x * 2, radius.y * 2 };
+		SDL_RenderDrawRect(Game::renderer, &r);
+		SDL_RenderPresent(Game::renderer);
+		SDL_RenderPresent(Game::renderer);
+
+//		if (lineS.checkInserction(fieldPos.x - radius.x, fieldPos.y - radius.y, fieldPos.x - radius.x, fieldPos.y + radius.y))
+//			return false;
+//		if (lineS.checkInserction(fieldPos.x - radius.x, fieldPos.y - radius.y, fieldPos.x + radius.x, fieldPos.y - radius.y))
+//			return false;
+//		if (lineS.checkInserction(fieldPos.x + radius.x, fieldPos.y - radius.y, fieldPos.x + radius.x, fieldPos.y + radius.y))
+//			return false;
+//		if (lineS.checkInserction(fieldPos.x + radius.x, fieldPos.y + radius.y, fieldPos.x - radius.x, fieldPos.y + radius.y))
+//			return false;
+	}
+
+	for (auto it = field->getCollisionObj().begin(); it != field->getCollisionObj().end(); it++) {
+		PointInt fieldPos((int)(*it)->getPositionX(), (int)(*it)->getPositionY());
+		PointInt radius((int)(*it)->getRadius(), (int)(*it)->getRadiusY());
+
+		if (lineS.checkInserction(fieldPos.x - radius.x, fieldPos.y - radius.y, fieldPos.x - radius.x, fieldPos.y + radius.y))
+			return false;
+		if (lineS.checkInserction(fieldPos.x - radius.x, fieldPos.y - radius.y, fieldPos.x + radius.x, fieldPos.y - radius.y))
+			return false;
+		if (lineS.checkInserction(fieldPos.x + radius.x, fieldPos.y - radius.y, fieldPos.x + radius.x, fieldPos.y + radius.y))
+			return false;
+		if (lineS.checkInserction(fieldPos.x + radius.x, fieldPos.y + radius.y, fieldPos.x - radius.x, fieldPos.y + radius.y))
+			return false;
+	}
+
+	return true;
 }
 
 Map::Map(Player* p, int _hCenter, int _wCenter) : MapCore(_hCenter, _wCenter), player(p), generator(this) {

@@ -6,19 +6,22 @@ enum class PassiveActivateOn;
 class Passive;
 class BuffsManager;
 class AttackType;
+class Unit;
 
+enum class DamageType { Physical, Fire, Heal };
 
-class AttackPassivesManager {
+class AttackPassivesManager { // Object of this class is in attack
 	std::vector<Passive*> attackPassives;
 
 public:
-	void activateHitEnemy(std::list <AttackType*>& attacks, BuffsManager* hittedBuffsManager);
-	void activateHitWall(std::list <AttackType*>& attacks, BuffsManager* buffsManager);
+	void activateHitEnemy(std::list <AttackType*>& attacks, BuffsManager* hittedBuffsManager, float hitDamage);
+	void activateHitWall(std::list <AttackType*>& attacks);
 
 	void addAttackPassive(Passive* passive);
 	void removeAttackPassive(Passive* passive);
 
 	AttackPassivesManager() = default;
+	AttackPassivesManager(const AttackPassivesManager& attackPassivesM);
 	~AttackPassivesManager() = default;
 };
 
@@ -38,15 +41,16 @@ public:
 	ItemPassives& getUnitStatistics() { return unitStatisticsRef; }
 	BuffsManager* getBuffsManager() { return buffsManager; }
 
-	void updateAllPassives();
+	void updateAllPassives(Unit* unitParent);
 
-	void equipItem(Item* item);
+	void equipItem(Item* item, Unit* unit);
 	void unequipItem(Item* item);
 
-	void activatePassives(PassiveActivateOn activationType, std::list <AttackType*>& attacks, SDL_Point* attackPoint);
+	void activatePassives(PassiveActivateOn activationType, std::list <AttackType*>& attacks, float activationValue = 0);
 
-	void addStartingStat(StaticPassiveName::StaticPassiveName statName, float value);
 	void setStartingStat(StaticPassiveName::StaticPassiveName statName, float value);
+
+	void takeDamage(float& damage, DamageType damageType = DamageType::Physical);
 
 	PassivesManager(ItemPassives& unitStatistics);
 	~PassivesManager();

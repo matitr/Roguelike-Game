@@ -10,16 +10,24 @@ void Field::setPosition(int _x, int _y) {
 
 	position.x = (_x * dstRect.w) + radius;
 	position.y = (_y * dstRect.h) + radius;
+
+	if (positionShiftX || positionShiftY) {
+		position.x += positionShiftX;
+		position.y += positionShiftY;
+	}
 }
 
 void Field::drawField(int x, int y) {
-	dstRect.x = x - positionShiftX;
-	dstRect.y = y - positionShiftY;
+	dstRect.x = x;
+	dstRect.y = y;
 
 	int h = dstRect.h;
 	dstRect.h *= HEIGHT_SCALE;
 	SDL_RenderCopy(Game::renderer, texture, &srcRect, &dstRect);
 	dstRect.h = h;
+
+	SDL_SetRenderDrawColor(Game::renderer, 24, 34, 767, 255);
+	SDL_RenderDrawRect(Game::renderer, &dstRect);
 }
 
 double Field::distanceEdgesX(Field* otherField) {

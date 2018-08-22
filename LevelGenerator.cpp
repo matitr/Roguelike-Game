@@ -5,6 +5,7 @@
 #include "Chest.h"
 #include "Player.h"
 #include "Teleporter.h"
+#include "Game.h"
 
 
 FieldType& LevelGenerator::mapFieldType(int x, int y) {
@@ -25,10 +26,10 @@ void LevelGenerator::generateNewMap() {
 	generateHallways(roomsNumber);
 
 	for (i = 0; i < roomsNumber; i++)
-		generateRoomFields(rooms[i]);
+		createRoom(rooms[i]);
 
 	for (i = 0; i < roomsNumber; i++)
-		createRoom(rooms[i]);
+		addWallsDepth(rooms[i]);
 
 	createAllFields();
 
@@ -40,14 +41,6 @@ void LevelGenerator::generateNewMap() {
 
 void LevelGenerator::generateRooms(int &roomsNumber) {
 	int x, y;
-
-	for (int i = 1; i < roomsNumber; i++) {
-		if (!rooms[i]) {
-			x = rand() % (MAP_WIDTH - BORDER_SIZE - BORDER_SIZE - 50) + BORDER_SIZE;
-			y = rand() % (MAP_HEIGHT - BORDER_SIZE - BORDER_SIZE - 50) + BORDER_SIZE;
-			rooms[i] = new Room(x, y, x + rand() % 20 + 30, y + rand() % 20 + 20, Monsters); // mobs room
-		}
-	}
 
 	rooms[0] = new Room(MAP_WIDTH / 2 - 15, MAP_HEIGHT / 2 - 15, MAP_WIDTH / 2 - 15 + 30, MAP_HEIGHT / 2 - 15 + 15, Spawn); // start room
 
@@ -70,6 +63,14 @@ void LevelGenerator::generateRooms(int &roomsNumber) {
 	x = rand() % (MAP_WIDTH - BORDER_SIZE - BORDER_SIZE - 50) + BORDER_SIZE;
 	y = rand() % (MAP_HEIGHT - BORDER_SIZE - BORDER_SIZE - 50) + BORDER_SIZE;
 	rooms[roomsNumber - 4] = new Room(x, y, x + 30, y + 17, Treasure); // treasure room
+
+	for (int i = 1; i < roomsNumber; i++) {
+		if (!rooms[i]) {
+			x = rand() % (MAP_WIDTH - BORDER_SIZE - BORDER_SIZE - 50) + BORDER_SIZE;
+			y = rand() % (MAP_HEIGHT - BORDER_SIZE - BORDER_SIZE - 50) + BORDER_SIZE;
+			rooms[i] = new Room(x, y, x + rand() % 20 + 30, y + rand() % 20 + 20, Monsters); // mobs room
+		}
+	}
 }
 
 void LevelGenerator::findPositionForRooms(int roomsNumber) {
@@ -107,15 +108,6 @@ void LevelGenerator::findPositionForRooms(int roomsNumber) {
 
 		}
 	}
-}
-
-void LevelGenerator::createRoom(Room* room) {
-	int xIter, yIter;
-	for (yIter = room->y1 + 1; yIter < room->y2; yIter++) {
-		for (xIter = room->x1 + 1; xIter < room->x2; xIter++)
-			if (!map.getField(xIter, yIter))
-				mapFieldType(xIter, yIter) = FieldType::Floor;
-		}
 }
 
 void LevelGenerator::generateHallways(int &roomsNumber) {
@@ -232,17 +224,67 @@ void LevelGenerator::createHallwayV(PointInt& p1, PointInt& p2) { // Vertical
 	}
 }
 
-void LevelGenerator::generateRoomFields(Room* room) {
+void LevelGenerator::createRoom(Room* room) {
+	int xIter, yIter;
+	for (yIter = room->y1 + 1; yIter < room->y2; yIter++) {
+		for (xIter = room->x1 + 1; xIter < room->x2; xIter++)
+			if (!map.getField(xIter, yIter))
+				mapFieldType(xIter, yIter) = FieldType::Floor;
+	}
 
+	if (room->type == RoomType::Monsters)
+		generateColumns(room);
+
+//	if (room->type == RoomType::Spawn) {
+//		xIter = room->x1 + (room->x2 - room->x1) / 2 + 2;
+//		yIter = room->y1 + (room->y2 - room->y1) / 2 + 2;
+//		mapFieldType(xIter, yIter) = FieldType::Wall;
+//		mapFieldType(xIter + 1, yIter) = FieldType::Wall;
+//		mapFieldType(xIter + 1, yIter + 1) = FieldType::Wall;
+//		mapFieldType(xIter, yIter + 1) = FieldType::Wall;
+//		mapFieldType(xIter + 1, yIter + 2) = FieldType::Wall;
+//		mapFieldType(xIter, yIter + 2) = FieldType::Wall;
+//
+//		mapFieldType(xIter - 6, yIter) = FieldType::Wall;
+//		mapFieldType(xIter - 5, yIter) = FieldType::Wall;
+//		mapFieldType(xIter - 5, yIter + 1) = FieldType::Wall;
+//		mapFieldType(xIter - 6, yIter + 1) = FieldType::Wall;
+//
+//		xIter - 4;
+//		mapFieldType(xIter - 6, yIter) = FieldType::Wall;
+//		mapFieldType(xIter - 6, yIter + 1) = FieldType::Wall;
+//		mapFieldType(xIter - 5, yIter) = FieldType::Wall;
+//		mapFieldType(xIter - 5, yIter + 1) = FieldType::Wall;
+//		mapFieldType(xIter - 7, yIter) = FieldType::Wall;
+//		mapFieldType(xIter - 7, yIter + 1) = FieldType::Wall;
+//	}
+}
+
+void LevelGenerator::generateColumns(Room* room) {
+	double maxCulumnsInColumn = (room->x2 - room->x1 + 1) / 7 - 1;
+	double maxCulumnsInRow = (room->y2 - room->y1 + 1) / 5 - 1;
+	
+	std::vector<int> columnsNumber;
+
+	
+}
+
+void LevelGenerator::addWallsDepth(Room* room) {
+
+	for (int y = room->y1; y <= room->y2; y++) {
+		for (int x = room->x1; x <= room->x2; x++) {
+			if (mapFieldType(x, y) != FieldType::Wall && mapFieldType(x, y + 1) == FieldType::Wall && mapFieldType(x, y) != FieldType::Door && mapFieldType(x, y - 1) != FieldType::Door) {
+				mapFieldType(x, y) = FieldType::Wall;
+				mapFieldType(x, y - 1) = FieldType::Wall;
+			}
+		}
+	}
 }
 
 void LevelGenerator::createAllFields() {
 
 	for (int y = BORDER_SIZE; y < MAP_HEIGHT - BORDER_SIZE; y++) {
 		for (int x = BORDER_SIZE; x < MAP_WIDTH - BORDER_SIZE; x++) {
-			if (mapFieldType(x, y) == FieldType::Floor) {
-				map.getField(x, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WOOD_FLOOR], FieldType::Floor);
-			}
 			if (mapFieldType(x, y) == FieldType::FloorHallway) {
 				map.getField(x, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WOOD_FLOOR], FieldType::Floor);
 			}
@@ -250,45 +292,102 @@ void LevelGenerator::createAllFields() {
 				map.getField(x, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::DOORS], FieldType::Door);
 			}
 			if (mapFieldType(x, y) == FieldType::Floor) {
-				if (mapFieldType(x - 1, y) == FieldType::None || mapFieldType(x - 1, y) == FieldType::Wall) { // Left is wall
-					map.getField(x - 1, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_TOP_L], FieldType::Wall);
+				if (mapFieldType(x - 1, y) == FieldType::None || mapFieldType(x - 1, y) == FieldType::Wall) // Left is wall
+					createFieldsLeftIsWall(x, y);
 
-					if (mapFieldType(x, y - 1) == FieldType::None || mapFieldType(x - 1, y) == FieldType::Wall) { // Left & Up is wall
-						map.getField(x - 1, y - 3) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_CORSEN_LT], FieldType::Wall);
-						map.getField(x - 1, y - 1) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_TOP_L], FieldType::Wall);
-						map.getField(x - 1, y - 2) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_TOP_L], FieldType::Wall);
-					}
+				if (mapFieldType(x + 1, y) == FieldType::None || mapFieldType(x + 1, y) == FieldType::Wall) // Right
+					createFieldsRighttIsWall(x, y);
 
-					if (mapFieldType(x, y + 1) == FieldType::None || mapFieldType(x - 1, y) == FieldType::Wall) { // Left & Down is wall
-						map.getField(x - 1, y + 1) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_CORSEN_LB], FieldType::Wall);
+				if (mapFieldType(x - 1, y) == FieldType::Floor && mapFieldType(x , y - 1) == FieldType::Floor && mapFieldType(x - 1, y - 1) == FieldType::Wall)
+					map.getField(x, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::FLOOR_NEAR_COLUMN_NW], FieldType::Floor);
+				else if (mapFieldType(x + 1, y) == FieldType::Floor && mapFieldType(x, y - 1) == FieldType::Floor && mapFieldType(x + 1, y - 1) == FieldType::Wall)
+					map.getField(x, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::FLOOR_NEAR_COLUMN_NE], FieldType::Floor);
+				else if (mapFieldType(x, y - 1) == FieldType::Wall && (mapFieldType(x - 1, y) == FieldType::Floor && mapFieldType(x + 1, y) == FieldType::Floor))
+					map.getField(x, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::FLOOR_NEAR_WALL_N], FieldType::Floor);
+
+				if (mapFieldType(x, y - 1) == FieldType::None || mapFieldType(x, y - 1) == FieldType::Wall) { // Up is wall
+					map.getField(x, y - 1) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_FRONT0], FieldType::Wall);
+					map.getField(x, y - 2) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_FRONT1], FieldType::Wall);
+					if (mapFieldType(x - 1, y - 3) != FieldType::Wall)
+						map.getField(x, y - 3) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_COLUMN_SW], FieldType::Wall);
+					else if (mapFieldType(x + 1, y - 3) != FieldType::Wall)
+						map.getField(x, y - 3) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_COLUMN_SE], FieldType::Wall);
+					else
+						map.getField(x, y - 3) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_TOP_T], FieldType::Wall);
+				}
+
+				if (mapFieldType(x, y + 1) == FieldType::None || mapFieldType(x, y + 1) == FieldType::Wall) { // Down is wall
+					if (mapFieldType(x - 1, y + 1) == FieldType::Wall && mapFieldType(x + 1, y + 1) == FieldType::Wall) {
+						map.getField(x, y + 1) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_TOP_B], FieldType::Wall);
+						map.getField(x, y + 1)->setPositionShift(0, 0.4, 1);
+						map.getField(x, y + 1)->setDrawLast();;
 					}
 				}
 
-				if (mapFieldType(x + 1, y) == FieldType::None || mapFieldType(x - 1, y) == FieldType::Wall) { // Right
-					map.getField(x + 1, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_TOP_R], FieldType::Wall);
-
-					if (mapFieldType(x, y - 1) == FieldType::None || mapFieldType(x - 1, y) == FieldType::Wall) { // Right & Up is wall
-						map.getField(x + 1, y - 3) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_CORSEN_RT], FieldType::Wall);
-						map.getField(x + 1, y - 1) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_TOP_R], FieldType::Wall);
-						map.getField(x + 1, y - 2) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_TOP_R], FieldType::Wall);
-					}
-					if (mapFieldType(x, y + 1) == FieldType::None || mapFieldType(x - 1, y) == FieldType::Wall) { // Right & Down is wall
-						map.getField(x + 1, y + 1) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_CORSEN_RB], FieldType::Wall);
-					}
-
-				}
-
-				if (mapFieldType(x, y - 1) == FieldType::None || mapFieldType(x - 1, y) == FieldType::Wall) { // Up is wall
-					map.getField(x, y - 1) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_SIDE0], FieldType::Wall);
-					map.getField(x, y - 2) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_SIDE1], FieldType::Wall);
-					map.getField(x, y - 3) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_TOP_T], FieldType::Wall);
-				}
-
-				if (mapFieldType(x, y + 1) == FieldType::None || mapFieldType(x - 1, y) == FieldType::Wall) { // Down is wall
-					map.getField(x, y + 1) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_TOP_B], FieldType::Wall);
+				if (!map.getField(x, y) && mapFieldType(x, y) == FieldType::Floor) {
+					map.getField(x, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WOOD_FLOOR], FieldType::Floor);
 				}
 			}
 		}
+	}
+}
+
+void LevelGenerator::createFieldsLeftIsWall(int x, int y) {
+	if (mapFieldType(x - 1, y - 1) != FieldType::Wall) {
+		map.getField(x - 1, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_COLUMN_NE], FieldType::Wall);
+		map.getField(x - 1, y)->setPositionShift(0, 0.4, 1);
+		map.getField(x - 1, y)->setDrawLast();
+	}
+	else if (!(mapFieldType(x - 1, y + 3) != FieldType::Wall || mapFieldType(x - 1, y + 2) != FieldType::Wall || mapFieldType(x - 1, y + 1) != FieldType::Wall) ||
+		(mapFieldType(x - 1, y + 3) == FieldType::Door || mapFieldType(x - 1, y + 2) == FieldType::Door || mapFieldType(x - 1, y + 1) == FieldType::Door)) {
+		map.getField(x - 1, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_TOP_L], FieldType::Wall);
+	}
+
+	if (mapFieldType(x, y - 1) == FieldType::None || mapFieldType(x, y - 1) == FieldType::Wall) { // Left & Up is wall
+		map.getField(x - 1, y - 3) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_CORNER_LT], FieldType::Wall);
+		map.getField(x - 1, y - 1) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_TOP_L], FieldType::Wall);
+		map.getField(x - 1, y - 2) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_TOP_L], FieldType::Wall);
+		map.getField(x, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::FLOOR_NEAR_WALL_NW], FieldType::Floor);
+	}
+
+	if (mapFieldType(x, y + 1) == FieldType::None || mapFieldType(x, y + 1) == FieldType::Wall) { // Left & Down is wall
+		map.getField(x - 1, y + 1) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_CORNER_LB], FieldType::Wall);
+	}
+
+	if (mapFieldType(x - 1, y - 1) == FieldType::Wall) {
+		if (mapFieldType(x - 1, y - 1) == FieldType::Wall && mapFieldType(x - 1, y - 2) == FieldType::Floor)
+			map.getField(x, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::FLOOR_NEAR_COLUMN_SW], FieldType::Floor);
+		else if (mapFieldType(x, y - 1) == FieldType::Floor)
+			map.getField(x, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::FLOOR_NEAR_WALL_W], FieldType::Floor);
+	}
+}
+
+void LevelGenerator::createFieldsRighttIsWall(int x, int y) {
+	if (mapFieldType(x + 1, y - 1) != FieldType::Wall) {
+		map.getField(x + 1, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_COLUMN_NW], FieldType::Wall);
+		map.getField(x + 1, y)->setPositionShift(0, 0.4, 1);
+		map.getField(x + 1, y)->setDrawLast();
+	}
+	else if (!(mapFieldType(x + 1, y + 3) != FieldType::Wall || mapFieldType(x + 1, y + 2) != FieldType::Wall || mapFieldType(x + 1, y + 1) != FieldType::Wall) ||
+		(mapFieldType(x + 1, y + 3) == FieldType::Door || mapFieldType(x + 1, y + 2) == FieldType::Door || mapFieldType(x + 1, y + 1) == FieldType::Door)) {
+		map.getField(x + 1, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_TOP_R], FieldType::Wall);
+	}
+
+	if (mapFieldType(x, y - 1) == FieldType::None || mapFieldType(x, y - 1) == FieldType::Wall) { // Right & Up is wall
+		map.getField(x + 1, y - 3) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_CORNER_RT], FieldType::Wall);
+		map.getField(x + 1, y - 1) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_TOP_R], FieldType::Wall);
+		map.getField(x + 1, y - 2) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_TOP_R], FieldType::Wall);
+		map.getField(x, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::FLOOR_NEAR_WALL_NE], FieldType::Floor);
+	}
+	if (mapFieldType(x, y + 1) == FieldType::None || mapFieldType(x, y + 1) == FieldType::Wall) { // Right & Down is wall
+		map.getField(x + 1, y + 1) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_CORNER_RB], FieldType::Wall);
+	}
+
+	if (mapFieldType(x + 1, y - 1) == FieldType::Wall) {
+		if (mapFieldType(x + 1, y - 2) == FieldType::Floor || mapFieldType(x + 1, y - 2) == FieldType::Door)
+			map.getField(x, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::FLOOR_NEAR_COLUMN_SE], FieldType::Floor);
+		else if (mapFieldType(x, y - 1) == FieldType::Floor)
+			map.getField(x, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::FLOOR_NEAR_WALL_E], FieldType::Floor);
 	}
 }
 

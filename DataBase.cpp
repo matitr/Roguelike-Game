@@ -95,12 +95,13 @@ void DataBase::loadFontData() {
 	RWops[FontPurpose::ItemDescription] = SDL_RWFromFile("Font/font.ttf", "r");
 	RWops[FontPurpose::GameEndResult] = SDL_RWFromFile("Font/font.ttf", "r");
 	RWops[FontPurpose::MenuButtonsText] = SDL_RWFromFile("Font/font.ttf", "r");
-	RWops[FontPurpose::CombatText] = SDL_RWFromFile("Font/font.ttf", "r");
+	RWops[FontPurpose::CombatTextDmg] = SDL_RWFromFile("Font/font.ttf", "r");
 
 	fonts[FontPurpose::ItemDescription] = TTF_OpenFontRW(RWops[FontPurpose::ItemDescription], 0, 18);
 	fonts[FontPurpose::GameEndResult] = TTF_OpenFontRW(RWops[FontPurpose::GameEndResult], 0, 64);
 	fonts[FontPurpose::MenuButtonsText] = TTF_OpenFontRW(RWops[FontPurpose::MenuButtonsText], 0, 32);
-	fonts[FontPurpose::CombatText] = TTF_OpenFontRW(RWops[FontPurpose::CombatText], 0, 16);
+	fonts[FontPurpose::CombatTextDmg] = TTF_OpenFontRW(RWops[FontPurpose::CombatTextDmg], 0, 16);
+	TTF_SetFontStyle(fonts[FontPurpose::CombatTextDmg], TTF_STYLE_BOLD);
 
 	for (auto it = fonts.begin(); it != fonts.end(); it++)
 		if (!it->second)
@@ -111,6 +112,8 @@ void DataBase::loadFontData() {
 	colors[TextColor::ItemType] = { 255, 204, 0,255 };
 	colors[TextColor::MenuButtonText] = { 255, 255, 255,255 };
 	colors[TextColor::CombatTextDamage] = { 255, 204, 102, 255 };
+	colors[TextColor::CombatTextFireDmg] = { 204, 0, 0, 255 };
+	colors[TextColor::CombatTextHeal] = { 0, 153, 51, 255 };
 }
 
 void DataBase::loadItems() {
@@ -125,7 +128,7 @@ void DataBase::loadItems() {
 	items[ItemName::Item3].passives[StaticPassiveName::attackSpeedMult] = 0.7;
 	items[ItemName::Item3].passives[StaticPassiveName::numbOfProjectiles] = 72;
 	items[ItemName::Item3].passives[StaticPassiveName::unitSpeedMult] = 0.5;
-	items[ItemName::Item3].passiveName = PassiveName::OnEnemyKillMoveSpeed;
+	items[ItemName::Item3].passiveName = PassiveName::OnHitBurn;
 
 	items[ItemName::Item4].type = ItemType::Passive;
 	items[ItemName::Item4].passives[StaticPassiveName::attackSpeedMult] = 2;

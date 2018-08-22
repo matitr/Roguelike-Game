@@ -2,25 +2,26 @@
 #include "BuffsManager.h"
 #include "Passive.h"
 #include "DataBase.h"
+#include "Unit.h"
 #include <iostream>
 
 
 #pragma region AttackPassivesManager
-void AttackPassivesManager::activateHitEnemy(std::list <AttackType*>& attacks, BuffsManager* buffsManager) {
+void AttackPassivesManager::activateHitEnemy(std::list <AttackType*>& attacks, BuffsManager* buffsManager, float hitDamage) {
 	for (int i = 0; i < attackPassives.size(); i++) {
 		if (attackPassives[i]->activateOn() == PassiveActivateOn::HitEnemy || attackPassives[i]->activateOn() == PassiveActivateOn::HitWallOrEnemy) {
-			if (attackPassives[i]->activate(attacks, NULL) && attackPassives[i]->buffOnActivate()) {
+			if (attackPassives[i]->activate(attacks, hitDamage) && attackPassives[i]->buffOnActivate()) {
 				buffsManager->addBuffCopy(attackPassives[i]->buffOnActivate());
 			}
 		}
 	}
 }
 
-void AttackPassivesManager::activateHitWall(std::list <AttackType*>& attacks, BuffsManager* buffsManager) {
+void AttackPassivesManager::activateHitWall(std::list <AttackType*>& attacks) {
 	for (int i = 0; i < attackPassives.size(); i++) {
 		if (attackPassives[i]->activateOn() == PassiveActivateOn::HitWall || attackPassives[i]->activateOn() == PassiveActivateOn::HitWallOrEnemy) {
-			if (attackPassives[i]->activate(attacks, NULL) && attackPassives[i]->buffOnActivate()) {
-				buffsManager->addBuffCopy(attackPassives[i]->buffOnActivate());
+			if (attackPassives[i]->activate(attacks) && attackPassives[i]->buffOnActivate()) {
+//				buffsManager->addBuffCopy(attackPassives[i]->buffOnActivate());
 			}
 		}
 	}
@@ -36,33 +37,42 @@ void AttackPassivesManager::removeAttackPassive(Passive* passive) {
 	if (it_found != attackPassives.end())
 		attackPassives.erase(it_found);
 }
+
+AttackPassivesManager::AttackPassivesManager(const AttackPassivesManager& attackPassivesM) {
+	attackPassives.reserve(attackPassivesM.attackPassives.size());
+
+	for (int i = 0; i < attackPassivesM.attackPassives.size(); i++)
+		attackPassives.push_back(attackPassivesM.attackPassives[i]);
+}
 #pragma endregion
 
 
-void PassivesManager::updateAllPassives() {
+void PassivesManager::updateAllPassives(Unit* unitParent) {
 	for (int i = 0; i < passives.size(); i++) {
 		passives[i]->update();
 	}
-	buffsManager->updateAllBuffs();
+	buffsManager->updateAllBuffs(unitParent);
 	limitStatistics();
 
-	static int o = 0;
-	o++;
-	if (!(o % 60)) {
-		for (int it_passive = 0; it_passive < unitStatsWithoutLimit.size(); it_passive++) {
-			std::cout << unitStatisticsRef[it_passive] <<",";
-		}
-		std::cout << std::endl;
-	}
+//	static int o = 0;
+//	o++;
+//	if (!(o % 60)) {
+//		for (int it_passive = 0; it_passive < unitStatsWithoutLimit.size(); it_passive++) {
+//			std::cout << unitStatisticsRef[it_passive] <<",";
+//		}
+//		std::cout << std::endl;
+//	}
 }
 
-void PassivesManager::equipItem(Item* item) {
+void PassivesManager::equipItem(Item* item, Unit* unit) {
 	// Add values
 	for (int it_passive = 0; it_passive < item->getStaticPassives().size(); it_passive++) {
 		unitStatsWithoutLimit[it_passive] += item->getStaticPassives()[it_passive];
 	}
-	if (item->getPassive())
+	if (item->getPassive()) {
 		addPassive(item->getPassive());
+		item->getPassive()->setParentUnit(unit);
+	}
 }
 
 void PassivesManager::unequipItem(Item* item) {
@@ -70,8 +80,10 @@ void PassivesManager::unequipItem(Item* item) {
 	for (int it_passive = 0; it_passive < item->getStaticPassives().size(); it_passive++) {
 		unitStatsWithoutLimit[it_passive] -= item->getStaticPassives()[it_passive];
 	}
-	if (item->getPassive())
+	if (item->getPassive()) {
 		removePassive(item->getPassive());
+		item->getPassive()->removeParentUnit();
+	}
 }
 
 void PassivesManager::limitStatistics() {
@@ -85,12 +97,16 @@ void PassivesManager::limitStatistics() {
 				unitStatisticsRef[i] = unitStatsWithoutLimit[i];
 		}
 	}
+
+	// Limit hp
+	if (unitStatsWithoutLimit[StaticPassiveName::hp] > unitStatsWithoutLimit[StaticPassiveName::hpMax])
+		unitStatsWithoutLimit[StaticPassiveName::hp] = unitStatsWithoutLimit[StaticPassiveName::hpMax];
 }
 
-void PassivesManager::activatePassives(PassiveActivateOn activationType, std::list <AttackType*>& attacks, SDL_Point* attackPoint) {
+void PassivesManager::activatePassives(PassiveActivateOn activationType, std::list <AttackType*>& attacks, float activationValue) {
 	for (int i = 0; i < passives.size(); i++) {
 		if (passives[i]->activateOn() == activationType) {
-			if (passives[i]->activate(attacks, attackPoint) && passives[i]->buffOnActivate()) {
+			if (passives[i]->activate(attacks) && passives[i]->buffOnActivate()) {
 				buffsManager->addBuffCopy(passives[i]->buffOnActivate());
 			}
 		}
@@ -115,12 +131,20 @@ void PassivesManager::removePassive(Passive* passive) {
 	removeAttackPassive(passive);
 }
 
-void PassivesManager::addStartingStat(StaticPassiveName::StaticPassiveName statName, float value) {
-	unitStatsWithoutLimit[statName] += value;
+void PassivesManager::setStartingStat(StaticPassiveName::StaticPassiveName statName, float value) {
+	unitStatsWithoutLimit[statName] = value;			
+	
+	if (unitStatsWithoutLimit[statName] < DataBase::passivesLimits[statName].min)
+		unitStatisticsRef[statName] = DataBase::passivesLimits[statName].min;
+	else if (unitStatsWithoutLimit[statName] > DataBase::passivesLimits[statName].max)
+		unitStatisticsRef[statName] = DataBase::passivesLimits[statName].max;
+	else
+		unitStatisticsRef[statName] = unitStatsWithoutLimit[statName];
 }
 
-void PassivesManager::setStartingStat(StaticPassiveName::StaticPassiveName statName, float value) {
-	unitStatsWithoutLimit[statName] = value;
+void PassivesManager::takeDamage(float& damage, DamageType damageType) {
+	damage = damage * (1 + unitStatisticsRef[StaticPassiveName::damageTakenMult]);
+	unitStatsWithoutLimit[StaticPassiveName::hp] -= damage;
 }
 
 PassivesManager::PassivesManager(ItemPassives& unitStatistics) : unitStatisticsRef(unitStatistics) {

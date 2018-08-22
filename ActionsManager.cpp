@@ -4,9 +4,11 @@
 #include "Unit.h"
 #include "DataBase.h"
 #include "Movements.h"
+#include "myMath.h"
+#include "Map.h"
 
 
-void ActionsManager::updateAction() {
+void ActionsManager::updateAction(const PointDouble& velocity) {
 	Direction::Name dirPast = actions[*currAction]->getDirection();
 
 	if (actions[*currAction]->actionEnded()) { // Next action
@@ -31,7 +33,7 @@ void ActionsManager::updateAction() {
 	}
 
 	if (!actionChanged)
-		actions[*currAction]->updateFrame();
+		actions[*currAction]->updateFrame(moveSpeedMult, attackSpeedMult);
 
 	std::unordered_map <ActionType, UnitAction*>::iterator it_action = actions.begin();
 	for (it_action; it_action != actions.end(); it_action++)
@@ -40,7 +42,7 @@ void ActionsManager::updateAction() {
 	actionChanged = false;
 }
 
-void ActionsManager::onClosestObj(GameObject* closestObj, double closestObjDist) {
+void ActionsManager::onClosestObj(Map* map, GameObject* closestObj, double closestObjDist, const PointDouble& position) {
 	if (closestObj && (!actions[*currAction]->dynamicActivationOnly() || actions[*currAction]->actionEnded())) {
 		// Force change action
 		std::vector<std::list<ActionType>::iterator> actionsToForceChange;
@@ -49,8 +51,11 @@ void ActionsManager::onClosestObj(GameObject* closestObj, double closestObjDist)
 			if (++temp_itAction == pattern.end()) // Last action
 				temp_itAction = pattern.begin();
 
-			if (actions[*temp_itAction]->canDynamicActivation(closestObjDist))
+			if (actions[*temp_itAction]->canDynamicActivation(closestObjDist)
+				&& (!actions[*temp_itAction]->clearPathRequired() || (--checkClearPathCurrCooldown == -1 && map->checkClearPath(unitParent, closestObj)))) {
 				actionsToForceChange.push_back(temp_itAction);
+				checkClearPathCurrCooldown = checkClearPathCooldown;
+			}
 
 		} while (temp_itAction != currAction);
 
@@ -135,6 +140,36 @@ bool ActionsManager::changeActionType(ActionType action) {
 	return true;
 }
 
+bool ActionsManager::updateDeathAction(Unit* unit, std::list <AttackType*>& monsterAttacks, PointInt* attackPoint) {
+	actionChanged = true;
+
+	if (actionChanged) {
+		actionChanged = false;
+		std::unordered_map <ActionType, UnitAction*>::iterator it_found = actions.find(ActionType::Death);
+
+		if (it_found == actions.end())
+			return false;
+
+		if (!(*it_found).second->animationsExists()) {
+			if (actions[ActionType::Death]->attackExists())
+				actions[ActionType::Death]->getAttack()->makeAttack(unit, monsterAttacks, attackPoint);
+
+			return false;
+		}
+
+		actions[ActionType::Death]->setFirstFrame();
+	}
+	else {
+		if (actions[ActionType::Death]->actionEnded())
+			return false;
+
+		actions[ActionType::Death]->updateFrame(0.0f, 0.0f);
+	}
+
+	actions[ActionType::Death]->makeAttack(unit, monsterAttacks, attackPoint, 0.0f);
+	return true;
+}
+
 void ActionsManager::setCurrentDirection(double x, double y) {
 	actions[*currAction]->setDirection(x, y);
 }
@@ -150,13 +185,19 @@ void ActionsManager::makeMove(Unit* unitToMove) {
 	}
 }
 
-void ActionsManager::makeAttack(Unit* unit, std::list <AttackType*>& monsterAttacks, SDL_Point* attackPoint) {
-	actions[*currAction]->makeAttack(unit, monsterAttacks, attackPoint);
+void ActionsManager::updateMove() {
+	actions[*currAction]->updateMove();
 }
 
-ActionsManager::ActionsManager(SDL_Rect& srcRect, PointDouble& velocityObj, PointDouble& positionObj)
-	: srcRectRef(srcRect), velocity(velocityObj), position(positionObj) {
+void ActionsManager::makeAttack(Unit* unit, std::list <AttackType*>& monsterAttacks, PointInt* attackPoint) {
+	actions[*currAction]->makeAttack(unit, monsterAttacks, attackPoint, attackSpeedMult);
+}
 
+ActionsManager::ActionsManager(SDL_Rect& srcRect, float& unitMoveSpeedMult, float& unitAttackSpeedMult, Unit* unit)
+	: srcRectRef(srcRect), moveSpeedMult(unitMoveSpeedMult), attackSpeedMult(unitAttackSpeedMult), unitParent(unit) {
+
+	checkClearPathCooldown = 3 + rand() % 3;
+	checkClearPathCurrCooldown = 0;
 }
 
 

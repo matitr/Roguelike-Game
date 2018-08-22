@@ -24,25 +24,37 @@ protected:
 
 	Unit* closestEnemy = nullptr;
 	double closestEnemyDist;
+	PointInt attackPos;
 
 	float maxSpeed;
 	float speed;
+	bool isAlive = true;
 
 	HealthBar* healthBar;
 
 	ItemPassives staticPassives;
 	PassivesManager* passivesManager;
+
+	bool unitDetectedCollisionUnit;
+	bool unitDetectedCollisionWall;
 public:
 	virtual bool update(std::list <AttackType*>& monsterAttacks, Map* map);
 	virtual void draw(SDL_Point* startRender);
 
 	void setClosestEnemy(Unit* u, double dist);
 
-	void takeDamage(float damage);
+	void takeDamage(float& damage, DamageType damageType = DamageType::Physical);
 	const UnitType& getUnitType() { return unitType; }
 	ItemPassives& getPassives() { return staticPassives; }
 	ActionsManager& getActiongManager() { return actionsManager; }
 	PassivesManager* getPassivesManager() { return passivesManager; }
+	const PointInt& getAttackPos() { return attackPos; }
+	bool alive() { return isAlive; }
+
+	void setCollisionWithUnit() { unitDetectedCollisionUnit = true; }
+	void setHittedWall() { unitDetectedCollisionWall = true; }
+	bool detectedCollisionUnit() { return unitDetectedCollisionUnit; }
+	bool detectedCollisionWall() { return unitDetectedCollisionWall; }
 
 	float getBaseSpeed() { return staticPassives[StaticPassiveName::unitSpeed]; }
 	void setMaxSpeed(float maxS) { maxSpeed = maxS; }

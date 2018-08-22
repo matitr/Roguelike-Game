@@ -7,12 +7,13 @@
 
 class Room;
 
-enum class FieldType {None, Floor, FloorHallway, Door, Wall};
+enum class FieldType { Wall, Floor, FloorHallway, Door, None };
 
 class Field : public GameObject {
 	bool isGround = false;
 	FieldType fieldType;
 	PointInt fieldPos;
+	bool drawFieldLast = false;
 
 	std::vector<GameObject*> collisionObjects;
 public:
@@ -27,6 +28,8 @@ public:
 	int x() { return fieldPos.x; }
 	int y() { return fieldPos.y; }
 	PointInt& getFieldPos() { return fieldPos; }
+	void setDrawLast() { drawFieldLast = true; }
+	bool drawLast() { return drawFieldLast; }
 
 	void drawField(int x, int y);
 	void draw(SDL_Point* startRender) {}

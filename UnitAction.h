@@ -18,6 +18,7 @@ class UnitAction {
 	int actionCooldown = 0;
 	int presentCooldown = 0;
 
+	bool _clearPathRequired = false;
 	int attackFrame = 0;
 	Direction::Name currentDirection;
 public:
@@ -27,7 +28,9 @@ public:
 	bool canDynamicActivation(double dist); // Check distActivationMax && distActivationMin
 	void setDynamicActivationOnly() { dynamicEnableOnly = true; }
 
-	inline int makeAttackFrame() { return attackFrame; }
+	void setClearPathRequired() { _clearPathRequired = true; }
+	bool clearPathRequired() { return _clearPathRequired; }
+
 	inline bool movementExists() { return movement ? true : false; }
 	inline bool attackExists() { return attack ? true : false; }
 
@@ -38,6 +41,7 @@ public:
 
 	void addAnimation(Direction::Name dir, AnimationDetails& animationData, SDL_Rect& srcRectR);
 	void addAnimations(std::array<AnimationDetails, Direction::enum_size>& animations, SDL_Rect& srcRectR);
+	bool animationsExists();
 	void setFrameTime(int frameTime);
 
 	void setDirection(Direction::Name dir);
@@ -46,18 +50,19 @@ public:
 	void setFirstFrame();
 	void setLastFrame();
 	bool actionEnded();
-	void updateFrame();
+	void updateFrame(const float& moveSpeedMult, const float& attackSpeedMult);
 
 	void setCooldown(int cooldown) { actionCooldown = cooldown; }
 	void resetCooldown() { presentCooldown = actionCooldown; }
 	void updateCooldown();
 
 	void resetMove();
+	void updateMove();
 
-	void makeAttack(Unit* unit, std::list <AttackType*>& monsterAttacks, SDL_Point* attackPoint);
+	void makeAttack(Unit* unit, std::list <AttackType*>& monsterAttacks, PointInt* attackPoint, float attackSpeedMult);
 	void makeMove();
 
-	UnitAction(Movement* move, AttackPattern* attack, int attackFrame);
+	UnitAction(Movement* move, AttackPattern* attack, int attackFrame = -1);
 	~UnitAction();
 };
 

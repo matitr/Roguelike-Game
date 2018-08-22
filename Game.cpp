@@ -35,13 +35,7 @@ void Game::run() {
 	DataBase::loadAllDataBases();
 	screensManager = new ScreensManager(windowResolution.x, windowResolution.y);
 
-	player = new Player(TextureManager::textures[TextureFile::PLAYER], windowResolution);
-	map = new Map(player, windowResolution.y / 2, windowResolution.x / 2);
-
-	map->generateNewLevel();
-	map->currentRoom()->getRoomObjects(monsters, interactiveObjects);
-	map->setFieldsPositions();
-	player->setPosition(map->getCameraX(), map->getCameraY());
+	newGame();
 
 	interactiveObjects->push_back(new Item(ItemName::Item3, player->getPositionX() + 5, player->getPositionY() + 5));
 	interactiveObjects->push_back(new Item(ItemName::Item4, player->getPositionX() + 5, player->getPositionY() + 5));
@@ -145,7 +139,7 @@ void Game::updateGame() {
 	std::vector <InteractiveObject*>::iterator itTemp_interactiveObj;
 	std::unordered_map <SDL_Scancode, InteractiveObject*>::iterator it_objectSelected;
 
-	SDL_RenderClear(renderer);
+//	SDL_RenderClear(renderer);
 	gameObjects.clear();
 
 	if (player->inventory().isOpened())
@@ -210,7 +204,7 @@ void Game::updateUnits() {
 
 	while (it_monsters != (*monsters).end()) {
 		if (!(*it_monsters)->update(monsterAttacks, map)) {
-			player->getPassivesManager()->activatePassives(PassiveActivateOn::EnemyKill, playerProjectiles, NULL);
+			player->getPassivesManager()->activatePassives(PassiveActivateOn::EnemyKill, playerProjectiles);
 			(*interactiveObjects).push_back(new Money((*it_monsters)->getPositionX(), (*it_monsters)->getPositionY())); // drop money	
 			std::list<AttackType*>::iterator it_projPlayer = playerProjectiles.begin(); // Delete Unit pointers in projectiles
 			while (it_projPlayer != playerProjectiles.end()) {
@@ -225,7 +219,7 @@ void Game::updateUnits() {
 			(*monsters).erase(tempItMonster);
 			if ((*monsters).empty()) {
 				map->currentRoom()->setBattle(false);
-				player->getPassivesManager()->activatePassives(PassiveActivateOn::RoomClear, monsterAttacks, NULL);
+				player->getPassivesManager()->activatePassives(PassiveActivateOn::RoomClear, monsterAttacks);
 			}
 
 			if (map->currentRoom()->type == Boss && monsters->empty()) { // Boss killed
@@ -318,7 +312,7 @@ void Game::quitGame() {
 	_running = false;
 }
 
-Game::Game(int w, int h, bool fullscreen) : windowResolution{ w, h } {
+Game::Game(int w, int h, bool fullscreen) : windowResolution{ w, h }, map(nullptr) {
 	int flags = 0;
 	if (fullscreen)
 		flags = SDL_WINDOW_FULLSCREEN;

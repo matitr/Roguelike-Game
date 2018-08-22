@@ -21,6 +21,7 @@ protected:
 public:
 	virtual void makeMove() = 0;
 	virtual void resetMove() {}
+	virtual void update() {}
 
 	void setSpeed(double s) { speed = s; }
 	void setSpeedMultiplier(double sM) { speedMultiplier = sM; }
@@ -78,10 +79,14 @@ public:
 class Charge : public Movement {
 	Unit* player;
 	PointInt chargeTargetPos;
+	PointDouble chargeVelocity;
+	double chargeAngleRadians;
+
 	bool getChargeTargetPos = true;
 public:
 	void makeMove() override;
 	void resetMove() override;
+	void update() override;
 
 	Charge(Unit* unitToMove, Unit* _player);
 	~Charge();

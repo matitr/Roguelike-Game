@@ -68,7 +68,7 @@ void Room::spawnMonsters(Map* _map, Unit* _player) {
 				enemyX = x1 + rand() % ((x2 - x1));
 				enemyY = y1 + rand() % ((y2 - y1));
 			} while (!_map->getField(enemyX, enemyY) || _map->getField(enemyX, enemyY)->type() != FieldType::Floor);
-			m->setPosition(enemyX * _map->fieldRect.w, enemyY * _map->fieldRect.h);
+			m->setPosition(enemyX * _map->fieldRect.w + _map->fieldRect.w * 0.5, enemyY * _map->fieldRect.h + _map->fieldRect.h * 0.5);
 		}
 	}
 	else if (type == Boss) {

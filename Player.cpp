@@ -11,13 +11,26 @@
 
 
 bool Player::update(std::list <AttackType*>& playerProjectiles, Map* map, SDL_Rect& fieldRect) {
-	passivesManager->activatePassives(PassiveActivateOn::Passive, playerProjectiles, &attackPos);
-	passivesManager->updateAllPassives();
+	if (staticPassives[StaticPassiveName::hp] <= 0) {
+		passivesManager->activatePassives(PassiveActivateOn::Death, playerProjectiles);
+	}
+
+	if (staticPassives[StaticPassiveName::hp] <= 0) {
+		isAlive = false;
+		return actionsManager.updateDeathAction(this, playerProjectiles, &attackPos);
+	}
+
+	passivesManager->activatePassives(PassiveActivateOn::Passive, playerProjectiles);
+	passivesManager->updateAllPassives(this);
 	speed = staticPassives[StaticPassiveName::unitSpeed];
 	if (isInteractionBlocked) {
 		attack = false;
 		velocity.x = 0;
 		velocity.y = 0;
+	}
+	if (!attack) {
+		attackPos.x = Input::mousePosX + map->getStartRender().x;
+		attackPos.y = Input::mousePosY + map->getStartRender().y;
 	}
 	if (staticPassives[StaticPassiveName::numbOfProjectiles])
 		attackP->setNumberOfProj((int)staticPassives[StaticPassiveName::numbOfProjectiles]);
@@ -40,6 +53,9 @@ bool Player::update(std::list <AttackType*>& playerProjectiles, Map* map, SDL_Re
  		velocity.x = rollVelocity.x;
 		velocity.y = rollVelocity.y;
 	}
+
+	unitDetectedCollisionUnit = false;
+	unitDetectedCollisionWall = false;
 
 	Field *field = nullptr;
 	// Check if player have collision with door. Change room
@@ -95,7 +111,7 @@ bool Player::update(std::list <AttackType*>& playerProjectiles, Map* map, SDL_Re
 		}
 	}
 
-	actionsManager.updateAction();
+	actionsManager.updateAction(velocity);
 
 	return true;
 }
@@ -108,7 +124,7 @@ void Player::drawStatus() {
 
 	SDL_RenderCopy(Game::renderer, playerStatsTxt, &statusSrcRect, &statusDstRest);
 	int width = statusSrcRect.w;
-	statusDstRest.w = int((statusDstRest.w - 4) * (staticPassives[StaticPassiveName::hp] / 8.0));
+	statusDstRest.w = int((statusDstRest.w - 4) * (staticPassives[StaticPassiveName::hp] / staticPassives[StaticPassiveName::hpMax]));
 	statusSrcRect.w = statusDstRest.w;
 	statusSrcRect.y = 30;
 	SDL_RenderCopy(Game::renderer, playerStatsTxt, &statusSrcRect, &statusDstRest);
@@ -234,8 +250,8 @@ Player::Player(SDL_Texture* txt, SDL_Point& windowResolution) : Unit(TextureMana
 	lastRollFramesAgo = rollCooldown;
 
 	passivesManager->setStartingStat(StaticPassiveName::damage, 1);
-	passivesManager->setStartingStat(StaticPassiveName::hp, 8);
-	passivesManager->setStartingStat(StaticPassiveName::hpMax, 8);
+	passivesManager->setStartingStat(StaticPassiveName::hp, 899);
+	passivesManager->setStartingStat(StaticPassiveName::hpMax, 899);
 	passivesManager->setStartingStat(StaticPassiveName::unitSpeed, 4);
 
 	money = 0;

@@ -24,6 +24,8 @@ class Map: public MapCore {
 
 	LevelGenerator generator;
 	void renderMinimap();
+
+	bool checkClearField(Field* field, LineSegment& lineS);
 public:
 	std::vector<Room*> rooms; // rooms[0] is spawn
 
@@ -50,6 +52,8 @@ public:
 	void setFieldsPositions(); // Set fileds iterators. Coordinates (x,y)  (0...1...n, 0...1...m)
 	void changeRoom(Room* room, Field* fieldToMove);
 	void changeRoom(Room* room, Teleporter* tele);
+
+	bool checkClearPath(GameObject* object, GameObject* objectTarget);
 
 	Map(Player* p, int _hCenter, int _wCenter);
 	~Map();

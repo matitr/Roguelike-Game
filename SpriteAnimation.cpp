@@ -1,9 +1,10 @@
 #include "SpriteAnimation.h"
 #include "DataBase.h"
+#include <iostream>
 
 
-void SpriteAnimation::updateTexture() {
-	if (frameCounter == frameTime) { // Next texture frame
+void SpriteAnimation::updateTexture(float frameTimeMultReciprocal) {
+	if (frameCounter == FRAME_ENDED) { // Next texture frame
 		if (currFrame + 1 == frames) { // The last texture frame has ended
 
 			srcRectAnimation.x = firstFrame.x;
@@ -23,6 +24,12 @@ void SpriteAnimation::updateTexture() {
 		frameCounter = 0;
 	}
 	frameCounter++;
+
+	frameTimeMultReciprocal++;
+
+	if (frameCounter >= int(frameTime / (abs(frameTimeMultReciprocal)))) {
+		frameCounter = FRAME_ENDED;
+	}
 }
 
 void SpriteAnimation::setFirstFrame() {
@@ -41,13 +48,19 @@ void SpriteAnimation::setLastFrame() {
 void SpriteAnimation::setFrameCounter(SpriteAnimation& animationOther) {
 	setFirstFrame();
 
-	while (frameCounter != animationOther.frameCounter)
+	while (currFrame != animationOther.currFrame)
 		updateTexture();
 
+	frameCounter = animationOther.frameCounter;
 }
 
-bool SpriteAnimation::firstTimuUnitOfFrame(int frame) {
-	return (currFrame == frame && frameCounter == 1); 
+bool SpriteAnimation::firstTimuUnitOfFrame(int frame, float attackSpeedMult) {
+	if (currFrame == frame) {
+		if (frameTime == 1 || (frameTime / abs(attackSpeedMult)) <= 1 || frameCounter == 1)
+			return true;
+	}
+
+	return false;
 }
 
 SpriteAnimation::SpriteAnimation(AnimationDetails& animationD, SDL_Rect &_srcRect)

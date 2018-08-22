@@ -15,8 +15,8 @@ enum class ItemType { Universal, MainWeapon, Active, Passive };
 enum class AnimationName { Projectile, Projectile2, ChestOpening, CoinSpin };
 
 
-enum class TextColor { ItemStatText, ItemPassive, ItemType, MenuButtonText, CombatTextDamage };
-enum class FontPurpose { ItemDescription, GameEndResult, MenuButtonsText, CombatText };
+enum class TextColor { ItemStatText, ItemPassive, ItemType, MenuButtonText, CombatTextDamage, CombatTextFireDmg, CombatTextHeal };
+enum class FontPurpose { ItemDescription, GameEndResult, MenuButtonsText, CombatTextDmg };
 
 enum class UnitName { Unit, Player };
 

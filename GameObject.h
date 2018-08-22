@@ -32,7 +32,7 @@ protected:
 public:
 	PointDouble velocity;
 	template <class T>
-	void collisionUnit(T *gameObj);
+	bool collisionUnit(T *gameObj);
 
 	template <class T>
 	bool detectCollision(T *gameObj);
@@ -44,7 +44,7 @@ public:
 	float distanceEdges(T *gameObj);
 
 	// Change position of unit when collision detected
-	void collisionUnitFields(Map* map, SDL_Rect& fieldRect);
+	bool collisionUnitFields(Map* map, SDL_Rect& fieldRect);
 
 	void setRadius(int r) { radius = r; }
 	void setRadiusY(int y) { radiusY = y; }

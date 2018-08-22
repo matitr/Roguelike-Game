@@ -9,7 +9,7 @@
 #include "TextureManager.h"
 
 template <class T>
-void GameObject::collisionUnit(T *gameObj) {
+bool GameObject::collisionUnit(T *gameObj) {
 	if (gameObj->hitboxType == Circle) {
 		if (((position.x - gameObj->position.x)*(position.x - gameObj->position.x)
 			+ (position.y - gameObj->position.y)*(position.y - gameObj->position.y)) <= (radius + gameObj->radius)*(radius + gameObj->radius)) {
@@ -31,7 +31,7 @@ void GameObject::collisionUnit(T *gameObj) {
 					gameObj->position.x += cos(dir) * overlap;
 					gameObj->position.y += sin(dir) * overlap;
 
-					return;
+					return true;
 				}
 			}
 			position.x -= overlap * (position.x - gameObj->position.x) / dist;
@@ -39,6 +39,8 @@ void GameObject::collisionUnit(T *gameObj) {
 
 			gameObj->position.x += overlap * (position.x - gameObj->position.x) / dist;
 			gameObj->position.y += overlap * (position.y - gameObj->position.y) / dist;
+
+			return true;
 		}
 	}
 	else { // Rectangle
@@ -60,13 +62,15 @@ void GameObject::collisionUnit(T *gameObj) {
 					position.y += radius - deltaY;
 				else
 					position.y -= radius + deltaY;
+			return true;
 		}
 	}
+	return false;
 }
 
-template void GameObject::collisionUnit<Unit>(Unit *gameObj);
-template void GameObject::collisionUnit<Field>(Field *gameObj);
-template void GameObject::collisionUnit<AttackType>(AttackType *gameObj);
+template bool GameObject::collisionUnit<Unit>(Unit *gameObj);
+template bool GameObject::collisionUnit<Field>(Field *gameObj);
+template bool GameObject::collisionUnit<AttackType>(AttackType *gameObj);
 
 
 template <class T>
@@ -204,10 +208,11 @@ template float GameObject::distanceEdges<InteractiveObject>(InteractiveObject *g
 template float GameObject::distanceEdges<Field>(Field *gameObj);
 
 
-void GameObject::collisionUnitFields(Map* map, SDL_Rect& fieldRect) {
+bool GameObject::collisionUnitFields(Map* map, SDL_Rect& fieldRect) {
 	int fieldX, fieldY;
 	Field* field;
 	double minX, deltaX, minY, deltaY;
+	bool collisionDetected = false;
 
 	for (fieldY = ((int)position.y - radius) / fieldRect.h; fieldY <= (position.y + radius) / fieldRect.h; fieldY++) {
 		for (fieldX = ((int)position.x - radius) / fieldRect.w; fieldX <= (position.x + radius) / fieldRect.w; fieldX++) {
@@ -235,11 +240,13 @@ void GameObject::collisionUnitFields(Map* map, SDL_Rect& fieldRect) {
 							position.y += radius - deltaY;
 						else
 							position.y -= radius + deltaY;
+
+					collisionDetected = true;
 				}
 			}
 		}
 	}
-
+	return collisionDetected;
 }
 
 void GameObject::setPosition(double x, double y) {

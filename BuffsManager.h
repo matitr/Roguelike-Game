@@ -4,6 +4,7 @@
 
 class Buff;
 class Passive;
+class Unit;
 
 class BuffsManager {
 	std::vector<Buff*> buffs;
@@ -12,7 +13,7 @@ class BuffsManager {
 public:
 	void addBuffCopy(Buff* buff);
 	void removeBuffs(Passive* parentPassive);
-	void updateAllBuffs();
+	void updateAllBuffs(Unit* unit);
 
 	BuffsManager(ItemPassives& statsWithoutLimit);
 	~BuffsManager();

@@ -13,16 +13,17 @@ class UnitEnemy1 : public Unit {
 
 public:
 	UnitEnemy1(Map* _map, Unit* _player) : Unit(TextureManager::textureParameters[SingleTexture::UnitT], UnitType::Monster) {
-		staticPassives[StaticPassiveName::projectileSpeedMult] = 0.5;
+//		passivesManager->setStartingStat(StaticPassiveName::attackSpeedMult, 3);
 
-		actionsManager.addAction(Walk, new MoveForwardPlayer(this, _map, _player), NULL, 1);
+		actionsManager.addAction(Walk, NULL, NULL, 1);
 		actionsManager.addAnimations(Walk, DataBase::unitAnimations[UnitName::Unit][Walk]);
 
 		UnitAction* action = new UnitAction(new NoMoveFaceEnemy(this, _player), new MultipleProjectiles(DataBase::animations[AnimationName::Projectile2], 1), 9);
 		action->addAnimations(DataBase::unitAnimations[UnitName::Unit][AttackProj], srcRect);
 		action->setDistActivationMax(500);
 		action->setDistActivationMin(50);
-		action->setCooldown(120);
+		action->setCooldown(0);
+		action->setClearPathRequired();
 		actionsManager.addAction(AttackProj, action);
 
 		actionsManager.addAction(Attack, NULL, new MeleeSwingAttack(DataBase::unitAnimations[UnitName::Unit][Attack][Direction::E], 60, 45), 2);
@@ -33,6 +34,7 @@ public:
 		actionsManager.addPattern(Walk);
 		actionsManager.addPattern(Attack);
 		actionsManager.addPattern(AttackProj);
+		actionsManager.addAction(Death, NULL, new ProjectileDirection(DataBase::animations[AnimationName::Projectile2], 60, 45), 2);
 
 		setPositionShift(0.5f, 0.8f, 0.55f);
 	}
@@ -50,7 +52,7 @@ public:
 		actionsManager.addAction(Walk, new MoveForwardPlayer(this, _map, _player), NULL, 1);
 		actionsManager.addAnimations(Walk, DataBase::unitAnimations[UnitName::Unit][Walk]);
 
-		actionsManager.addAction(AttackProj, new NoMoveFaceEnemy(this, _player), new MultipleProjectiles(DataBase::animations[AnimationName::Projectile2], 3), 9);
+		actionsManager.addAction(AttackProj, NULL, NULL, 9);
 		actionsManager.addAnimations(AttackProj, DataBase::unitAnimations[UnitName::Unit][AttackProj]);
 		actionsManager.setActionActivationDistMax(AttackProj, 1000);
 

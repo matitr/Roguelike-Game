@@ -10,10 +10,12 @@ class GameObject;
 class Movement;
 class Unit;
 class AttackType;
+class Map;
 struct AnimationDetails;
+struct PointInt;
 enum Name;
 
-enum ActionType { Idle, Walk, Dash, AttackProj, Attack };
+enum ActionType { Idle, Death, Walk, Dash, AttackProj, Attack };
 struct PointDouble;
 
 class ActionsManager {
@@ -23,12 +25,15 @@ class ActionsManager {
 	std::list<ActionType>::iterator currAction;
 	bool actionChanged = true;
 
+	int checkClearPathCooldown;
+	int checkClearPathCurrCooldown;
+	Unit* unitParent;
 	SDL_Rect& srcRectRef;
-	const PointDouble& velocity;
-	const PointDouble& position;
+	const float& moveSpeedMult;
+	const float& attackSpeedMult;
 public:
-	void onClosestObj(GameObject* closestObj, double closestObjDist);
-	void updateAction();
+	void onClosestObj(Map* map, GameObject* closestObj, double closestObjDist, const PointDouble& position);
+	void updateAction(const PointDouble& velocity);
 
 	void addAction(ActionType action, Movement* move, AttackPattern* attack, int attackFrame = -1);
 	void addAction(ActionType actionName, UnitAction* action);
@@ -43,13 +48,16 @@ public:
 	void changeAction(std::list<ActionType>::iterator actionIt);
 	bool changeActionType(ActionType action);
 
+	bool updateDeathAction(Unit* unit, std::list <AttackType*>& monsterAttacks, PointInt* attackPoint);
+
 	ActionType currActionType() { return *currAction; }
 	void setCurrentDirection(double x, double y);
 
 	void makeMove(Unit* unitToMove);
-	void makeAttack(Unit* unit, std::list <AttackType*>& monsterAttacks, SDL_Point* attackPoint);
+	void updateMove();
+	void makeAttack(Unit* unit, std::list <AttackType*>& monsterAttacks, PointInt* attackPoint);
 
-	ActionsManager(SDL_Rect& srcRect, PointDouble& velocityObj, PointDouble& positionObj);
+	ActionsManager(SDL_Rect& srcRect, float& unitMoveSpeedMult, float& unitAttackSpeedMult, Unit* unit);
 	~ActionsManager();
 };
 

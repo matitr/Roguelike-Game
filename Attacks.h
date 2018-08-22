@@ -5,11 +5,17 @@
 
 class Unit;
 
+//All attacks
+class ProjectileDirection;
+class MultipleProjectiles;
+class MeleeSwingAttack;
+
+
 class AttackPattern {
 	double damage = -1;
 	double damageMultiplier = -1;
 public:
-	virtual void makeAttack(Unit* unit, std::list <AttackType*>& attacksContainer, SDL_Point* attackPoint) = 0;
+	virtual void makeAttack(Unit* unit, std::list <AttackType*>& attacksContainer, PointInt* attackPoint) = 0;
 
 	void setDamage(double d) { damage = d; }
 	void setDamageMultiplier(double dM) { damageMultiplier = dM; }
@@ -19,14 +25,14 @@ public:
 	virtual ~AttackPattern();
 };
 
-class ProjectileDirection : public AttackPattern { // Projectiles 
+class ProjectileDirection : public AttackPattern { // Projectiles around point
 	float startAngle;
 	float angle;
 	int numbOfProj;
 	AnimationDetails& animationD;
 
 public:
-	void makeAttack(Unit* unit, std::list <AttackType*>& attacksContainer, SDL_Point* attackPoint);
+	void makeAttack(Unit* unit, std::list <AttackType*>& attacksContainer, PointInt* attackPoint) override;
 
 	ProjectileDirection(AnimationDetails& animationDetails, float _angle, int _numbOfProj) : animationD(animationDetails) {
 		startAngle = _angle;
@@ -43,7 +49,7 @@ class MultipleProjectiles : public AttackPattern { // Multiple projectiles in on
 	AnimationDetails& animationD;
 public:
 	void setNumberOfProj(int i) { numbOfProjectiles = i; }
-	void makeAttack(Unit* unit, std::list <AttackType*>& attacksContainer, SDL_Point* attackPoint);
+	void makeAttack(Unit* unit, std::list <AttackType*>& attacksContainer, PointInt* attackPoint) override;
 
 	MultipleProjectiles(AnimationDetails& animationDetails, int _numbOfProjectiles) : animationD(animationDetails), numbOfProjectiles(_numbOfProjectiles) {}
 
@@ -56,7 +62,7 @@ class MeleeSwingAttack : public AttackPattern {
 	int radius;
 
 public:
-	void makeAttack(Unit* unit, std::list <AttackType*>& attacksContainer, SDL_Point* attackPoint);
+	void makeAttack(Unit* unit, std::list <AttackType*>& attacksContainer, PointInt* attackPoint) override;
 
 	MeleeSwingAttack(AnimationDetails& animationDetails, int angleWidth, int _radius) 
 		: animationD(animationDetails), attackWidthAngle(angleWidth), radius(_radius) {}

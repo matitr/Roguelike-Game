@@ -36,6 +36,8 @@ struct PointInt {
 		x = _x;
 		y = _y;
 	}
+	PointInt(const PointDouble& pointD) : x((int)pointD.x), y((int)pointD.y) {}
+		
 	bool const operator== (const PointInt &p) const {
 		return x == p.x && y == p.y;
 	}
@@ -50,7 +52,32 @@ struct PointInt_cmp {
 	}
 };
 
+class LineSegment {
+	double aParam, bParam;
+	const PointInt p1, p2;
+public:
+	double y(double x) {
+		return aParam * x + bParam;
+	}
 
+	double x(double y) {
+		return (y - bParam) / aParam;
+	}
+
+	bool checkInserction(int x3, int y3, int x4, int y4) {
+		double uA = ((x4 - x3)*(p1.y - y3) - (y4 - y3)*(p1.x - x3)) / ((y4 - y3)*(p2.x - p1.x) - (x4 - x3)*(p2.y - p1.y));
+		double uB = ((p2.x - p1.x)*(p1.y - y3) - (p2.y - p1.y)*(p1.x - x3)) / ((y4 - y3)*(p2.x - p1.x) - (x4 - x3)*(p2.y - p1.y));
+
+		if (uA >= 0 && uA <= 1 && uB >= 0 && uB <= 1)
+			return true;
+		return false;
+	}
+
+	LineSegment(const PointDouble& p1, const PointDouble& p2) : p1(p1), p2(p2) {
+		aParam = (p1.y - p2.y) / (p1.x - p2.x);
+		bParam = p1.y - (p1.y - p2.y) * (p1.x) / (p1.x - p2.x);
+	}
+};
 
 
 
