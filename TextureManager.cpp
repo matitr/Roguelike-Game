@@ -72,6 +72,8 @@ void TextureManager::loadAllTextureSrcRect() { // srcRect = { x, y, w, h }
 	fieldTextureSrcRect[SingleFieldTexture::WALL_COLUMN_NW] = { fieldSize * 2, fieldSize * 2, fieldSize, fieldSize };
 	fieldTextureSrcRect[SingleFieldTexture::WALL_COLUMN_NE] = { fieldSize * 3, fieldSize * 2, fieldSize, fieldSize };
 
+	fieldTextureSrcRect[SingleFieldTexture::WALL_TOP] = { fieldSize * 0, fieldSize * 3, fieldSize, fieldSize };
+
 	// Parameters:
 	//  { SDL_Rect srcRect = { x, y, w, h }, Rect dstRect = { w, h }, SDL_Texture* texture };
 	textureParameters[SingleTexture::Teleport] = { { 0, 0, 468, 468 },{ 120,120 }, textures[TextureFile::OBJECTS] };

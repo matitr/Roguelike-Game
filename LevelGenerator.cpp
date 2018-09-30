@@ -12,6 +12,10 @@ FieldType& LevelGenerator::mapFieldType(int x, int y) {
 	return mapFields[MAP_WIDTH * y + x];
 }
 
+void LevelGenerator::setMapFieldType(int x, int y, FieldType type) {
+	mapFields[MAP_WIDTH * y + x] = type;
+}
+
 void LevelGenerator::generateNewMap() {
 	mapFields.resize(MAP_WIDTH * MAP_HEIGHT);
 
@@ -233,40 +237,7 @@ void LevelGenerator::createRoom(Room* room) {
 	}
 
 	if (room->type == RoomType::Monsters)
-		generateColumns(room);
-
-//	if (room->type == RoomType::Spawn) {
-//		xIter = room->x1 + (room->x2 - room->x1) / 2 + 2;
-//		yIter = room->y1 + (room->y2 - room->y1) / 2 + 2;
-//		mapFieldType(xIter, yIter) = FieldType::Wall;
-//		mapFieldType(xIter + 1, yIter) = FieldType::Wall;
-//		mapFieldType(xIter + 1, yIter + 1) = FieldType::Wall;
-//		mapFieldType(xIter, yIter + 1) = FieldType::Wall;
-//		mapFieldType(xIter + 1, yIter + 2) = FieldType::Wall;
-//		mapFieldType(xIter, yIter + 2) = FieldType::Wall;
-//
-//		mapFieldType(xIter - 6, yIter) = FieldType::Wall;
-//		mapFieldType(xIter - 5, yIter) = FieldType::Wall;
-//		mapFieldType(xIter - 5, yIter + 1) = FieldType::Wall;
-//		mapFieldType(xIter - 6, yIter + 1) = FieldType::Wall;
-//
-//		xIter - 4;
-//		mapFieldType(xIter - 6, yIter) = FieldType::Wall;
-//		mapFieldType(xIter - 6, yIter + 1) = FieldType::Wall;
-//		mapFieldType(xIter - 5, yIter) = FieldType::Wall;
-//		mapFieldType(xIter - 5, yIter + 1) = FieldType::Wall;
-//		mapFieldType(xIter - 7, yIter) = FieldType::Wall;
-//		mapFieldType(xIter - 7, yIter + 1) = FieldType::Wall;
-//	}
-}
-
-void LevelGenerator::generateColumns(Room* room) {
-	double maxCulumnsInColumn = (room->x2 - room->x1 + 1) / 7 - 1;
-	double maxCulumnsInRow = (room->y2 - room->y1 + 1) / 5 - 1;
-	
-	std::vector<int> columnsNumber;
-
-	
+		wallsGenerator.generateSymetrical(this, room);
 }
 
 void LevelGenerator::addWallsDepth(Room* room) {
@@ -327,6 +298,15 @@ void LevelGenerator::createAllFields() {
 				if (!map.getField(x, y) && mapFieldType(x, y) == FieldType::Floor) {
 					map.getField(x, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WOOD_FLOOR], FieldType::Floor);
 				}
+			}
+		}
+	}
+
+	for (auto roomIt = rooms.begin(); roomIt != rooms.end(); roomIt++) {
+		for (int y = (*roomIt)->y1 - 1; y < (*roomIt)->y2 + 1; y++) {
+			for (int x = (*roomIt)->x1 - 1; x < (*roomIt)->x2 + 1; x++) {
+				if (!map.getField(x, y))
+					map.getField(x, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_TOP], FieldType::Wall);
 			}
 		}
 	}

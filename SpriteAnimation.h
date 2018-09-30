@@ -15,8 +15,8 @@ private:
 	int framesInRow;
 	SDL_Rect &srcRectAnimation;
 public:
-	bool lastFrameEnded() { return (currFrame + 1 == frames && frameCounter == FRAME_ENDED) ? true : false; }
-	void setOnEndOfFrame() { frameCounter = frameTime; frameCounter = FRAME_ENDED; }
+	bool lastFrameEnded() { return (currFrame + 1 == frames && frameCounter < 0) ? true : false; }
+	void setOnEndOfFrame() { frameCounter = frameTime; frameCounter = -frameTime; }
 	void setFrameTime(int fTime) { frameTime = fTime; }
 
 	void updateTexture(float frameTimeMultReciprocal = 0);

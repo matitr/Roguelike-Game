@@ -4,7 +4,7 @@
 
 
 void SpriteAnimation::updateTexture(float frameTimeMultReciprocal) {
-	if (frameCounter == FRAME_ENDED) { // Next texture frame
+	if (frameCounter < 0) { // Next texture frame
 		if (currFrame + 1 == frames) { // The last texture frame has ended
 
 			srcRectAnimation.x = firstFrame.x;
@@ -28,7 +28,7 @@ void SpriteAnimation::updateTexture(float frameTimeMultReciprocal) {
 	frameTimeMultReciprocal++;
 
 	if (frameCounter >= int(frameTime / (abs(frameTimeMultReciprocal)))) {
-		frameCounter = FRAME_ENDED;
+		frameCounter = -frameCounter;
 	}
 }
 
@@ -56,7 +56,7 @@ void SpriteAnimation::setFrameCounter(SpriteAnimation& animationOther) {
 
 bool SpriteAnimation::firstTimuUnitOfFrame(int frame, float attackSpeedMult) {
 	if (currFrame == frame) {
-		if (frameTime == 1 || (frameTime / abs(attackSpeedMult)) <= 1 || frameCounter == 1)
+		if (frameTime == 1 || frameCounter == -1 || (frameTime / abs(attackSpeedMult)) <= 1 || frameCounter == 1)
 			return true;
 	}
 

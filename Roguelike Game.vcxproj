@@ -180,6 +180,7 @@
     <ClCompile Include="Unit.cpp" />
     <ClCompile Include="UnitAction.cpp" />
     <ClCompile Include="UpdateCollision.cpp" />
+    <ClCompile Include="WallsGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ActionsManager.h" />
@@ -223,6 +224,7 @@
     <ClInclude Include="Unit.h" />
     <ClInclude Include="UnitAction.h" />
     <ClInclude Include="UpdateCollision.h" />
+    <ClInclude Include="WallsGenerator.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="toDo.txt" />

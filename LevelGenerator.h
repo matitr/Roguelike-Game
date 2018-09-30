@@ -2,6 +2,7 @@
 #include <vector>
 #include "SDL.h"
 #include "myMath.h"
+#include "WallsGenerator.h"
 
 class Room;
 class Player;
@@ -17,6 +18,7 @@ class LevelGenerator {
 	std::vector<Room*>& rooms;
 
 	std::vector<FieldType> mapFields;
+	WallsGenerator wallsGenerator;
 
 	Map& map;
 	Player* player;
@@ -31,7 +33,6 @@ class LevelGenerator {
 	void createHallwayV(PointInt&, PointInt&); // Vertical, (p1.y >= p2.y)
 
 	void createRoom(Room* room);
-	void generateColumns(Room* room);
 
 	void addWallsDepth(Room* room);
 	void createAllFields();
@@ -39,6 +40,7 @@ class LevelGenerator {
 	void createFieldsRighttIsWall(int x, int y);
 	void createRoomObjects(Room* room);
 public:
+	void setMapFieldType(int x, int y, FieldType type);
 	void generateNewMap();
 
 	LevelGenerator(Map *map);

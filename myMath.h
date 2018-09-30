@@ -65,8 +65,12 @@ public:
 	}
 
 	bool checkInserction(int x3, int y3, int x4, int y4) {
-		double uA = ((x4 - x3)*(p1.y - y3) - (y4 - y3)*(p1.x - x3)) / ((y4 - y3)*(p2.x - p1.x) - (x4 - x3)*(p2.y - p1.y));
-		double uB = ((p2.x - p1.x)*(p1.y - y3) - (p2.y - p1.y)*(p1.x - x3)) / ((y4 - y3)*(p2.x - p1.x) - (x4 - x3)*(p2.y - p1.y));
+		double divider = ((y4 - y3)*(p2.x - p1.x) - (x4 - x3)*(p2.y - p1.y));
+		if (divider == 0)
+			return false;
+
+		double uA = ((x4 - x3)*(p1.y - y3) - (y4 - y3)*(p1.x - x3)) / divider;
+		double uB = ((p2.x - p1.x)*(p1.y - y3) - (p2.y - p1.y)*(p1.x - x3)) / divider;
 
 		if (uA >= 0 && uA <= 1 && uB >= 0 && uB <= 1)
 			return true;
@@ -79,6 +83,10 @@ public:
 	}
 };
 
+struct RectInt {
+	int x = 0, y = 0, w = 0, h = 0;
+
+};
 
 
 

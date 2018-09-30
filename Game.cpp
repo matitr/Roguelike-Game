@@ -139,7 +139,7 @@ void Game::updateGame() {
 	std::vector <InteractiveObject*>::iterator itTemp_interactiveObj;
 	std::unordered_map <SDL_Scancode, InteractiveObject*>::iterator it_objectSelected;
 
-//	SDL_RenderClear(renderer);
+	SDL_RenderClear(renderer);
 	gameObjects.clear();
 
 	if (player->inventory().isOpened())

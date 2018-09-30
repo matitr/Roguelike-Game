@@ -61,7 +61,8 @@ void Map::addToMinimap(Room* room) {
 	if (std::find(roomsOnMiniman.begin(), roomsOnMiniman.end(), room) == roomsOnMiniman.end()){
 		for (y = room->y1; y < room->y2; y++) {
 			for (x = room->x1; x < room->x2; x++) {
-				if (getField(x, y) && (getField(x, y)->type() == FieldType::Floor)) {
+				if (getField(x, y) && (getField(x, y)->type() == FieldType::Floor 
+					|| (getField(x, y)->type() == FieldType::Wall && getField(x, y - 1) && getField(x, y - 1)->type() == FieldType::Floor))) {
 					r.x = x;
 					r.y = y;
 					SDL_RenderFillRect(Game::renderer, &r);
@@ -380,24 +381,18 @@ bool Map::checkClearPath(GameObject* object, GameObject* objectTarget) {
 }
 
 bool Map::checkClearField(Field* field, LineSegment& lineS) {
-	if (field->type() == FieldType::Floor) {
+	if (field->type() == FieldType::Wall) {
 		PointInt fieldPos((int)field->getPositionX(), (int)field->getPositionY());
 		PointInt radius((int)field->getRadius(), (int)field->getRadiusY());
 
-		SDL_SetRenderDrawColor(Game::renderer, rand() % 150, rand() % 150, rand() % 150, 255);
-		SDL_Rect r = { fieldPos.x - radius.x - startRender.x, fieldPos.y - radius.y - startRender.y, radius.x * 2, radius.y * 2 };
-		SDL_RenderDrawRect(Game::renderer, &r);
-		SDL_RenderPresent(Game::renderer);
-		SDL_RenderPresent(Game::renderer);
-
-//		if (lineS.checkInserction(fieldPos.x - radius.x, fieldPos.y - radius.y, fieldPos.x - radius.x, fieldPos.y + radius.y))
-//			return false;
-//		if (lineS.checkInserction(fieldPos.x - radius.x, fieldPos.y - radius.y, fieldPos.x + radius.x, fieldPos.y - radius.y))
-//			return false;
-//		if (lineS.checkInserction(fieldPos.x + radius.x, fieldPos.y - radius.y, fieldPos.x + radius.x, fieldPos.y + radius.y))
-//			return false;
-//		if (lineS.checkInserction(fieldPos.x + radius.x, fieldPos.y + radius.y, fieldPos.x - radius.x, fieldPos.y + radius.y))
-//			return false;
+		if (lineS.checkInserction(fieldPos.x - radius.x, fieldPos.y - radius.y, fieldPos.x - radius.x, fieldPos.y + radius.y))
+			return false;
+		if (lineS.checkInserction(fieldPos.x - radius.x, fieldPos.y - radius.y, fieldPos.x + radius.x, fieldPos.y - radius.y))
+			return false;
+		if (lineS.checkInserction(fieldPos.x + radius.x, fieldPos.y - radius.y, fieldPos.x + radius.x, fieldPos.y + radius.y))
+			return false;
+		if (lineS.checkInserction(fieldPos.x + radius.x, fieldPos.y + radius.y, fieldPos.x - radius.x, fieldPos.y + radius.y))
+			return false;
 	}
 
 	for (auto it = field->getCollisionObj().begin(); it != field->getCollisionObj().end(); it++) {

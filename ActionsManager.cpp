@@ -52,7 +52,7 @@ void ActionsManager::onClosestObj(Map* map, GameObject* closestObj, double close
 				temp_itAction = pattern.begin();
 
 			if (actions[*temp_itAction]->canDynamicActivation(closestObjDist)
-				&& (!actions[*temp_itAction]->clearPathRequired() || (--checkClearPathCurrCooldown == -1 && map->checkClearPath(unitParent, closestObj)))) {
+				&& (!actions[*temp_itAction]->clearPathRequired() || (checkClearPathCurrCooldown == -1 && map->checkClearPath(unitParent, closestObj)))) {
 				actionsToForceChange.push_back(temp_itAction);
 				checkClearPathCurrCooldown = checkClearPathCooldown;
 			}
@@ -73,6 +73,9 @@ void ActionsManager::onClosestObj(Map* map, GameObject* closestObj, double close
 			actions[*currAction]->setDirection(closestObj->getPositionX() - position.x, closestObj->getPositionY() - position.y);
 		}
 	}
+
+	if (checkClearPathCurrCooldown > -1)
+		checkClearPathCurrCooldown--;
 }
 
 void ActionsManager::addAction(ActionType action, Movement* move, AttackPattern* attack, int attackFrame) {
