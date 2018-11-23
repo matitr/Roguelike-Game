@@ -10,14 +10,15 @@ void WallsGenerator::generateSymetrical(LevelGenerator* levelGen, Room* room) {
 	if (maxCulumnsInColumn < 1 || maxCulumnsInRow < 1)
 		return;
 
-	std::vector<std::vector<int>> columnXPosition;
-	int numberOfRows = 0;
-	bool centerRow = false;
+	int numberOfRows = rand() % maxCulumnsInColumn + 1;
 
-	numberOfRows = rand() % maxCulumnsInColumn + 1;
+	if (numberOfRows % 2 && maxCulumnsInRow <= 1)
+		numberOfRows--;
+	if (numberOfRows < 1)
+		return;
+
+	std::vector<std::vector<int>> columnXPosition;
 	columnXPosition.resize(numberOfRows / 2 + numberOfRows % 2); // Set number of rows
-	if (numberOfRows % 2)
-		centerRow = true;
 
 	std::vector<int> rowPositionY(numberOfRows / 2 + numberOfRows % 2);
 	std::vector<PointInt> columnSize(numberOfRows / 2 + numberOfRows % 2);

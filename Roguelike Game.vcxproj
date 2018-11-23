@@ -170,6 +170,7 @@
     <ClCompile Include="AttackType.cpp" />
     <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="MapCore.cpp" />
+    <ClCompile Include="ProjectileEffects.cpp" />
     <ClCompile Include="Room.cpp" />
     <ClCompile Include="Screen.cpp" />
     <ClCompile Include="ScreensManager.cpp" />
@@ -214,6 +215,7 @@
     <ClInclude Include="AttackType.h" />
     <ClInclude Include="Projectile.h" />
     <ClInclude Include="MapCore.h" />
+    <ClInclude Include="ProjectileEffects.h" />
     <ClInclude Include="Room.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="ScreensManager.h" />

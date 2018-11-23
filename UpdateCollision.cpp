@@ -43,8 +43,8 @@ void UpdateCollision::updateAllUnits(Player* player, std::list <Unit*>& monsters
 
 
 bool UpdateCollision::detectCollisionWithField(Unit* unit, Map* map) {
-	for (int y = (int)(unit->getPositionY() - unit->getRadius()) / map->fieldRect.h; y <= ((int)unit->getPositionY() - unit->getRadius()) / map->fieldRect.h; y++) {
-		for (int x = ((int)unit->getPositionX() - unit->getRadius()) / map->fieldRect.w; x <= ((int)unit->getPositionX() - unit->getRadius()) / map->fieldRect.w; x++) {
+	for (int y = (int)(unit->getPositionY() - unit->getRadius()) / map->fieldRect.h; y <= ((int)unit->getPositionY() + unit->getRadius()) / map->fieldRect.h; y++) {
+		for (int x = ((int)unit->getPositionX() - unit->getRadius()) / map->fieldRect.w; x <= ((int)unit->getPositionX() + unit->getRadius()) / map->fieldRect.w; x++) {
 			if (map->getField(x, y)->type() != FieldType::Floor && unit->detectCollision(map->getField(x, y)))
 				return true;
 

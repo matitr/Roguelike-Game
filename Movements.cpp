@@ -28,17 +28,45 @@ Movement::~Movement() {
 #pragma region A_Star
 void A_Star::createNeighbors(Field* field, std::stack<Field*>& neighbors) {
 
-	for (int y = -1; y < 2; y++) {
-		for (int x = -1; x < 2; x++) {
+	for (int y = -1; y < 2; y += 2) {
+		if (std::find(closedSet.begin(), closedSet.end(), map->getField(field->x(), field->y() + y)) == closedSet.end()) {
+			unitToMove->setPosition(field->x() * map->fieldRect.w + map->fieldRect.w / 2, field->y() * map->fieldRect.h + map->fieldRect.h / 2 + y * map->fieldRect.h);
+
+			if (!UpdateCollision::detectCollisionWithField(unitToMove, map))
+				neighbors.push(map->getField(field->x(), field->y() + y));
+			else if (map->getField(field->x(), field->y() + y) == end)
+				neighbors.push(map->getField(field->x(), field->y() + y));
+		}
+	}
+
+	for (int x = -1; x < 2; x += 2) {
+		if (std::find(closedSet.begin(), closedSet.end(), map->getField(field->x() + x, field->y())) == closedSet.end()) {
+			unitToMove->setPosition(field->x() * map->fieldRect.w + map->fieldRect.w / 2 + x * map->fieldRect.w, field->y() * map->fieldRect.h + map->fieldRect.h / 2);
+
+			if (!UpdateCollision::detectCollisionWithField(unitToMove, map))
+				neighbors.push(map->getField(field->x() + x, field->y()));
+			else if (map->getField(field->x() + x, field->y()) == end)
+				neighbors.push(map->getField(field->x() + x, field->y()));
+		}
+	}
+
+	// Check diagonal fields
+	for (int y = -1; y < 2; y += 2) {
+		for (int x = -1; x < 2; x += 2) {
 			if (std::find(closedSet.begin(), closedSet.end(), map->getField(field->x() + x, field->y() + y)) == closedSet.end()) {
-				unitToMove->setPosition(field->x() * map->fieldRect.w + map->fieldRect.w / 2 + x * map->fieldRect.w
-					, field->y() * map->fieldRect.h + map->fieldRect.h / 2 + y * map->fieldRect.h);
 
-				if  (!UpdateCollision::detectCollisionWithField(unitToMove, map))
-					neighbors.push(map->getField(field->x() + x, field->y() + y));
+				// Check between 2 fields
+				unitToMove->setPosition(field->getPositionX() + x * (map->fieldRect.w * 0.5), field->getPositionY() + y * (map->fieldRect.h * 0.5));
 
-				else if (map->getField(field->x() + x, field->y() + y) == end && field->prevField)
-					neighbors.push(map->getField(field->x() + x, field->y() + y));
+				// Check diagonal field
+				if (!UpdateCollision::detectCollisionWithField(unitToMove, map)) {
+					unitToMove->setPosition(field->x() * map->fieldRect.w + map->fieldRect.w / 2 + x * map->fieldRect.w
+						, field->y() * map->fieldRect.h + map->fieldRect.h / 2 + y * map->fieldRect.h);
+
+					if (!UpdateCollision::detectCollisionWithField(unitToMove, map))
+						neighbors.push(map->getField(field->x() + x, field->y() + y));
+				}
+
 			}
 		}
 	}
@@ -70,7 +98,9 @@ void A_Star::getVelocityOfPath(Field* lastField, Field* start) {
 	}
 
 	// No collisions on the way
-	if ((int)start->distanceEdgesX(end) / map->fieldRect.w == pathLength || (int)start->distanceEdgesY(end) / map->fieldRect.h == pathLength) {
+	if (((int)start->distanceEdgesX(end) / map->fieldRect.w == pathLength && lastField->getPositionY() == start->getPositionY()) 
+		|| (int)start->distanceEdgesY(end) / map->fieldRect.h == pathLength && lastField->getPositionX() == start->getPositionX()) {
+
 		float distUnits = unitToMove->distanceEdges(player);
 		if (distUnits < 3.0f) {
 			velocity.x = 0;
@@ -83,18 +113,89 @@ void A_Star::getVelocityOfPath(Field* lastField, Field* start) {
 		}
 		// toDo if collision with wall after move 
 
+
 	}
 	else {
 		velocity.x = lastField->x() - start->x();
 		velocity.y = lastField->y() - start->y();
+//		unitToMove->velocity.x = lastField->x() - start->x();
+//		unitToMove->velocity.y = lastField->y() - start->y();
+//		unitToMove->setPosition(unitStartPos.x, unitStartPos.y);
+//		unitToMove->makeMove();
+//		PointDouble unitPosAfterMove(unitToMove->getPositionX(), unitToMove->getPositionY());
+//		unitToMove->collisionUnitFields(map, map->fieldRect);
+//		if (unitToMove->getPositionX() != unitPosAfterMove.x || unitToMove->getPositionY() != unitPosAfterMove.y) {
+//			velocity.x = unitToMove->getPositionX() - unitStartPos.x;
+//			velocity.y = unitToMove->getPositionY() - unitStartPos.y;
+//
+////			velocity.x = lastField->getPositionX() - unitStartPos.x;
+////			velocity.y = lastField->getPositionY() - unitStartPos.y;
+//		}
+//		unitToMove->setPosition(unitStartPos.x, unitStartPos.y);
+
+
 	}
+
+	unitToMove->velocity.x = velocity.x;
+	unitToMove->velocity.y = velocity.y;
+	unitToMove->setPosition(unitStartPos.x, unitStartPos.y);
+	unitToMove->makeMove();
+
+	if (UpdateCollision::detectCollisionWithField(unitToMove, map)) {
+		if (velocity.x) {
+			for (int yIt = -1; yIt < 2; yIt += 2) {
+				if (map->getField(lastField->x(), lastField->y() + yIt)->type() == FieldType::Wall) {
+					Field* fieldToCheck = map->getField(lastField->x(), lastField->y() + yIt);
+					if (map->getField(start->x(), start->y() + yIt)->type() == FieldType::Wall)
+						fieldToCheck = map->getField(start->x(), start->y() + yIt);
+
+					if (velocity.x > 0)
+						velocity.x = (fieldToCheck->getPositionX() - fieldToCheck->getRadius()) - unitStartPos.x;
+					else
+						velocity.x = (fieldToCheck->getPositionX() + fieldToCheck->getRadius()) - unitStartPos.x;
+
+					if ((unitToMove->velocity.x > 0 && velocity.x <= 0) || (unitToMove->velocity.x < 0 && velocity.x >= 0))
+						velocity.x = unitToMove->velocity.x;
+
+					if (yIt > 0)
+						velocity.y = (fieldToCheck->getPositionY() - fieldToCheck->getRadius() - unitToMove->getRadius()) - unitStartPos.y;
+					else
+						velocity.y = (fieldToCheck->getPositionY() + fieldToCheck->getRadius() + unitToMove->getRadius()) - unitStartPos.y;
+				}
+			}
+		}
+		if (velocity.y) {
+			for (int xIt = -1; xIt < 2; xIt += 2) {
+				if (map->getField(lastField->x() + xIt, lastField->y())->type() == FieldType::Wall) {
+					Field* fieldToCheck = map->getField(lastField->x() + xIt, lastField->y());
+					if (map->getField(start->x() + xIt, start->y())->type() == FieldType::Wall)
+						fieldToCheck = map->getField(start->x() + xIt, start->y());
+
+					if (velocity.y > 0)
+						velocity.y = (fieldToCheck->getPositionY() - fieldToCheck->getRadius()) - unitStartPos.y;
+					else
+						velocity.y = (fieldToCheck->getPositionY() + fieldToCheck->getRadius()) - unitStartPos.y;
+
+					if ((unitToMove->velocity.y > 0 && velocity.y <= 0) || (unitToMove->velocity.y < 0 && velocity.y >= 0))
+						velocity.y = unitToMove->velocity.y;
+
+					if (xIt > 0)
+						velocity.x = (fieldToCheck->getPositionX() - fieldToCheck->getRadius() - unitToMove->getRadius()) - unitStartPos.x;
+					else
+						velocity.x = (fieldToCheck->getPositionX() + fieldToCheck->getRadius() + unitToMove->getRadius()) - unitStartPos.x;
+				}
+			}
+		}
+	}
+	unitToMove->setPosition(unitStartPos.x, unitStartPos.y);
 }
 
 void A_Star::findPath() {
 	openSet.clear();
 	closedSet.clear();
 
-	PointDouble unitStartPos(unitToMove->getPositionX(), unitToMove->getPositionY());
+	unitStartPos.x = unitToMove->getPositionX();
+	unitStartPos.y = unitToMove->getPositionY();
 
 	std::list<Field*>::iterator it = openSet.begin();
 	start = map->getField((int)unitToMove->getPositionX() / map->fieldWidth(), (int)unitToMove->getPositionY() / map->fieldHeight());
@@ -177,7 +278,7 @@ void MoveForwardPlayer::makeMove() {
 		unitToMove->velocity.x = velocityPath.x;
 		unitToMove->velocity.y = velocityPath.y;
 
-		moveCooldown = 6 + rand() % 3;
+		moveCooldown = 1;
 	}
 	moveCooldown--;
 }

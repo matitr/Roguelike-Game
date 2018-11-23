@@ -39,6 +39,7 @@ protected:
 	bool unitDetectedCollisionWall;
 public:
 	virtual bool update(std::list <AttackType*>& monsterAttacks, Map* map);
+	void makeMove();
 	virtual void draw(SDL_Point* startRender);
 
 	void setClosestEnemy(Unit* u, double dist);

@@ -55,7 +55,7 @@ void Room::addHallway(Room* otherRoom, PointInt& p1, PointInt& p2) {
 
 void Room::spawnMonsters(Map* _map, Unit* _player) {
 	if (type == Monsters) {
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < 1; i++) {
 			Unit *m;
 			if (!i)
 				m = new UnitEnemy2(_map, _player);

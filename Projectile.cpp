@@ -1,11 +1,14 @@
 #include "Projectile.h"
 #include "Game.h"
 #include "Player.h"
-
+#include "ProjectileEffects.h"
 
 
 bool Projectile::update(Map* map, SDL_Rect& fieldRect, Unit* closestUnit) {
 	if (destroyObj)
+		return false;
+
+	if (travelDist > 33300)
 		return false;
 
 	if (enemyHitted) {
@@ -18,8 +21,12 @@ bool Projectile::update(Map* map, SDL_Rect& fieldRect, Unit* closestUnit) {
 	if (staticPassives[StaticPassiveName::homing] && closestUnit)
 		homingShot(closestUnit);
 
+	for (int i = 0; i < projectileEffects.size(); i++)
+		projectileEffects[i]->update(this);
+
 	position.x += velocity.x;
 	position.y += velocity.y;
+	travelDist += speed;
 
 	animation.updateTexture();
 
@@ -47,6 +54,20 @@ void Projectile::setAngle(double ang) {
 
 	velocity.x = cos(direction) * speed;
 	velocity.y = sin(direction) * speed;
+}
+
+void Projectile::changeAngleBy(double ang) {
+	angle += ang;
+	direction = angle * 3.14159265 / 180.0;
+
+	velocity.x = cos(direction) * speed;
+	velocity.y = sin(direction) * speed;
+}
+
+void Projectile::addEffects(std::vector<ProjectileEffect*>& effects) {
+	projectileEffects.reserve(projectileEffects.size() + effects.size());
+	for (int i = 0; i < effects.size(); i++)
+		projectileEffects.push_back(effects[i]->getCopy());
 }
 
 void Projectile::homingShot(Unit* closestUnit) {

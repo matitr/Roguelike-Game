@@ -49,9 +49,6 @@
     <ClCompile Include="Item.cpp">
       <Filter>Items</Filter>
     </ClCompile>
-    <ClCompile Include="LevelGenerator.cpp">
-      <Filter>Map</Filter>
-    </ClCompile>
     <ClCompile Include="ActionsManager.cpp">
       <Filter>Combat</Filter>
     </ClCompile>
@@ -121,7 +118,15 @@
     <ClCompile Include="CombatTextManager.cpp">
       <Filter>Interface</Filter>
     </ClCompile>
-    <ClCompile Include="WallsGenerator.cpp" />
+    <ClCompile Include="LevelGenerator.cpp">
+      <Filter>Map\Generator</Filter>
+    </ClCompile>
+    <ClCompile Include="WallsGenerator.cpp">
+      <Filter>Map\Generator</Filter>
+    </ClCompile>
+    <ClCompile Include="ProjectileEffects.cpp">
+      <Filter>Combat\Attacks</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Field.h">
@@ -174,9 +179,6 @@
     </ClInclude>
     <ClInclude Include="Item.h">
       <Filter>Items</Filter>
-    </ClInclude>
-    <ClInclude Include="LevelGenerator.h">
-      <Filter>Map</Filter>
     </ClInclude>
     <ClInclude Include="ActionsManager.h">
       <Filter>Combat</Filter>
@@ -247,7 +249,15 @@
     <ClInclude Include="myMath.h">
       <Filter>Game</Filter>
     </ClInclude>
-    <ClInclude Include="WallsGenerator.h" />
+    <ClInclude Include="WallsGenerator.h">
+      <Filter>Map\Generator</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelGenerator.h">
+      <Filter>Map\Generator</Filter>
+    </ClInclude>
+    <ClInclude Include="ProjectileEffects.h">
+      <Filter>Combat\Attacks</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Map">
@@ -282,6 +292,9 @@
     </Filter>
     <Filter Include="Interface\Textures">
       <UniqueIdentifier>{410b34ce-d4cb-443b-83d1-d44225611aaf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Map\Generator">
+      <UniqueIdentifier>{b2eb9634-2659-4d87-b4d8-1ceb7eb21623}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

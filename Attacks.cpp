@@ -3,6 +3,7 @@
 #include "DataBase.h"
 #include "Projectile.h"
 #include "MeleeSwing.h"
+#include "ProjectileEffects.h"
 
 
 double AttackPattern::attackDamage(ItemPassives& unitPassives) {
@@ -15,7 +16,17 @@ double AttackPattern::attackDamage(ItemPassives& unitPassives) {
 	return unitPassives[StaticPassiveName::damage] * (1 + unitPassives[StaticPassiveName::damageMult]);
 }
 
-AttackPattern::AttackPattern() {
+void AttackPattern::addProjectileEffect(ProjectileEffect* effect) {
+	projectileEffects.push_back(effect);
+}
+
+Projectile* AttackPattern::createProjectile(Unit* unit) {
+	Projectile* p = new Projectile(animationD, unit->getPassivesManager(), attackDamage(unit->getPassives()));
+	p->addEffects(projectileEffects);
+	return p;
+}
+
+AttackPattern::AttackPattern(AnimationDetails& animationDetails) : animationD(animationDetails) {
 
 }
 
@@ -24,10 +35,10 @@ AttackPattern::~AttackPattern() {
 
 }
 
-void ProjectileDirection::makeAttack(Unit* unit, std::list <AttackType*>& attacksContainer, PointInt* attackPoint) {
+void ProjectilesAround::makeAttack(Unit* unit, std::list <AttackType*>& attacksContainer, PointInt* attackPoint) {
 	angle = startAngle;
 	for (int i = 0; i < numbOfProj; i++) {
-		Projectile* p = new Projectile(animationD, unit->getPassivesManager(), attackDamage(unit->getPassives()));
+		Projectile* p = createProjectile(unit);
 		angle = startAngle + ((float)360.0 / (numbOfProj )) * i;
 		if (angle >= 360)
 			angle -= 360;
@@ -58,7 +69,7 @@ void MultipleProjectiles::makeAttack(Unit* unit, std::list <AttackType*>& attack
 		angle = 180 + (angle + 180);
 
 	for (int i = 0; i < numbOfProjectiles; i++) {
-		Projectile* p = new Projectile(animationD, unit->getPassivesManager(), attackDamage(unit->getPassives()));
+		Projectile* p = createProjectile(unit);
 		p->setAngle(angle);
 		p->setPosition(unit->getPositionX(), unit->getPositionY());
 		attacksContainer.push_back(p);

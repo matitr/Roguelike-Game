@@ -34,6 +34,7 @@ public:
 };
 
 class A_Star {
+	PointDouble unitStartPos;
 	std::list<Field*> openSet; // Fields to check
 	std::list<Field*> closedSet; // Fields already checked
 	Field* start;

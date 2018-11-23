@@ -37,6 +37,13 @@ bool Unit::update(std::list <AttackType*>& monsterAttacks, Map* map) {
 	unitDetectedCollisionUnit = false;
 	unitDetectedCollisionWall = false;
 
+	makeMove();
+	maxSpeed = -1;
+
+	return true;
+}
+
+void Unit::makeMove() {
 	if (!(!velocity.y && !velocity.x)) {
 		double dir = atan2(velocity.y, velocity.x);
 		if (maxSpeed == -1 || (speed * (1 + staticPassives[StaticPassiveName::unitSpeedMult])) <= maxSpeed) {
@@ -48,9 +55,6 @@ bool Unit::update(std::list <AttackType*>& monsterAttacks, Map* map) {
 			position.y += sin(dir) * maxSpeed;
 		}
 	}
-	maxSpeed = -1;
-
-	return true;
 }
 
 void Unit::draw(SDL_Point* startRender) {
@@ -61,13 +65,13 @@ void Unit::draw(SDL_Point* startRender) {
 	healthBar->draw();
 
 	// Draw hitbox
-//	SDL_Rect r;
-//	r.h = 4;
-//	r.w = radius * 2;
-//	r.x = (int)position.x - positionShiftX - startRender->x;
-//	r.y = (int)position.y - startRender->y;
-//	SDL_SetRenderDrawColor(Game::renderer, rand() % 225, 0, 102, 255);
-//	renderCircle((int)position.x - startRender->x, ((int)position.y - startRender->y) * HEIGHT_SCALE, radius);
+	SDL_Rect r;
+	r.h = 4;
+	r.w = radius * 2;
+	r.x = (int)position.x - positionShiftX - startRender->x;
+	r.y = (int)position.y - startRender->y;
+	SDL_SetRenderDrawColor(Game::renderer, rand() % 225, 0, 102, 255);
+	renderCircle((int)position.x - startRender->x, ((int)position.y - startRender->y) * HEIGHT_SCALE, radius);
 }
 
 void Unit::setClosestEnemy(Unit* u, double dist) {
