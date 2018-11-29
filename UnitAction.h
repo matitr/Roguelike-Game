@@ -1,16 +1,16 @@
 #pragma once
 #include <list>
-#include "AttackType.h"
-#include "TextureManager.h"
+#include "ActionUtilities.h"
 
 class Movement;
 class AttackPattern;
 class Unit;
 
+
 class UnitAction {
-	Movement *movement;
-	AttackPattern *attack;
-	std::vector<SpriteAnimation*> animations;
+	std::vector<ActionUtilities*> actionUtilities;
+	std::vector<ActionUtilities*>::iterator currentActionUtility;
+
 	bool actionEnable;
 	double distActivationMax = -1;
 	double distActivationMin = -1;
@@ -19,7 +19,6 @@ class UnitAction {
 	int presentCooldown = 0;
 
 	bool _clearPathRequired = false;
-	int attackFrame = 0;
 	Direction::Name currentDirection;
 public:
 	bool dynamicActivationOnly() { return (dynamicEnableOnly || distActivationMax != -1); }
@@ -31,16 +30,16 @@ public:
 	void setClearPathRequired() { _clearPathRequired = true; }
 	bool clearPathRequired() { return _clearPathRequired; }
 
-	inline bool movementExists() { return movement ? true : false; }
-	inline bool attackExists() { return attack ? true : false; }
+	inline bool movementExists() { return (*currentActionUtility)->getMovement() ? true : false; }
+	inline bool attackExists() { return (*currentActionUtility)->getAttack() ? true : false; }
 
-	Movement* getMovement() { return movement; }
-	AttackPattern* getAttack() { return attack; }
+	Movement* getMovement() { return (*currentActionUtility)->getMovement(); }
+	AttackPattern* getAttack() { return (*currentActionUtility)->getAttack(); }
 
 	Direction::Name getDirection() { return currentDirection; }
 
-	void addAnimation(Direction::Name dir, AnimationDetails& animationData, SDL_Rect& srcRectR);
-	void addAnimations(std::array<AnimationDetails, Direction::enum_size>& animations, SDL_Rect& srcRectR);
+	void addActionUtilities(ActionUtilities* actionUtilitiesToAdd);
+	void addAnimations(std::array<AnimationDetails, Direction::enum_size>& animations, SDL_Rect& srcRectRef);
 	bool animationsExists();
 	void setFrameTime(int frameTime);
 
@@ -51,6 +50,7 @@ public:
 	void setLastFrame();
 	bool actionEnded();
 	void updateFrame(const float& moveSpeedMult, const float& attackSpeedMult);
+	bool nextActionUtilities();
 
 	void setCooldown(int cooldown) { actionCooldown = cooldown; }
 	void resetCooldown() { presentCooldown = actionCooldown; }

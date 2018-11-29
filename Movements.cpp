@@ -296,7 +296,7 @@ MoveForwardPlayer::~MoveForwardPlayer() {
 }
 #pragma endregion
 
-#pragma region MoveForwardPlayer
+#pragma region NoMoveFaceEnemy
 void NoMoveFaceEnemy::makeMove() {
 	unitToMove->getActiongManager().setCurrentDirection(player->getPositionX() - unitToMove->getPositionX(), player->getPositionY() - unitToMove->getPositionY());
 	unitToMove->velocity.x = 0;

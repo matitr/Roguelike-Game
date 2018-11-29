@@ -20,17 +20,18 @@ public:
 		actionsManager.addAnimations(Walk, DataBase::unitAnimations[UnitName::Unit][Walk]);
 
 		UnitAction* action = new UnitAction(new NoMoveFaceEnemy(this, _player), new MultipleProjectiles(DataBase::animations[AnimationName::Projectile2], 1), 9);
+//		ActionUtilities* actionUtilities;
 //		UnitAction* action = new UnitAction(NULL, NULL, 9);
 		action->addAnimations(DataBase::unitAnimations[UnitName::Unit][AttackProj], srcRect);
-		action->setDistActivationMax(100);
-		action->setDistActivationMin(550);
-		action->setCooldown(0);
+		action->setDistActivationMax(1000);
+		action->setDistActivationMin(250);
+		action->setCooldown(240);
 		action->setClearPathRequired();
 		actionsManager.addAction(AttackProj, action);
 
 		actionsManager.addAction(Attack, NULL, new MeleeSwingAttack(DataBase::unitAnimations[UnitName::Unit][Attack][Direction::E], 60, 45), 2);
 		actionsManager.addAnimations(Attack, DataBase::unitAnimations[UnitName::Unit][Attack]);
-		actionsManager.setActionActivationDistMax(Attack, -222);
+		actionsManager.setActionActivationDistMax(Attack, 5);
 
 		actionsManager.setStartingAction(Walk, Direction::S);
 		actionsManager.addPattern(Walk);

@@ -3,7 +3,7 @@
 
 int main(int argc, char* args[]) {
 
-	Game *game = new Game(1810, 1010, false);
+	Game *game = new Game(1510, 800, false);
 	game->run();
 	delete game;
 

@@ -37,8 +37,7 @@ public:
 
 	void addAction(ActionType action, Movement* move, AttackPattern* attack, int attackFrame = -1);
 	void addAction(ActionType actionName, UnitAction* action);
-	void addAnimation(ActionType action, Direction::Name dir, AnimationDetails& animationD);
-	void addAnimations(ActionType action, std::array<AnimationDetails, Direction::enum_size>& animations);
+	void addAnimations(ActionType actionName, std::array<AnimationDetails, Direction::enum_size>& animationsToAdd);
 	void addPattern(ActionType actionType);
 	void setStartingAction(ActionType action, Direction::Name dir);
 

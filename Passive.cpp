@@ -104,7 +104,7 @@ Passive* Passive::createPassive(PassiveName name) {
 	else if (name == PassiveName::OnHitBurn)
 		return new PassiveOnHitBurn();
 	else
-		_DEBUG_ERROR("Add passive to createPassive");
+		_STL_REPORT_ERROR("Add passive to createPassive");
 
 	return nullptr;
 }

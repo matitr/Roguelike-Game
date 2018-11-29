@@ -8,39 +8,37 @@
 
 
 bool UnitAction::canDynamicActivation(double dist) {
+	if (_clearPathRequired) {
+		int ite = 0;
+		int nes = 0;
+	}
+
 	if (dynamicActivationOnly() && dist <= distActivationMax && dist >= distActivationMin && !presentCooldown)
 		return true;
 
 	return false;
 }
 
-void UnitAction::addAnimation(Direction::Name dir, AnimationDetails& animationData, SDL_Rect& srcRectR) {
-	animations[dir] = new SpriteAnimation(animationData, srcRectR);
+void UnitAction::addActionUtilities(ActionUtilities* actionUtilitiesToAdd){
+	if (actionUtilities.empty()) {
+		actionUtilities.push_back(actionUtilitiesToAdd);
+		currentActionUtility = actionUtilities.begin();
+	}
+	else
+		actionUtilities.push_back(actionUtilitiesToAdd);
 }
 
-void UnitAction::addAnimations(std::array<AnimationDetails, Direction::enum_size>& animationsToAdd, SDL_Rect& srcRectR) {
-	for (int i = 0; i < Direction::enum_size; i++) {
-		animations[i] = new SpriteAnimation(animationsToAdd[i], srcRectR);
-	}
+void UnitAction::addAnimations(std::array<AnimationDetails, Direction::enum_size>& animationsToAdd, SDL_Rect& srcRectRef) {
+	(*currentActionUtility)->addAnimations(animationsToAdd, srcRectRef);
 }
 
 bool UnitAction::animationsExists() {
-	int animationsSize = animations.size();
-
-	if (!animationsSize)
-		return false;
-
-	for (int i = 0; i < animationsSize; i++) {
-		if (!animations[i])
-			return false;
-	}
-
-	return true;
+	return (*currentActionUtility)->animationsExists();
 }
 
 void  UnitAction::setFrameTime(int frameTime) {
 	for (int i = 0; i < Direction::enum_size; i++) {
-		animations[i]->setFrameTime(frameTime);
+		(*currentActionUtility)->getAnimations()[i]->setFrameTime(frameTime);
 	}
 }
 
@@ -48,7 +46,7 @@ void UnitAction::setDirection(Direction::Name dir) {
 	if (dir == currentDirection)
 		return;
 
-	animations[dir]->setFrameCounter(*animations[currentDirection]);
+	(*currentActionUtility)->getAnimations()[dir]->setFrameCounter(*(*currentActionUtility)->getAnimations()[currentDirection]);
 	currentDirection = dir;
 }
 
@@ -56,7 +54,7 @@ void UnitAction::setDirection(UnitAction& actionOther) {
 	if (actionOther.currentDirection == currentDirection)
 		return;
 
-	animations[actionOther.currentDirection]->setFrameCounter(*animations[currentDirection]);
+	(*currentActionUtility)->getAnimations()[actionOther.currentDirection]->setFrameCounter(*(*currentActionUtility)->getAnimations()[currentDirection]);
 	currentDirection = actionOther.currentDirection;
 }
 
@@ -77,31 +75,46 @@ void UnitAction::setDirection(double x, double y) {
 }
 
 void UnitAction::setFirstFrame() {
-	animations[currentDirection]->setFirstFrame();
+	currentActionUtility = actionUtilities.begin();
+	(*currentActionUtility)->getAnimations()[currentDirection]->setFirstFrame();
 }
 
 void UnitAction::setLastFrame() {
-	animations[currentDirection]->setLastFrame();
+	(*currentActionUtility)->getAnimations()[currentDirection]->setLastFrame();
 }
 
 bool UnitAction::actionEnded() {
-	if (animations[currentDirection]->lastFrameEnded()) {
-		if (!movement || movement->actionCanEnd())
-			return true;
+	if ((*currentActionUtility)->getAnimations()[currentDirection]->lastFrameEnded()) {
+		if (!(*currentActionUtility)->getMovement() || (*currentActionUtility)->getMovement()->actionCanEnd()) {
+				return true;
+		}
 	}
-	else if (movement && movement->actionMovementEnded())
+	else if ((*currentActionUtility)->getMovement() && (*currentActionUtility)->getMovement()->actionMovementEnded())
 		return true;
 	
 	return false;
 }
 
 void UnitAction::updateFrame(const float& moveSpeedMult, const float& attackSpeedMult) {
-	if (attack)
-		animations[currentDirection]->updateTexture(attackSpeedMult);
-	else if (movement)
-		animations[currentDirection]->updateTexture(moveSpeedMult);
+	(*currentActionUtility)->updateFrame(moveSpeedMult, attackSpeedMult);
+	if ((*currentActionUtility)->getAttack())
+		(*currentActionUtility)->getAnimations()[currentDirection]->updateTexture(attackSpeedMult);
+	else if ((*currentActionUtility)->getMovement())
+		(*currentActionUtility)->getAnimations()[currentDirection]->updateTexture(moveSpeedMult);
 	else
-		animations[currentDirection]->updateTexture();
+		(*currentActionUtility)->getAnimations()[currentDirection]->updateTexture();
+}
+
+bool UnitAction::nextActionUtilities() {
+	currentActionUtility++;
+	if (currentActionUtility != actionUtilities.end()) {
+		setFirstFrame();
+		setDirection(currentDirection);
+		resetCooldown();
+		resetMove();
+		return true;
+	}
+	return false;
 }
 
 void UnitAction::updateCooldown() {
@@ -110,42 +123,36 @@ void UnitAction::updateCooldown() {
 }
 
 void UnitAction::resetMove() {
-	if (movement)
-		movement->resetMove();
+	if ((*currentActionUtility)->getMovement())
+		(*currentActionUtility)->getMovement()->resetMove();
+
+	currentActionUtility = actionUtilities.begin();
 }
 
 void UnitAction::updateMove() {
-	if (movement)
-		movement->update();
+	if ((*currentActionUtility)->getMovement())
+		(*currentActionUtility)->getMovement()->update();
 }
 
 void UnitAction::makeAttack(Unit* unit, std::list <AttackType*>& monsterAttacks, PointInt* attackPoint, float attackSpeedMult) {
-	if (attack && animations[currentDirection]->firstTimuUnitOfFrame(attackFrame, attackSpeedMult))
-		attack->makeAttack(unit, monsterAttacks, attackPoint);
+	if ((*currentActionUtility)->getAttack() && (*currentActionUtility)->getAnimations()[currentDirection]->firstTimuUnitOfFrame((*currentActionUtility)->getAttackFrame(), attackSpeedMult))
+		(*currentActionUtility)->getAttack()->makeAttack(unit, monsterAttacks, attackPoint);
 }
 
 void UnitAction::makeMove() {
-	movement->makeMove();
+	(*currentActionUtility)->getMovement()->makeMove();
 }
 
-UnitAction::UnitAction( Movement* _move, AttackPattern* _attack, int _attackFrame) : currentDirection(Direction::E){
-	movement = _move;
-	attack = _attack;
-	attackFrame = _attackFrame;
-
-	animations.resize(Direction::Name::enum_size);
+UnitAction::UnitAction(Movement* _move, AttackPattern* _attack, int _attackFrame) : currentDirection(Direction::E){
+	ActionUtilities* actionU = new ActionUtilities(_move, _attack, _attackFrame);
+	actionUtilities.push_back(actionU);
+	currentActionUtility = actionUtilities.begin();
 }
 
 
 UnitAction::~UnitAction() {
-	std::vector<SpriteAnimation*>::iterator it = animations.begin();
+	std::vector<ActionUtilities*>::iterator it = actionUtilities.begin();
 
-	for (it; it != animations.end(); it++)
+	for (it; it != actionUtilities.end(); it++)
 		delete *it;
-
-	if (attack)
-		delete attack;
-
-	if (movement)
-		delete movement;
 }

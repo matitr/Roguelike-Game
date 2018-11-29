@@ -127,6 +127,7 @@
     <ClCompile Include="ProjectileEffects.cpp">
       <Filter>Combat\Attacks</Filter>
     </ClCompile>
+    <ClCompile Include="ActionUtilities.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Field.h">
@@ -258,6 +259,7 @@
     <ClInclude Include="ProjectileEffects.h">
       <Filter>Combat\Attacks</Filter>
     </ClInclude>
+    <ClInclude Include="ActionUtilities.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Map">

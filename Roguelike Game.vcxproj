@@ -22,7 +22,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{A5E07CFC-888B-4FB4-B3BA-E70E262FA82A}</ProjectGuid>
     <RootNamespace>PK4PROJECT</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -141,6 +141,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ActionsManager.cpp" />
+    <ClCompile Include="ActionUtilities.cpp" />
     <ClCompile Include="Attacks.cpp" />
     <ClCompile Include="Buff.cpp" />
     <ClCompile Include="BuffsManager.cpp" />
@@ -185,6 +186,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ActionsManager.h" />
+    <ClInclude Include="ActionUtilities.h" />
     <ClInclude Include="Attacks.h" />
     <ClInclude Include="Buff.h" />
     <ClInclude Include="BuffsManager.h" />

@@ -12,6 +12,9 @@ void ActionsManager::updateAction(const PointDouble& velocity) {
 	Direction::Name dirPast = actions[*currAction]->getDirection();
 
 	if (actions[*currAction]->actionEnded()) { // Next action
+		if (actions[*currAction]->nextActionUtilities())
+			return;
+
 		Direction::Name dirPast = actions[*currAction]->getDirection();
 
 		do {
@@ -86,14 +89,8 @@ void ActionsManager::addAction(ActionType actionName, UnitAction* action) {
 	actions[actionName] = action;
 }
 
-void ActionsManager::addAnimation(ActionType action, Direction::Name dir, AnimationDetails& animationD) {
-	actions[action]->addAnimation(dir, animationD, srcRectRef);
-}
-
-void ActionsManager::addAnimations(ActionType action, std::array<AnimationDetails, Direction::enum_size>& animations) {
-	for (int i = 0; i < Direction::enum_size; i++) {
-		actions[action]->addAnimation(Direction::Name(i), animations[i], srcRectRef);
-	}
+void ActionsManager::addAnimations(ActionType actionName, std::array<AnimationDetails, Direction::enum_size>& animationsToAdd) {
+	actions[actionName]->addAnimations(animationsToAdd, srcRectRef);
 }
 
 void  ActionsManager::addPattern(ActionType actionType) {
