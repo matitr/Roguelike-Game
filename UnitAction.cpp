@@ -8,11 +8,6 @@
 
 
 bool UnitAction::canDynamicActivation(double dist) {
-	if (_clearPathRequired) {
-		int ite = 0;
-		int nes = 0;
-	}
-
 	if (dynamicActivationOnly() && dist <= distActivationMax && dist >= distActivationMin && !presentCooldown)
 		return true;
 
@@ -96,7 +91,7 @@ bool UnitAction::actionEnded() {
 }
 
 void UnitAction::updateFrame(const float& moveSpeedMult, const float& attackSpeedMult) {
-	(*currentActionUtility)->updateFrame(moveSpeedMult, attackSpeedMult);
+//	(*currentActionUtility)->updateFrame(moveSpeedMult, attackSpeedMult);
 	if ((*currentActionUtility)->getAttack())
 		(*currentActionUtility)->getAnimations()[currentDirection]->updateTexture(attackSpeedMult);
 	else if ((*currentActionUtility)->getMovement())
@@ -107,11 +102,12 @@ void UnitAction::updateFrame(const float& moveSpeedMult, const float& attackSpee
 
 bool UnitAction::nextActionUtilities() {
 	currentActionUtility++;
+	std::vector<ActionUtilities*>::iterator currIt = currentActionUtility;
 	if (currentActionUtility != actionUtilities.end()) {
-		setFirstFrame();
+		(*currentActionUtility)->getAnimations()[currentDirection]->setFirstFrame();
 		setDirection(currentDirection);
-		resetCooldown();
 		resetMove();
+		currentActionUtility = currIt;
 		return true;
 	}
 	return false;

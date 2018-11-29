@@ -29,10 +29,6 @@ bool ActionUtilities::animationsExists() {
 	return true;
 }
 
-void ActionUtilities::setFrameTime() {
-
-}
-
 void ActionUtilities::updateFrame(const float& moveSpeedMult, const float& attackSpeedMult) {
 
 }

@@ -22,9 +22,7 @@ public:
 	void addAnimations(std::array<AnimationDetails, Direction::enum_size>& animations, SDL_Rect& srcRectR);
 
 	bool animationsExists();
-	void setFrameTime();
 	void updateFrame(const float& moveSpeedMult, const float& attackSpeedMult);
-	void makeAttack(Unit* unit, std::list <AttackType*>& monsterAttacks, PointInt* attackPoint, float attackSpeedMult);
 
 	ActionUtilities();
 	ActionUtilities(Movement* move, AttackPattern* attack, int attackFrame);

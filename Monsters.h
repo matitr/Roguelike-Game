@@ -20,11 +20,22 @@ public:
 		actionsManager.addAnimations(Walk, DataBase::unitAnimations[UnitName::Unit][Walk]);
 
 		UnitAction* action = new UnitAction(new NoMoveFaceEnemy(this, _player), new MultipleProjectiles(DataBase::animations[AnimationName::Projectile2], 1), 9);
-//		ActionUtilities* actionUtilities;
-//		UnitAction* action = new UnitAction(NULL, NULL, 9);
 		action->addAnimations(DataBase::unitAnimations[UnitName::Unit][AttackProj], srcRect);
-		action->setDistActivationMax(1000);
-		action->setDistActivationMin(250);
+
+		ActionUtilities* actionUtilities = new ActionUtilities(new NoMoveFaceEnemy(this, _player), new MultipleProjectiles(DataBase::animations[AnimationName::Projectile2], 1), 8);
+		actionUtilities->addAnimations(DataBase::unitAnimations[UnitName::Unit][AttackProj], srcRect);
+		action->addActionUtilities(actionUtilities);
+
+		actionUtilities = new ActionUtilities(new NoMoveFaceEnemy(this, _player), new MultipleProjectiles(DataBase::animations[AnimationName::Projectile2], 1), 7);
+		actionUtilities->addAnimations(DataBase::unitAnimations[UnitName::Unit][AttackProj], srcRect);
+		action->addActionUtilities(actionUtilities);
+
+		actionUtilities = new ActionUtilities(new NoMoveFaceEnemy(this, _player), new MultipleProjectiles(DataBase::animations[AnimationName::Projectile2], 1), 6);
+		actionUtilities->addAnimations(DataBase::unitAnimations[UnitName::Unit][AttackProj], srcRect);
+		action->addActionUtilities(actionUtilities);
+
+		action->setDistActivationMax(300);
+		action->setDistActivationMin(150);
 		action->setCooldown(240);
 		action->setClearPathRequired();
 		actionsManager.addAction(AttackProj, action);

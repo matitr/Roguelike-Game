@@ -14,6 +14,10 @@ void ActionsManager::updateAction(const PointDouble& velocity) {
 	if (actions[*currAction]->actionEnded()) { // Next action
 		if (actions[*currAction]->nextActionUtilities())
 			return;
+		else {
+			int idwa = 0;
+			int wad = 0;
+		}
 
 		Direction::Name dirPast = actions[*currAction]->getDirection();
 
@@ -158,6 +162,7 @@ bool ActionsManager::updateDeathAction(Unit* unit, std::list <AttackType*>& mons
 		}
 
 		actions[ActionType::Death]->setFirstFrame();
+		actions[ActionType::Death]->setDirection(*actions[*currAction]);
 	}
 	else {
 		if (actions[ActionType::Death]->actionEnded())
