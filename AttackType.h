@@ -24,6 +24,7 @@ public:
 	virtual void draw(SDL_Point* startRender);
 
 	void setEnemyHitted(Unit* u);
+	bool hittedEnemy() { return enemyHitted; }
 	bool canBeHitted(Unit* u);
 	void delHittedUnitPointer(Unit* u);
 	virtual void onWallHit();

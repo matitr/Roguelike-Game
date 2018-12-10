@@ -4,6 +4,8 @@
 class ProjectileEffect;
 
 class Projectile : public AttackType {
+	float speedBasic;
+	float speedMult;
 	float speed;
 	double direction;
 	double angle; // starting in middle right. Upper "-", Bottom "+"
@@ -22,6 +24,8 @@ public:
 	void setDirection(double dir);
 	void setAngle(double ang);
 	void changeAngleBy(double ang);
+	void addSpeedMult(float speedMultToAdd);
+
 	void addEffects(std::vector<ProjectileEffect*>& effects);
 
 	void homingShot(Unit* closestUnit);

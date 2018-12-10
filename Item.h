@@ -10,7 +10,7 @@
 
 namespace StaticPassiveName {
 	enum StaticPassiveName { hp, hpMax, damage, damageMult, damageTakenMult, numbOfProjectiles, pierceShots, chargeProjectiles, homing
-		, projectileSpeedMult, projectileSizeMult, attackSpeedMult, unitSpeed, unitSpeedMult, enum_size };
+		, projectileSpeed, projectileSpeedMult, projectileSizeMult, attackSpeedMult, unitSpeed, unitSpeedMult, enum_size };
 }
 
 typedef std::array<float, StaticPassiveName::enum_size> ItemPassives;

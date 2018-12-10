@@ -144,6 +144,7 @@ void DataBase::loadPassivesLimits() {
 	passivesLimits[StaticPassiveName::pierceShots] = { 0,5 };
 	passivesLimits[StaticPassiveName::chargeProjectiles] = { 0,1 };
 	passivesLimits[StaticPassiveName::homing] = { 0,25 };
+	passivesLimits[StaticPassiveName::projectileSpeed] = { 0,10 };
 	passivesLimits[StaticPassiveName::projectileSpeedMult] = { -0.5f,3 };
 	passivesLimits[StaticPassiveName::projectileSizeMult] = { -0.5f,3 };
 	passivesLimits[StaticPassiveName::attackSpeedMult] = { -0.8f,3 };

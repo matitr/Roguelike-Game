@@ -58,7 +58,7 @@ void Room::spawnMonsters(Map* _map, Unit* _player) {
 		for (int i = 0; i < 1; i++) {
 			Unit *m;
 			if (!i)
-				m = new UnitEnemy1(_map, _player);
+				m = new UnitEnemy2(_map, _player);
 			else
 				m = new UnitEnemy1(_map, _player);
 			monsters.push_back(m);

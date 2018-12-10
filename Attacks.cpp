@@ -32,7 +32,9 @@ AttackPattern::AttackPattern(AnimationDetails& animationDetails) : animationD(an
 
 
 AttackPattern::~AttackPattern() {
-
+	for (std::vector<ProjectileEffect*>::iterator it = projectileEffects.begin(); it != projectileEffects.end(); it++) {
+		delete (*it);
+	}
 }
 
 void ProjectilesAround::makeAttack(Unit* unit, std::list <AttackType*>& attacksContainer, PointInt* attackPoint) {

@@ -12,10 +12,10 @@ bool Projectile::update(Map* map, SDL_Rect& fieldRect, Unit* closestUnit) {
 		return false;
 
 	if (enemyHitted) {
-		enemyHitted = false;
-
-		if (staticPassives[StaticPassiveName::pierceShots] <= -1)
+		if (staticPassives[StaticPassiveName::pierceShots] <= -1) {
+			enemyHitted = false;
 			return false;
+		}
 	}
 
 	if (staticPassives[StaticPassiveName::homing] && closestUnit)
@@ -30,6 +30,7 @@ bool Projectile::update(Map* map, SDL_Rect& fieldRect, Unit* closestUnit) {
 
 	animation.updateTexture();
 
+	enemyHitted = false;
 	return true;
 }
 
@@ -59,6 +60,18 @@ void Projectile::setAngle(double ang) {
 void Projectile::changeAngleBy(double ang) {
 	angle += ang;
 	direction = angle * 3.14159265 / 180.0;
+
+	velocity.x = cos(direction) * speed;
+	velocity.y = sin(direction) * speed;
+}
+
+void Projectile::addSpeedMult(float speedMultToAdd) {
+	speedMult += speedMultToAdd;
+	speed = speedBasic * (1 + speedMult);
+	if (speed > DataBase::passivesLimits[StaticPassiveName::projectileSpeed].max)
+		speed = DataBase::passivesLimits[StaticPassiveName::projectileSpeed].max;
+	else if (speed < DataBase::passivesLimits[StaticPassiveName::projectileSpeed].min)
+		speed = DataBase::passivesLimits[StaticPassiveName::projectileSpeed].min;
 
 	velocity.x = cos(direction) * speed;
 	velocity.y = sin(direction) * speed;
@@ -134,9 +147,14 @@ Projectile::Projectile(AnimationDetails& animationD, PassivesManager* passivesMa
 		dstRect.h = int(dstRect.h + dstRect.h * (1 + passivesManager->getUnitStatistics()[StaticPassiveName::projectileSizeMult]));
 		setRadius(dstRect.w / 2);
 	}
+
+	speedBasic = speed;
 }
 
 
 Projectile::~Projectile() {
+	for (std::vector<ProjectileEffect*>::iterator it = projectileEffects.begin(); it != projectileEffects.end(); it++) {
+		delete (*it);
+	}
 
 }
