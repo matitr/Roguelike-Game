@@ -8,16 +8,8 @@
 #include <iomanip>
 
 
-void CombatTextManager::drawAndUpdate(SDL_Point* startRender) {
+void CombatTextManager::update() {
 	std::vector<CombatText*>::iterator it_combatText = combatTexts.begin();
-
-	while (it_combatText != combatTexts.end()) {
-		(*it_combatText)->draw(startRender);
-		it_combatText++;
-	}
-
-	// Update
-	it_combatText = combatTexts.begin();
 	while (it_combatText != combatTexts.end()) {
 		if (!(*it_combatText)->update()) {
 			delete (*it_combatText);
@@ -25,6 +17,15 @@ void CombatTextManager::drawAndUpdate(SDL_Point* startRender) {
 		}
 		else
 			it_combatText++;
+	}
+}
+
+void CombatTextManager::draw(SDL_Point* startRender) {
+	std::vector<CombatText*>::iterator it_combatText = combatTexts.begin();
+
+	while (it_combatText != combatTexts.end()) {
+		(*it_combatText)->draw(startRender);
+		it_combatText++;
 	}
 }
 

@@ -190,7 +190,7 @@ void Map::render(std::vector <GameObject*>& gameObjects) {
 				getField(fieldX, fieldY)->drawField(fieldRect.x, fieldRect.y);
 		}
 	}
-	CombatTextManager::get().drawAndUpdate(&startRender);
+	CombatTextManager::get().draw(&startRender);
 
 	renderMinimap();
 	fieldRect.h = fieldRectH;

@@ -11,7 +11,8 @@ class CombatTextManager {
 public:
 	static CombatTextManager& get() { static CombatTextManager cT; return cT; }
 
-	void drawAndUpdate(SDL_Point* startRender);
+	void update();
+	void draw(SDL_Point* startRender);
 
 	void addDamage(float value, DamageType damageType, Unit* unit);
 	void addDebuff(float value, Unit* unit);

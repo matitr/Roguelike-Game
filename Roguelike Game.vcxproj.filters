@@ -82,9 +82,6 @@
     <ClCompile Include="MapCore.cpp">
       <Filter>Map</Filter>
     </ClCompile>
-    <ClCompile Include="Button.cpp">
-      <Filter>Screens</Filter>
-    </ClCompile>
     <ClCompile Include="ScreensManager.cpp">
       <Filter>Screens</Filter>
     </ClCompile>
@@ -141,6 +138,12 @@
     </ClCompile>
     <ClCompile Include="ScreenMainMenu.cpp">
       <Filter>Screens\MainScreens</Filter>
+    </ClCompile>
+    <ClCompile Include="Button.cpp">
+      <Filter>Screens\Buttons</Filter>
+    </ClCompile>
+    <ClCompile Include="ButtonCheckBox.cpp">
+      <Filter>Screens\Buttons</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -225,9 +228,6 @@
     <ClInclude Include="MapCore.h">
       <Filter>Map</Filter>
     </ClInclude>
-    <ClInclude Include="Button.h">
-      <Filter>Screens</Filter>
-    </ClInclude>
     <ClInclude Include="ScreensManager.h">
       <Filter>Screens</Filter>
     </ClInclude>
@@ -288,6 +288,12 @@
     <ClInclude Include="ScreenMainMenu.h">
       <Filter>Screens\MainScreens</Filter>
     </ClInclude>
+    <ClInclude Include="Button.h">
+      <Filter>Screens\Buttons</Filter>
+    </ClInclude>
+    <ClInclude Include="ButtonCheckBox.h">
+      <Filter>Screens\Buttons</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Map">
@@ -331,6 +337,9 @@
     </Filter>
     <Filter Include="Screens\SubScreens">
       <UniqueIdentifier>{d1d6e162-7d64-463a-acee-3ff5c4015627}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Screens\Buttons">
+      <UniqueIdentifier>{7db17320-a8f2-4121-813a-6ed2a44b3ba0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

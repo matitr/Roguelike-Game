@@ -2,9 +2,6 @@
 #include "SDL.h"
 #include <string>
 
-namespace ButtonType {
-	enum ButtonType { Text, Boolean };
-}
 
 class ScreensManager;
 class Game;
@@ -16,20 +13,22 @@ class Button {
 	SDL_Texture* textTexture;
 
 	std::string value;
-	ButtonType::ButtonType buttonType;
 
 	void(*onClickAction)(Screen* parentScreen, ScreensManager* screenManager, Game* game);
-//	void (ScreensManager::*onClickAction)(Game*);
+
+protected:
+	void setTextDstRectX(int x) { dstRect.x = x; }
+	void setTextDstRectY(int y) { dstRect.y = y; }
+	SDL_Rect getTextDstRect() { return dstRect; }
+	std::string getValue() { return value; }
 public:
-	void draw();
+	virtual void draw();
 	SDL_Rect getButtonRect() { return buttonRect; }
 	void setValue(std::string valueToSet) { value = valueToSet; }
-	void setButtonType(ButtonType::ButtonType type);
 	
 	bool mouseOverButton(); // Check if mouse if on button 
 	void actionOnClick(Screen* parentScreen, ScreensManager* screenManager, Game* game); // Activate action
 
-//	Button(SDL_Rect dstR, const char* text, void (ScreensManager::*action)(Game*));
 	Button(SDL_Rect dstR, const char* text, void(*onClickAction)(Screen* parentScreen, ScreensManager* screenManager, Game*));
 	~Button();
 };

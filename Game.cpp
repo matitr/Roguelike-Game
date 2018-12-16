@@ -200,6 +200,7 @@ void Game::updateGame() {
 	map->upDateMinimapPos();
 
 	map->render(gameObjects);
+	CombatTextManager::get().update();
 	player->drawStatus();
 	for (it_objectSelected = objectSelected.begin(); it_objectSelected != objectSelected.end(); it_objectSelected++)
 		if ((*it_objectSelected).second && (*it_objectSelected).second->interacting())

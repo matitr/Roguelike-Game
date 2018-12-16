@@ -13,33 +13,6 @@ void Button::draw() {
 		, DataBase::colors[TextColor::MenuButtonText].g
 		, DataBase::colors[TextColor::MenuButtonText].b
 		, DataBase::colors[TextColor::MenuButtonText].a);
-//	SDL_RenderDrawRect(Game::renderer, &buttonRect);
-
-	if (buttonType == ButtonType::Boolean) {
-		SDL_Rect r = {
-			buttonRect.x + 10,
-			buttonRect.y + buttonRect.h / 2 - dstRect.h / 4,
-			dstRect.h / 2,
-			dstRect.h / 2
-		};
-		Settings* s = Settings::get();
-		if (value == "1")
-			SDL_RenderCopy(Game::renderer, TextureManager::textures[TextureFile::MENU], &TextureManager::menuTextureSrcRect[MenuTextureName::BooleanTrue], &r);
-		else
-			SDL_RenderCopy(Game::renderer, TextureManager::textures[TextureFile::MENU], &TextureManager::menuTextureSrcRect[MenuTextureName::BooleanFalse], &r);
-	}
-}
-
-void Button::setButtonType(ButtonType::ButtonType type) { 
-	buttonType = type; 
-
-	if (buttonType == ButtonType::Boolean) {
-		dstRect.x = buttonRect.x + 20 + dstRect.h / 2;
-	}
-	else if (buttonType == ButtonType::Text) {
-		dstRect.x = buttonRect.x + buttonRect.w / 2 - dstRect.w / 2;
-		dstRect.y = buttonRect.y + buttonRect.h / 2 - dstRect.h / 2;
-	}
 }
 
 bool Button::mouseOverButton() {
@@ -51,7 +24,6 @@ bool Button::mouseOverButton() {
 }
 
 void Button::actionOnClick(Screen* parentScreen, ScreensManager* screenManager, Game* game) {
-//	(screenManager->*onClickAction)(game);
 	onClickAction(parentScreen, screenManager, game);
 }
 

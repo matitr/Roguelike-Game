@@ -26,7 +26,7 @@ bool ScreensManager::update(Game* game) {
 			presentSubScreen->setShowing(false);
 		}
 		else if (selectedButton) {
-			if (Input::mousePressed[SDL_BUTTON_LEFT] || Input::keyPressed[SDL_SCANCODE_SPACE]) {
+			if ((Input::mousePressed[SDL_BUTTON_LEFT] && selectedButton->mouseOverButton()) || Input::keyPressed[SDL_SCANCODE_SPACE]) {
 				selectedButton->actionOnClick(presentSubScreen, this, game);
 			}
 		}

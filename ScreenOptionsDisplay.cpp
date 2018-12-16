@@ -1,6 +1,6 @@
 #include "ScreenOptionsDisplay.h"
 #include "SDL.h"
-#include "Button.h"
+#include "ButtonCheckBox.h"
 #include "Settings.h"
 
 
@@ -19,32 +19,28 @@ ScreenOptionsDisplay::ScreenOptionsDisplay(int windowResX, int windowResY) {
 	SDL_Rect r = {
 		windowResX / 2,
 		int(yPos),
-		int(windowResX * 0.2),
+		int(windowResX * 0.25),
 		int(windowResY * 0.05),
 	};
 	float spaceY = 0.1 * windowResY;
 
-	Button* button1 = new Button(r, "Show player hp", [](Screen* parentScreen, ScreensManager* sM, Game* game)
+	Button* button1 = new ButtonCheckBox(r, "Show player hp", [](Screen* parentScreen, ScreensManager* sM, Game* game)
 	{ Settings::get()->setSettingDisplay(SettingsDisplay::ShowPlayerHp, !Settings::get()->getSettingDisplay(SettingsDisplay::ShowPlayerHp)); });
-	button1->setButtonType(ButtonType::Boolean);
 	addButton(button1);
 
 	r.y = int(yPos + 1 * spaceY);
-	Button* button2 = new Button(r, "Show enemy hp", [](Screen* parentScreen, ScreensManager* sM, Game* game)
+	Button* button2 = new ButtonCheckBox(r, "Show enemy hp", [](Screen* parentScreen, ScreensManager* sM, Game* game)
 	{ Settings::get()->setSettingDisplay(SettingsDisplay::ShowEnemyHp, !Settings::get()->getSettingDisplay(SettingsDisplay::ShowEnemyHp)); });
-	button2->setButtonType(ButtonType::Boolean);
 	addButton(button2);
 
 	r.y = int(yPos + 2 * spaceY);
-	Button* button3 = new Button(r, "Show damage", [](Screen* parentScreen, ScreensManager* sM, Game* game)
+	Button* button3 = new ButtonCheckBox(r, "Show damage", [](Screen* parentScreen, ScreensManager* sM, Game* game)
 	{ Settings::get()->setSettingDisplay(SettingsDisplay::ShowDamage, !Settings::get()->getSettingDisplay(SettingsDisplay::ShowDamage)); });
-	button3->setButtonType(ButtonType::Boolean);
 	addButton(button3);
 
 	r.y = int(yPos + 3 * spaceY);
-	Button* button4 = new Button(r, "Show enemy damage", [](Screen* parentScreen, ScreensManager* sM, Game* game)
+	Button* button4 = new ButtonCheckBox(r, "Show enemy damage", [](Screen* parentScreen, ScreensManager* sM, Game* game)
 	{ Settings::get()->setSettingDisplay(SettingsDisplay::ShowEnemyDamage, !Settings::get()->getSettingDisplay(SettingsDisplay::ShowEnemyDamage)); });
-	button4->setButtonType(ButtonType::Boolean);
 	addButton(button4);
 }
 

@@ -146,6 +146,7 @@
     <ClCompile Include="Buff.cpp" />
     <ClCompile Include="BuffsManager.cpp" />
     <ClCompile Include="Button.cpp" />
+    <ClCompile Include="ButtonCheckBox.cpp" />
     <ClCompile Include="Chest.cpp" />
     <ClCompile Include="CombatText.cpp" />
     <ClCompile Include="CombatTextManager.cpp" />
@@ -195,6 +196,7 @@
     <ClInclude Include="Buff.h" />
     <ClInclude Include="BuffsManager.h" />
     <ClInclude Include="Button.h" />
+    <ClInclude Include="ButtonCheckBox.h" />
     <ClInclude Include="Chest.h" />
     <ClInclude Include="CombatText.h" />
     <ClInclude Include="CombatTextManager.h" />
