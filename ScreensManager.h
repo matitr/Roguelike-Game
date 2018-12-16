@@ -1,18 +1,36 @@
 #pragma once
 #include "SDL.h"
+#include <vector>
 
-enum class ScreenName { Death };
 
+namespace MainScreenName {
+	enum MainScreenName { MainMenu, Pause, Death, enum_size };
+}
+
+class Screen;
 class EndScreen;
 class Game;
+
 class ScreensManager {
 	EndScreen* endScreen = nullptr;
 
-public:
-	EndScreen* getEndScreen() { return endScreen; }
+	std::vector<Screen*> screens;
 
-	void update(Game* game);
+	bool goBackKeyPressed = false;
+
+	void drawBackground(Screen* screen);
+public:
+	bool update(Game* game);
 	void draw();
+
+	void setGoBackScreen() { goBackKeyPressed = true; }
+
+	void setScreenVisible(MainScreenName::MainScreenName screenName, bool visible);
+	bool getVisibleScreen(MainScreenName::MainScreenName screenName);
+	bool noScreensVisible();
+	void hideAllScreens();
+
+	void setEndScreenStats(bool win, int score);
 
 	// Actions
 	void newGame(Game* game);

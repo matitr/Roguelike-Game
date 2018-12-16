@@ -44,6 +44,8 @@ void Game::run() {
 	updateGame();
 	SDL_RenderClear(Game::renderer);
 
+//	screensManager->setScreenVisible(MainScreenName::MainMenu, true);
+
 	while (running()) {
 		if (clock() - timeCounter > CLOCKS_PER_SEC) {
 			std::cout << frameCounter << std::endl;
@@ -53,10 +55,16 @@ void Game::run() {
 
 		frameStart = Clock::now();
 		handleEvents();
-		if (player->alive()) 
-			updateGame();
 
-		screensManager->update(this);
+		SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 255);
+		SDL_RenderClear(renderer);
+		if (!screensManager->update(this)) {
+			if (player && player->alive())
+				updateGame();
+		}
+		else if (map)
+			map->render(gameObjects);
+
 		screensManager->draw();
 		SDL_RenderPresent(renderer);
 
@@ -77,8 +85,17 @@ void Game::handleEvents() {
 	std::unordered_map <SDL_Scancode, InteractiveObject*>::iterator it_objectSelected;
 	Input::update();
 
-	if( Input::quit)
+	if (Input::keyPressed[SDL_SCANCODE_ESCAPE]) {
+		if (screensManager->noScreensVisible() && player && player->inventory().isOpened())
+			player->inventory().close();
+		else
+			screensManager->setGoBackScreen();
+	}
+
+	if (Input::quit)
 		_running = 0;
+	else if (!player)
+		return;
 	else {
 		for (it_objectSelected = objectSelected.begin(); it_objectSelected != objectSelected.end(); it_objectSelected++) {
 			if (Input::keyPressed[it_objectSelected->first]) { // Interaction on key detected
@@ -139,7 +156,6 @@ void Game::updateGame() {
 	std::vector <InteractiveObject*>::iterator itTemp_interactiveObj;
 	std::unordered_map <SDL_Scancode, InteractiveObject*>::iterator it_objectSelected;
 
-	SDL_RenderClear(renderer);
 	gameObjects.clear();
 
 	if (player->inventory().isOpened())
@@ -193,8 +209,8 @@ void Game::updateGame() {
 		player->inventory().draw();
 
 	if (!player->alive()) {
-		screensManager->getEndScreen()->setShowing(true);
-		screensManager->getEndScreen()->setStats(false, player->getMoney());
+		screensManager->setScreenVisible(MainScreenName::Death, true);
+		screensManager->setEndScreenStats(false, player->getMoney());
 	}
 }
 
@@ -223,8 +239,8 @@ void Game::updateUnits() {
 			}
 
 			if (map->currentRoom()->type == Boss && monsters->empty()) { // Boss killed
-				screensManager->getEndScreen()->setShowing(true);
-				screensManager->getEndScreen()->setStats(true, player->getMoney());
+				screensManager->setScreenVisible(MainScreenName::Death, true);
+				screensManager->setEndScreenStats(true, player->getMoney());
 			}
 		}
 		else {

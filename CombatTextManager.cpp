@@ -30,11 +30,11 @@ void CombatTextManager::drawAndUpdate(SDL_Point* startRender) {
 
 void CombatTextManager::addDamage(float value, DamageType damageType, Unit* unit) {
 	if (unit->getUnitType() == UnitType::Player) {
-		if (!Settings::get()->showEnemyDamage)
+		if (!Settings::get()->getSettingDisplay(SettingsDisplay::ShowEnemyDamage))
 			return;
 	}
 	else
-		if (!Settings::get()->showDamage)
+		if (!Settings::get()->getSettingDisplay(SettingsDisplay::ShowDamage))
 			return;
 
 	std::stringstream stream;

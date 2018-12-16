@@ -82,9 +82,6 @@
     <ClCompile Include="MapCore.cpp">
       <Filter>Map</Filter>
     </ClCompile>
-    <ClCompile Include="EndScreen.cpp">
-      <Filter>Screens</Filter>
-    </ClCompile>
     <ClCompile Include="Button.cpp">
       <Filter>Screens</Filter>
     </ClCompile>
@@ -129,6 +126,21 @@
     </ClCompile>
     <ClCompile Include="ActionUtilities.cpp">
       <Filter>Combat</Filter>
+    </ClCompile>
+    <ClCompile Include="EndScreen.cpp">
+      <Filter>Screens\MainScreens</Filter>
+    </ClCompile>
+    <ClCompile Include="ScreenPauseGame.cpp">
+      <Filter>Screens\MainScreens</Filter>
+    </ClCompile>
+    <ClCompile Include="ScreenOptions.cpp">
+      <Filter>Screens\SubScreens</Filter>
+    </ClCompile>
+    <ClCompile Include="ScreenOptionsDisplay.cpp">
+      <Filter>Screens\SubScreens</Filter>
+    </ClCompile>
+    <ClCompile Include="ScreenMainMenu.cpp">
+      <Filter>Screens\MainScreens</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -213,9 +225,6 @@
     <ClInclude Include="MapCore.h">
       <Filter>Map</Filter>
     </ClInclude>
-    <ClInclude Include="EndScreen.h">
-      <Filter>Screens</Filter>
-    </ClInclude>
     <ClInclude Include="Button.h">
       <Filter>Screens</Filter>
     </ClInclude>
@@ -264,6 +273,21 @@
     <ClInclude Include="ActionUtilities.h">
       <Filter>Combat</Filter>
     </ClInclude>
+    <ClInclude Include="EndScreen.h">
+      <Filter>Screens\MainScreens</Filter>
+    </ClInclude>
+    <ClInclude Include="ScreenPauseGame.h">
+      <Filter>Screens\MainScreens</Filter>
+    </ClInclude>
+    <ClInclude Include="ScreenOptions.h">
+      <Filter>Screens\SubScreens</Filter>
+    </ClInclude>
+    <ClInclude Include="ScreenOptionsDisplay.h">
+      <Filter>Screens\SubScreens</Filter>
+    </ClInclude>
+    <ClInclude Include="ScreenMainMenu.h">
+      <Filter>Screens\MainScreens</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Map">
@@ -301,6 +325,12 @@
     </Filter>
     <Filter Include="Map\Generator">
       <UniqueIdentifier>{b2eb9634-2659-4d87-b4d8-1ceb7eb21623}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Screens\MainScreens">
+      <UniqueIdentifier>{82b4fe7d-354c-476f-8b65-816de88354b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Screens\SubScreens">
+      <UniqueIdentifier>{d1d6e162-7d64-463a-acee-3ff5c4015627}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

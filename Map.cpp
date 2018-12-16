@@ -216,6 +216,8 @@ void Map::renderMinimap() {
 		minimapDstRect.x -= (int)r.w;
 		minimapDstRect.y -= (int)r.h;
 		SDL_RenderFillRect(Game::renderer, &r);
+		minimapDstRect.x += (int)r.w;
+		minimapDstRect.y += (int)r.h;
 	}
 	else if (minimapSize == MinimapSmall) {
 		r.x = minimapDstRect.x + MINIMAP_WIDTH / 2;
@@ -223,7 +225,10 @@ void Map::renderMinimap() {
 		minimapDstRect.x -= (int)r.w;
 		minimapDstRect.y -= (int)r.h;
 		SDL_RenderFillRect(Game::renderer, &r);
+		minimapDstRect.x += (int)r.w;
+		minimapDstRect.y += (int)r.h;
 	}
+
 }
 
 void Map::setFieldsPositions() {

@@ -29,7 +29,7 @@ struct ItemTextureInfo {
 };
 
 
-enum class TextureFile { PLAYER, PROJECTILES, PLAYER_STATS, LEVEL_1, OBJECTS, COIN, CHEST, INVENTORY, UNIT, Items };
+enum class TextureFile { PLAYER, PROJECTILES, PLAYER_STATS, LEVEL_1, OBJECTS, COIN, CHEST, INVENTORY, UNIT, Items, MENU };
 
 enum class SingleFieldTexture { WOOD_FLOOR, FLOOR_NEAR_WALL_N, FLOOR_NEAR_WALL_E, FLOOR_NEAR_WALL_S, FLOOR_NEAR_WALL_W,
 	FLOOR_NEAR_WALL_SW, FLOOR_NEAR_WALL_SE, FLOOR_NEAR_WALL_NW, FLOOR_NEAR_WALL_NE,
@@ -41,7 +41,7 @@ enum class SingleFieldTexture { WOOD_FLOOR, FLOOR_NEAR_WALL_N, FLOOR_NEAR_WALL_E
 
 enum class SingleTexture { Chest, Coin, Teleport, TeleportOff, TeleportOn, PlayerT, UnitT, ProjectileT };
 enum class TextureAnimation { ChestOpening, CoinSpin };
-
+enum class MenuTextureName { BooleanFalse, BooleanTrue };
 
 
 class TextureManager{
@@ -53,6 +53,7 @@ public:
 	static std::unordered_map <SingleTexture, TextureInfo> textureParameters;
 	static std::unordered_map <ItemName::Name, ItemTextureInfo> itemTextureDetails;
 
+	static std::unordered_map <MenuTextureName, SDL_Rect> menuTextureSrcRect;
 
 	static void loadAllTextures();
 	static void loadAllTextureSrcRect();

@@ -174,6 +174,10 @@
     <ClCompile Include="ProjectileEffects.cpp" />
     <ClCompile Include="Room.cpp" />
     <ClCompile Include="Screen.cpp" />
+    <ClCompile Include="ScreenMainMenu.cpp" />
+    <ClCompile Include="ScreenOptions.cpp" />
+    <ClCompile Include="ScreenOptionsDisplay.cpp" />
+    <ClCompile Include="ScreenPauseGame.cpp" />
     <ClCompile Include="ScreensManager.cpp" />
     <ClCompile Include="Settings.cpp" />
     <ClCompile Include="SpriteAnimation.cpp" />
@@ -220,6 +224,10 @@
     <ClInclude Include="ProjectileEffects.h" />
     <ClInclude Include="Room.h" />
     <ClInclude Include="Screen.h" />
+    <ClInclude Include="ScreenMainMenu.h" />
+    <ClInclude Include="ScreenOptions.h" />
+    <ClInclude Include="ScreenOptionsDisplay.h" />
+    <ClInclude Include="ScreenPauseGame.h" />
     <ClInclude Include="ScreensManager.h" />
     <ClInclude Include="Settings.h" />
     <ClInclude Include="SpriteAnimation.h" />

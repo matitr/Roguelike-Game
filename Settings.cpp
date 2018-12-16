@@ -12,11 +12,17 @@ Settings* Settings::get() {
 	return instance;
 }
 
+void Settings::setSettingDisplay(SettingsDisplay::SettingsDisplay name, bool toSet) {
+	displaySettings[name] = toSet;
+}
+
 Settings::Settings() {
-	showPlayerHp = 0;
-	showEnemyHp = 1;
-	showDamage = 1;
-	showEnemyDamage = 1;
+	displaySettings.resize(SettingsDisplay::enum_size);
+
+	displaySettings[SettingsDisplay::ShowPlayerHp] = false;
+	displaySettings[SettingsDisplay::ShowEnemyHp] = true;
+	displaySettings[SettingsDisplay::ShowDamage] = true;
+	displaySettings[SettingsDisplay::ShowEnemyDamage] = true;
 }
 
 

@@ -6,11 +6,11 @@
 
 void HealthBar::draw() {
 	if (unitType == UnitType::Player) {
-		if (!Settings::get()->showPlayerHp)
+		if (!Settings::get()->getSettingDisplay(SettingsDisplay::ShowPlayerHp))
 			return;
 	}
 	else
-		if (!Settings::get()->showEnemyHp)
+		if (!Settings::get()->getSettingDisplay(SettingsDisplay::ShowEnemyHp))
 			return;
 
 	healthBarDstRect.x = unitDstRect.x + unitDstRect.w / 2 - healthBarDstRect.w / 2;
@@ -28,6 +28,9 @@ void HealthBar::draw() {
 	int barWidth = healthBarDstRect.w;
 
 	healthBarDstRect.w = int(healthBarDstRect.w * (hp / hpMax));
+	if (!healthBarDstRect.w && hp)
+		healthBarDstRect.w = 1;
+
 	SDL_RenderFillRect(Game::renderer, &healthBarDstRect); // Health bar
 
 	healthBarDstRect.w = barWidth;

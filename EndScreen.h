@@ -15,7 +15,6 @@ class EndScreen : public Screen {
 	SDL_Point pointsTxtCenter;
 
 public:
-	void update(Game* g) override;
 	void draw() override;
 
 	void setStats(bool win, int points); // Set: endGameStatus (if playerWin), playerPoints

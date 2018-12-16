@@ -125,6 +125,10 @@ void Player::drawStatus() {
 	SDL_RenderCopy(Game::renderer, playerStatsTxt, &statusSrcRect, &statusDstRest);
 	int width = statusSrcRect.w;
 	statusDstRest.w = int((statusDstRest.w - 4) * (staticPassives[StaticPassiveName::hp] / staticPassives[StaticPassiveName::hpMax]));
+	if (!statusDstRest.w && staticPassives[StaticPassiveName::hp])
+		statusDstRest.w = 1;
+
+	statusDstRest.w += 4; // Frame
 	statusSrcRect.w = statusDstRest.w;
 	statusSrcRect.y = 30;
 	SDL_RenderCopy(Game::renderer, playerStatsTxt, &statusSrcRect, &statusDstRest);
@@ -250,7 +254,7 @@ Player::Player(SDL_Texture* txt, SDL_Point& windowResolution) : Unit(TextureMana
 	lastRollFramesAgo = rollCooldown;
 
 	passivesManager->setStartingStat(StaticPassiveName::damage, 1);
-	passivesManager->setStartingStat(StaticPassiveName::hp, 899);
+	passivesManager->setStartingStat(StaticPassiveName::hp, 1);
 	passivesManager->setStartingStat(StaticPassiveName::hpMax, 899);
 	passivesManager->setStartingStat(StaticPassiveName::unitSpeed, 4);
 

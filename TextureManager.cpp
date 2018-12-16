@@ -7,6 +7,7 @@ std::unordered_map <TextureFile, SDL_Texture*> TextureManager::textures;
 std::unordered_map <SingleFieldTexture, SDL_Rect> TextureManager::fieldTextureSrcRect;
 std::unordered_map <SingleTexture, TextureInfo> TextureManager::textureParameters;
 std::unordered_map <ItemName::Name, ItemTextureInfo> TextureManager::itemTextureDetails;
+std::unordered_map <MenuTextureName, SDL_Rect> TextureManager::menuTextureSrcRect;
 
 void TextureManager::loadAllTextures() {
 	try {
@@ -22,6 +23,7 @@ void TextureManager::loadAllTextures() {
 		textures[TextureFile::INVENTORY] = TextureManager::LoadTexture("Textures/inventory.png");
 		textures[TextureFile::UNIT] = TextureManager::LoadTexture("Textures/unit.png");
 		textures[TextureFile::Items] = TextureManager::LoadTexture("Textures/items.png");
+		textures[TextureFile::MENU] = TextureManager::LoadTexture("Textures/menu.png");
 	}
 	catch (const char* dir) {
 		std::cout << "Error while opening texture from file: " << dir << std::endl;
@@ -95,6 +97,9 @@ void TextureManager::loadAllTextureSrcRect() { // srcRect = { x, y, w, h }
 	itemTextureDetails[ItemName::Item4] = { { 0,100,itemSizeFile,itemSizeFile }, textures[TextureFile::Items] };
 	itemTextureDetails[ItemName::Item5] = { { 100,100,itemSizeFile,itemSizeFile }, textures[TextureFile::Items] };
 	itemTextureDetails[ItemName::Item6] = { { 200,100,itemSizeFile,itemSizeFile }, textures[TextureFile::Items] };
+
+	menuTextureSrcRect[MenuTextureName::BooleanFalse] = { 0,0,55,55 };
+	menuTextureSrcRect[MenuTextureName::BooleanTrue] = { 55,0,55,55 };
 }
 
 SDL_Texture* TextureManager::LoadTexture(const char* dir) {

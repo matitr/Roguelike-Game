@@ -66,13 +66,13 @@ public:
 		actionsManager.addAction(Walk, NULL, NULL, 1);
 		actionsManager.addAnimations(Walk, DataBase::unitAnimations[UnitName::Unit][Walk]);
 
-		AttackPattern* attackP = new ProjectilesAround(DataBase::animations[AnimationName::Projectile2], 270, 30);
+		AttackPattern* attackP = new ProjectilesAround(DataBase::animations[AnimationName::Projectile2], 270, 1);
 //		attackP->addProjectileEffect(new ProjEffectChangingAngle(0.5));
 //		attackP->addProjectileEffect(new ProjEffectSinusPath(300, 45));
 //		attackP->addProjectileEffect(new ProjEffectStop(30, 50));
 //		attackP->addProjectileEffect(new ProjEffectRightAngle(100, true));
 //		attackP->addProjectileEffect(new ProjEffectSlowToFast(250, -0.5, 2));
-		attackP->addProjectileEffect(new ProjEffectRandAngleChange(40, 30));
+		attackP->addProjectileEffect(new ProjEffectRandAngleChange(1, 5));
 		actionsManager.addAction(AttackProj, NULL, attackP, 9);
 		actionsManager.addAnimations(AttackProj, DataBase::unitAnimations[UnitName::Unit][AttackProj]);
 		actionsManager.setActionActivationDistMax(AttackProj, 1000);

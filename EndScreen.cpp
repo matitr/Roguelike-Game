@@ -6,9 +6,7 @@
 #include "Game.h"
 
 
-void EndScreen::update(Game* game) {
 
-}
 
 void EndScreen::draw() {
 	SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 255);
@@ -59,9 +57,9 @@ EndScreen::EndScreen(int windowResX, int windowResY) : dstRectGameResult{ window
 	pointsTxtCenter.x = dstRectPoints.x;
 	pointsTxtCenter.y = dstRectPoints.y;
 
-	buttons.push_back(new Button(r, "New game", &ScreensManager::newGame));
+	addButton(new Button(r, "New game", [](Screen* parentScreen, ScreensManager* sM, Game* game) { sM->newGame(game); }));
 	r.y = int(windowResY * 0.8);
-	buttons.push_back(new Button(r, "Exit", &ScreensManager::quitGame));
+	addButton(new Button(r, "Exit", [](Screen* parentScreen, ScreensManager* sM, Game* game) { sM->quitGame(game); }));
 
 }
 
