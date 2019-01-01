@@ -9,6 +9,11 @@
 #include "CombatTextManager.h"
 #include "myMath.h"
 
+#define MINIMAP_BACKGROUND_COLOR 0, 51, 51, 100
+#define MINIMAP_FRAME_COLOR 0, 0, 0, 100
+#define MINIMAP_FLOOR_COLOR 255, 184, 77, 200
+#define MINIMAP_TELEPORTER_COLOR 0, 102, 255, 200
+
 
 void Map::generateNewLevel() {
 	generator.generateNewMap();
@@ -18,7 +23,6 @@ void Map::generateNewLevel() {
 }
 
 void Map::createMinimap() {
-	SDL_SetRenderDrawColor(Game::renderer, 255, 184, 77, 200);
 	SDL_Rect r;
 
 	r.h = MAP_HEIGHT;
@@ -28,13 +32,12 @@ void Map::createMinimap() {
 
 	// Background color
 	SDL_SetRenderTarget(Game::renderer, minimapBackground);
-	SDL_SetRenderDrawColor(Game::renderer, 0, 51, 51, 100);
+	SDL_SetRenderDrawColor(Game::renderer, MINIMAP_BACKGROUND_COLOR);
 	SDL_RenderFillRect(Game::renderer, &r);
 
 	// Minimap
 	SDL_SetRenderTarget(Game::renderer, minimap);
 	SDL_RenderClear(Game::renderer);
-	SDL_SetRenderDrawColor(Game::renderer, 255, 184, 77, 200);
 
 	r.w = 1;
 	r.h = 1;
@@ -50,7 +53,7 @@ void Map::createMinimap() {
 }
 
 void Map::addToMinimap(Room* room) {
-	SDL_SetRenderDrawColor(Game::renderer, 255, 184, 77, 200);
+	SDL_SetRenderDrawColor(Game::renderer, MINIMAP_FLOOR_COLOR);
 	SDL_SetRenderTarget(Game::renderer, minimap);
 	SDL_Rect r;
 	r.w = 1;
@@ -73,14 +76,14 @@ void Map::addToMinimap(Room* room) {
 
 		// Draw teleport
 		if (room->telporter) {
-			SDL_SetRenderDrawColor(Game::renderer, 0, 102, 255, 200);
+			SDL_SetRenderDrawColor(Game::renderer, MINIMAP_TELEPORTER_COLOR);
 			r.w = 3;
 			r.h = 3;
 			r.x = int(room->telporter->getPositionX() / fieldRect.w - 1);
 			r.y = int(room->telporter->getPositionY() / fieldRect.h - 1);
 			SDL_RenderFillRect(Game::renderer, &r);
 			// Undo color and r.w and r.h
-			SDL_SetRenderDrawColor(Game::renderer, 255, 184, 77, 200);
+			SDL_SetRenderDrawColor(Game::renderer, MINIMAP_FLOOR_COLOR);
 			r.w = 1;
 			r.h = 1;
 		}
@@ -197,7 +200,7 @@ void Map::render(std::vector <GameObject*>& gameObjects) {
 }
 
 void Map::renderMinimap() {
-	SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 100);
+	SDL_SetRenderDrawColor(Game::renderer, MINIMAP_FRAME_COLOR);
 
 	// Render minimap
 	if (minimapSize != MinimapClosed) {

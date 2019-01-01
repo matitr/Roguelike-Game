@@ -7,7 +7,7 @@
 
 class Room;
 
-enum class FieldType { Wall, Floor, FloorHallway, Door, None };
+enum class FieldType { BasicWall, Wall, Floor, FloorHallway, Door, Abyss, None };
 
 class Field : public GameObject {
 	bool isGround = false;

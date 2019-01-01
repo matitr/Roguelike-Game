@@ -76,6 +76,24 @@ void TextureManager::loadAllTextureSrcRect() { // srcRect = { x, y, w, h }
 
 	fieldTextureSrcRect[SingleFieldTexture::WALL_TOP] = { fieldSize * 0, fieldSize * 3, fieldSize, fieldSize };
 
+	// Abyss
+	fieldTextureSrcRect[SingleFieldTexture::ABYSS_CORNER_LT] = { fieldSize * 5, fieldSize * 5, fieldSize, fieldSize };
+	fieldTextureSrcRect[SingleFieldTexture::ABYSS_CORNER_RT] = { fieldSize * 4, fieldSize * 5, fieldSize, fieldSize };
+	fieldTextureSrcRect[SingleFieldTexture::ABYSS_CORNER_LB] = { fieldSize * 5, fieldSize * 4, fieldSize, fieldSize };
+	fieldTextureSrcRect[SingleFieldTexture::ABYSS_CORNER_RB] = { fieldSize * 4, fieldSize * 4, fieldSize, fieldSize };
+
+	fieldTextureSrcRect[SingleFieldTexture::ABYSS_TOP] = { fieldSize * 2, fieldSize * 3, fieldSize, fieldSize };
+	fieldTextureSrcRect[SingleFieldTexture::ABYSS_RIGHT] = { fieldSize * 3, fieldSize * 4, fieldSize, fieldSize };
+	fieldTextureSrcRect[SingleFieldTexture::ABYSS_BOTTOM] = { fieldSize * 2, fieldSize * 5, fieldSize, fieldSize };
+	fieldTextureSrcRect[SingleFieldTexture::ABYSS_LEFT] = { fieldSize * 1, fieldSize * 4, fieldSize, fieldSize };
+
+	fieldTextureSrcRect[SingleFieldTexture::ABYSS_COLUMN_SW] = { fieldSize * 1, fieldSize * 3, fieldSize, fieldSize };
+	fieldTextureSrcRect[SingleFieldTexture::ABYSS_COLUMN_SE] = { fieldSize * 3, fieldSize * 3, fieldSize, fieldSize };
+	fieldTextureSrcRect[SingleFieldTexture::ABYSS_COLUMN_NW] = { fieldSize * 1, fieldSize * 5, fieldSize, fieldSize };
+	fieldTextureSrcRect[SingleFieldTexture::ABYSS_COLUMN_NE] = { fieldSize * 3, fieldSize * 5, fieldSize, fieldSize };
+
+	fieldTextureSrcRect[SingleFieldTexture::ABYSS_MIDDLE] = { fieldSize * 2, fieldSize * 4, fieldSize, fieldSize };
+
 	// Parameters:
 	//  { SDL_Rect srcRect = { x, y, w, h }, Rect dstRect = { w, h }, SDL_Texture* texture };
 	textureParameters[SingleTexture::Teleport] = { { 0, 0, 468, 468 },{ 120,120 }, textures[TextureFile::OBJECTS] };

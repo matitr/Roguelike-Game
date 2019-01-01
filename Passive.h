@@ -3,7 +3,7 @@
 #include <string>
 #include <list>
 
-enum class PassiveActivateOn { Passive, CreateAttack, TakeDamage, EnemyKill, Death, RoomClear, HitEnemy, HitWall, HitWallOrEnemy, size_of_enum };
+enum class PassiveActivateOn { Passive, TakeDamage, EnemyKill, Death, RoomClear, HitEnemy, HitWall, HitWallOrEnemy, size_of_enum };
 enum class PassiveName { None, OnRoomClearHeal, OnEnemyKillMoveSpeed, OnHitSlowMoveSpeed, OnHitBurn, size_of_enum };
 
 struct SDL_Point;

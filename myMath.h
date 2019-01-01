@@ -1,4 +1,7 @@
 #pragma once
+#ifndef _MYMATH_H
+#define _MYMATH_H
+
 #include <utility> 
 
 
@@ -101,3 +104,5 @@ struct RectInt {
 
 
 
+
+#endif // !_MYMATH_H

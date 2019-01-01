@@ -34,13 +34,16 @@ class LevelGenerator {
 
 	void createRoom(Room* room);
 
+	void setBaseWalls();
 	void addWallsDepth(Room* room);
 	void createAllFields();
 	void createFieldsLeftIsWall(int x, int y);
 	void createFieldsRighttIsWall(int x, int y);
+	void createAbyss(int x, int y);
 	void createRoomObjects(Room* room);
 public:
 	void setMapFieldType(int x, int y, FieldType type);
+	const FieldType& getMapFieldType(int x, int y);
 	void generateNewMap();
 
 	LevelGenerator(Map *map);

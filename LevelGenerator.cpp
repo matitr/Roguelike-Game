@@ -16,6 +16,10 @@ void LevelGenerator::setMapFieldType(int x, int y, FieldType type) {
 	mapFields[MAP_WIDTH * y + x] = type;
 }
 
+const FieldType& LevelGenerator::getMapFieldType(int x, int y) {
+	return mapFields[MAP_WIDTH * y + x];
+}
+
 void LevelGenerator::generateNewMap() {
 	mapFields.resize(MAP_WIDTH * MAP_HEIGHT);
 
@@ -31,6 +35,8 @@ void LevelGenerator::generateNewMap() {
 
 	for (i = 0; i < roomsNumber; i++)
 		createRoom(rooms[i]);
+
+	setBaseWalls();
 
 	for (i = 0; i < roomsNumber; i++)
 		addWallsDepth(rooms[i]);
@@ -236,8 +242,26 @@ void LevelGenerator::createRoom(Room* room) {
 				mapFieldType(xIter, yIter) = FieldType::Floor;
 	}
 
-	if (room->type == RoomType::Monsters)
-		wallsGenerator.generateSymetrical(this, room);
+	if (room->type == RoomType::Monsters) {
+		if (rand() % 100 < 15)
+			wallsGenerator.generateSymetrical(this, room, FieldType::Abyss);
+		else
+			wallsGenerator.generateSymetrical(this, room, FieldType::Wall);
+
+		if (rand() % 100 < 50)
+			wallsGenerator.generateConnectedToWall(this, room, FieldType::Wall);
+		else
+			wallsGenerator.generateConnectedToWall(this, room, FieldType::Abyss);
+	}
+}
+
+void LevelGenerator::setBaseWalls() {
+	for (int y = 0; y < MAP_HEIGHT; y++) {
+		for (int x = 0; x < MAP_WIDTH; x++) {
+			if (mapFieldType(x, y) == FieldType::BasicWall)
+				mapFieldType(x, y) = FieldType::Wall;
+		}
+	}
 }
 
 void LevelGenerator::addWallsDepth(Room* room) {
@@ -262,26 +286,31 @@ void LevelGenerator::createAllFields() {
 			if (mapFieldType(x, y) == FieldType::Door) {
 				map.getField(x, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::DOORS], FieldType::Door);
 			}
-			if (mapFieldType(x, y) == FieldType::Floor) {
+			if (mapFieldType(x, y) == FieldType::Abyss) {
+				createAbyss(x, y);
+			}
+			if (mapFieldType(x, y) == FieldType::Floor || mapFieldType(x, y) == FieldType::Abyss) {
 				if (mapFieldType(x - 1, y) == FieldType::None || mapFieldType(x - 1, y) == FieldType::Wall) // Left is wall
 					createFieldsLeftIsWall(x, y);
 
 				if (mapFieldType(x + 1, y) == FieldType::None || mapFieldType(x + 1, y) == FieldType::Wall) // Right
 					createFieldsRighttIsWall(x, y);
 
-				if (mapFieldType(x - 1, y) == FieldType::Floor && mapFieldType(x , y - 1) == FieldType::Floor && mapFieldType(x - 1, y - 1) == FieldType::Wall)
-					map.getField(x, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::FLOOR_NEAR_COLUMN_NW], FieldType::Floor);
-				else if (mapFieldType(x + 1, y) == FieldType::Floor && mapFieldType(x, y - 1) == FieldType::Floor && mapFieldType(x + 1, y - 1) == FieldType::Wall)
-					map.getField(x, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::FLOOR_NEAR_COLUMN_NE], FieldType::Floor);
-				else if (mapFieldType(x, y - 1) == FieldType::Wall && (mapFieldType(x - 1, y) == FieldType::Floor && mapFieldType(x + 1, y) == FieldType::Floor))
-					map.getField(x, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::FLOOR_NEAR_WALL_N], FieldType::Floor);
+				if (!map.getField(x, y)) {
+					if (mapFieldType(x - 1, y) != FieldType::Wall && mapFieldType(x, y - 1) != FieldType::Wall && mapFieldType(x - 1, y - 1) == FieldType::Wall)
+						map.getField(x, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::FLOOR_NEAR_COLUMN_NW], FieldType::Floor);
+					else if (mapFieldType(x + 1, y) != FieldType::Wall && mapFieldType(x, y - 1) != FieldType::Wall && mapFieldType(x + 1, y - 1) == FieldType::Wall)
+						map.getField(x, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::FLOOR_NEAR_COLUMN_NE], FieldType::Floor);
+					else if (mapFieldType(x - 1, y) != FieldType::Wall && mapFieldType(x + 1, y) != FieldType::Wall && mapFieldType(x, y - 1) == FieldType::Wall)
+						map.getField(x, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::FLOOR_NEAR_WALL_N], FieldType::Floor);
+				}
 
 				if (mapFieldType(x, y - 1) == FieldType::None || mapFieldType(x, y - 1) == FieldType::Wall) { // Up is wall
 					map.getField(x, y - 1) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_FRONT0], FieldType::Wall);
 					map.getField(x, y - 2) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_FRONT1], FieldType::Wall);
-					if (mapFieldType(x - 1, y - 3) != FieldType::Wall)
+					if (mapFieldType(x - 1, y - 2) != FieldType::Wall)
 						map.getField(x, y - 3) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_COLUMN_SW], FieldType::Wall);
-					else if (mapFieldType(x + 1, y - 3) != FieldType::Wall)
+					else if (mapFieldType(x + 1, y - 2) != FieldType::Wall)
 						map.getField(x, y - 3) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_COLUMN_SE], FieldType::Wall);
 					else
 						map.getField(x, y - 3) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::WALL_TOP_T], FieldType::Wall);
@@ -369,6 +398,45 @@ void LevelGenerator::createFieldsRighttIsWall(int x, int y) {
 		else if (mapFieldType(x, y - 1) == FieldType::Floor)
 			map.getField(x, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::FLOOR_NEAR_WALL_E], FieldType::Floor);
 	}
+}
+
+void LevelGenerator::createAbyss(int x, int y) {
+	if (mapFieldType(x, y - 1) != FieldType::Abyss) { // Up is not abyss
+		if (mapFieldType(x - 1, y) != FieldType::Abyss) // Left is not abyss
+			map.getField(x, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::ABYSS_COLUMN_SW], FieldType::Abyss);
+		else if (mapFieldType(x + 1, y) != FieldType::Abyss) // Right is not abyss
+			map.getField(x, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::ABYSS_COLUMN_SE], FieldType::Abyss);
+		else // Left and right is abyss
+			map.getField(x, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::ABYSS_TOP], FieldType::Abyss);
+	}
+	else if (mapFieldType(x, y + 1) != FieldType::Abyss) { // Down is not abyss
+		if (mapFieldType(x - 1, y) != FieldType::Abyss) // Left is not abyss
+			map.getField(x, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::ABYSS_COLUMN_NW], FieldType::Abyss);
+		else if (mapFieldType(x + 1, y) != FieldType::Abyss) // Right is not abyss
+			map.getField(x, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::ABYSS_COLUMN_NE], FieldType::Abyss);
+		else // Left and right is abyss
+			map.getField(x, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::ABYSS_BOTTOM], FieldType::Abyss);
+	}
+	else if (mapFieldType(x - 1, y) != FieldType::Abyss) { // Left is not abyss
+		map.getField(x, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::ABYSS_LEFT], FieldType::Abyss);
+	}
+	else if (mapFieldType(x + 1, y) != FieldType::Abyss) { // Right is not abyss
+		map.getField(x, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::ABYSS_RIGHT], FieldType::Abyss);
+	}
+	else if (mapFieldType(x - 1, y - 1) != FieldType::Abyss) { // Top left is not abyss
+		map.getField(x, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::ABYSS_CORNER_RB], FieldType::Abyss);
+	}
+	else if (mapFieldType(x + 1, y - 1) != FieldType::Abyss) { // Top right is not abyss
+		map.getField(x, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::ABYSS_CORNER_LB], FieldType::Abyss);
+	}
+	else if (mapFieldType(x - 1, y + 1) != FieldType::Abyss) { // Bottom left is not abyss
+		map.getField(x, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::ABYSS_CORNER_RT], FieldType::Abyss);
+	}
+	else if (mapFieldType(x + 1, y + 1) != FieldType::Abyss) { // Bottom right is not abyss
+		map.getField(x, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::ABYSS_CORNER_LT], FieldType::Abyss);
+	}
+	else
+		map.getField(x, y) = new Field(levelTexture, TextureManager::fieldTextureSrcRect[SingleFieldTexture::ABYSS_MIDDLE], FieldType::Abyss);
 }
 
 void LevelGenerator::createRoomObjects(Room* room) {

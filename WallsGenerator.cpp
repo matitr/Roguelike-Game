@@ -3,7 +3,7 @@
 #include "Room.h"
 
 
-void WallsGenerator::generateSymetrical(LevelGenerator* levelGen, Room* room) {
+void WallsGenerator::generateSymetrical(LevelGenerator* levelGen, Room* room, FieldType fieldType) {
 	int maxCulumnsInColumn = (room->y2 - room->y1) / (MIN_COLUMN_SPACE + MIN_COLUMN_SIZE) - 1;
 	int maxCulumnsInRow = (room->x2 - room->x1) / (MIN_COLUMN_SPACE + MIN_COLUMN_SIZE) - 1;
 
@@ -61,22 +61,22 @@ void WallsGenerator::generateSymetrical(LevelGenerator* levelGen, Room* room) {
 		(*it).y = MIN_COLUMN_SIZE;
 
 	int columnAdditionalSpace = room->y2 - room->y1 - 1 - (numberOfRows * (MIN_COLUMN_SPACE + MIN_COLUMN_SIZE) + MIN_COLUMN_SPACE) - 2;
-	int i = 0;
-	while (i < columnAdditionalSpace) {
+	int itAdditionalSpace = 0;
+	while (itAdditionalSpace < columnAdditionalSpace) {
 		if (rand() % 100 < 50) {
 			int randNumber = rand() % columnXPosition.size();
 			if (columnSize[randNumber].x / (float)columnSize[randNumber].y < COLUMN_MAX_WIDTH_TO_HEIGHT
 				&& columnSize[randNumber].y / (float)columnSize[randNumber].x < COLUMN_MAX_HEIGHT_TO_WIDTH) { // Check max w/h && h/w ratio
 				columnSize[randNumber].y++;
 				if (randNumber == (columnXPosition.size() - 1))
-					i++;
+					itAdditionalSpace++;
 				else
-					i += 2;
+					itAdditionalSpace += 2;
 			}
-			i += 2;
+			itAdditionalSpace += 2;
 		}
 		else
-			i += 2;
+			itAdditionalSpace += 2;
 	}
 
 	// Set positions x in each row
@@ -85,7 +85,7 @@ void WallsGenerator::generateSymetrical(LevelGenerator* levelGen, Room* room) {
 
 		int allSpaceBetweenCol = (room->x2 - room->x1 - 1 - totalColumnSizeX);
 		int minSpaceBetweenColumns = (room->x2 - room->x1 - 1 - totalColumnSizeX) / (columnXPosition[row].size() + 1);
-		for (int i = MIN_COLUMN_SPACE * (columnSize.size() + 1); i < allSpaceBetweenCol; i += 2) { // Split space randomly
+		for (int i = MIN_COLUMN_SPACE * (columnSize[row].x + 1); i < allSpaceBetweenCol; i += 2) { // Split space randomly
 			if (rand() % columnXPosition[row].size() == 0)
 				columnXPosition[row][rand() % columnXPosition[row].size() / 2]++;
 		}
@@ -164,6 +164,47 @@ void WallsGenerator::generateSymetrical(LevelGenerator* levelGen, Room* room) {
 			}
 		}
 	}
+}
+
+bool WallsGenerator::canPlaceWall(LevelGenerator* mapGen, RectInt wallRect) {
+	for (int y = wallRect.y - MIN_WALL_RECT_SPACE; y < wallRect.y + MIN_WALL_RECT_SPACE + wallRect.h; y++) {
+		for (int x = wallRect.x - MIN_WALL_RECT_SPACE; x < wallRect.x + MIN_WALL_RECT_SPACE + wallRect.w; x++) {
+			if (mapGen->getMapFieldType(x, y) == FieldType::Door || mapGen->getMapFieldType(x, y) == FieldType::Wall
+				|| mapGen->getMapFieldType(x, y) == FieldType::Abyss)
+				return false;
+		}
+	}
+
+	return true;
+}
+
+void WallsGenerator::placeWall(LevelGenerator* mapGen, RectInt wallRect, FieldType fieldType) {
+	for (int y = wallRect.y; y < wallRect.y + wallRect.h; y++) {
+		for (int x = wallRect.x; x < wallRect.x + wallRect.w; x++) { 
+			mapGen->setMapFieldType(x, y, fieldType);
+		}
+	}
+}
+
+void WallsGenerator::generateConnectedToWall(LevelGenerator* levelGen, Room* room, FieldType fieldType) {
+	int height = rand() % int(((room->y2 - room->y1) / 2) * 0.3) + 2;
+	int maxWidth = int(((room->x2 - room->x1) / 2) * 0.3);
+
+	int width = rand() % maxWidth + 2;
+	if ((room->x2 - room->x1) % 2 == width % 2)
+		width++;
+
+	RectInt rectWallTop = { room->x1 + (room->x2 - room->x1) / 2 - width / 2 + (width + 1) % 2, room->y1 + 1, width, height }; // Wall middle top
+	if (canPlaceWall(levelGen, rectWallTop))
+		placeWall(levelGen, rectWallTop, fieldType);
+
+	width = rand() % maxWidth + 2;
+	if ((room->x2 - room->x1) % 2 == width % 2)
+		width++;
+	
+	RectInt rectWallBottom = { room->x1 + (room->x2 - room->x1) / 2 - width / 2 + (width + 1) % 2, room->y2 - height - 1, width, height }; // Wall middle bottom
+	if (canPlaceWall(levelGen, rectWallBottom))
+		placeWall(levelGen, rectWallBottom, fieldType);
 }
 
 WallsGenerator::WallsGenerator() {
